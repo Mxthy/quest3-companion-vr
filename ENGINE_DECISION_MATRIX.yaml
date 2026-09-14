@@ -1,0 +1,253 @@
+# ENGINE_DECISION_MATRIX.yaml
+# Scores 1-5. unknown = not verified in this environment; requires prototype or hardware test.
+# Weights apply to category aggregates, not raw sum of 20 rows.
+# Updated: 2026-09-14 | Decision status: NOT FINAL – matrix + prototype plan only
+
+meta:
+  project: quest3-companion-vr
+  milestone: M3
+  decision_status: open_pending_prototypes
+  target: Meta Quest 3 standalone
+  genre: companion / presence VR
+  evidence_basis:
+    - ENGINE_ANALYSIS.yaml (ref APKs: Unity x2, Unreal x1)
+    - public Meta/OpenXR docs knowledge
+    - no live Quest 3 hardware in agent environment
+
+weights:
+  quest3_performance: 0.20
+  agent_vibe_maintainability: 0.20
+  xr_meta_integration: 0.15
+  build_cloud_pipeline: 0.15
+  content_asset_workflow: 0.10
+  extensibility: 0.10
+  cost_license: 0.10
+
+criteria:
+  # id, category (maps to weight), unity, godot, unreal, notes
+  - id: 1
+    name: Meta Quest 3 standalone support
+    category: xr_meta_integration
+    unity: 5
+    godot: 4
+    unreal: 5
+    note: "Unity and Unreal have shipping Quest titles in our ref set. Godot OpenXR + Meta support exists; fewer AAA Quest shipping refs."
+
+  - id: 2
+    name: OpenXR integration
+    category: xr_meta_integration
+    unity: 5
+    godot: 5
+    unreal: 5
+    note: "All three support OpenXR. SliceOfLife uses UnityOpenXR; Godot first-class OpenXR; Unreal OpenXR plugin mature."
+
+  - id: 3
+    name: Hand and controller interaction
+    category: xr_meta_integration
+    unity: 5
+    godot: 4
+    unreal: 5
+    note: "Unity: XRIT + Meta Interaction SDK (seen in refs). Unreal: OpenXR hand + enhanced input. Godot: OpenXR action maps; less Meta-specific Interaction SDK depth."
+
+  - id: 4
+    name: Passthrough and mixed reality
+    category: xr_meta_integration
+    unity: 5
+    godot: 3
+    unreal: 5
+    note: "Unity Meta XR + Unreal have production passthrough paths (refs). Godot passthrough possible via OpenXR extensions; fewer production examples → conservative score."
+
+  - id: 5
+    name: Scene anchors / MRUK-comparable
+    category: xr_meta_integration
+    unity: 5
+    godot: 2
+    unreal: 4
+    note: "MRUK / Building Blocks strongest on Unity Meta stack (SliceOfLife). Unreal has scene/anchor paths. Godot: limited comparable high-level MRUK."
+
+  - id: 6
+    name: Spatial audio
+    category: xr_meta_integration
+    unity: 5
+    godot: 4
+    unreal: 5
+    note: "All viable. Unity Meta XR Audio + third-party mature; Unreal spatial audio strong; Godot improving but fewer Meta-tuned presets."
+
+  - id: 7
+    name: Avatar and voice integration
+    category: xr_meta_integration
+    unity: 5
+    godot: 2
+    unreal: 4
+    note: "Meta Voice/Wit + AvatarSDK2 observed on Unity ref. Unreal can integrate; Godot has weaker ready Meta avatar/voice packages."
+
+  - id: 8
+    name: Rendering performance on Quest 3
+    category: quest3_performance
+    unity: 4
+    godot: 3
+    unreal: 4
+    note: "unknown without device profiling. Scores = expected headroom from industry practice; must measure on hardware."
+    verification: quest3_device_or_cloud_profile
+
+  - id: 9
+    name: CPU/GPU profiling tooling
+    category: quest3_performance
+    unity: 5
+    godot: 3
+    unreal: 5
+    note: "Unity Profiler + Frame Debugger; Unreal Insights. Godot profiler lighter for mobile VR."
+
+  - id: 10
+    name: Asset and scene workflow
+    category: content_asset_workflow
+    unity: 5
+    godot: 4
+    unreal: 4
+    note: "Unity: fast iteration for small scenes. Godot: text scenes, friendly diffs. Unreal: powerful but heavier for tiny prototypes."
+
+  - id: 11
+    name: Suitability for AI-generated code
+    category: agent_vibe_maintainability
+    unity: 4
+    godot: 5
+    unreal: 3
+    note: "Godot GDScript/C# small surface, text resources. Unity C# well-represented in LLM training. Unreal C++/Blueprints harder for pure agent loops."
+
+  - id: 12
+    name: Maintainability by agents
+    category: agent_vibe_maintainability
+    unity: 4
+    godot: 5
+    unreal: 2
+    note: "Godot project = files agents can read/edit cleanly. Unity YAML scenes workable. Unreal binary assets + complex modules resist agent-only workflows."
+
+  - id: 13
+    name: Build and export automation
+    category: build_cloud_pipeline
+    unity: 5
+    godot: 4
+    unreal: 4
+    note: "Unity batchmode well documented. Godot headless export solid. Unreal UAT powerful but heavier setup."
+
+  - id: 14
+    name: Cloud / remote build capability
+    category: build_cloud_pipeline
+    unity: 5
+    godot: 3
+    unreal: 5
+    note: "Unity Build Automation / UCB ecosystem mature. Unreal has cloud build paths. Godot mostly self-hosted CI."
+
+  - id: 15
+    name: Debugging without local high-end PC
+    category: build_cloud_pipeline
+    unity: 3
+    godot: 4
+    unreal: 2
+    note: "Unreal editor heavy. Godot lightest. Unity mid. All still need Quest device or remote for true XR validation."
+
+  - id: 16
+    name: License and cost structure
+    category: cost_license
+    unity: 3
+    godot: 5
+    unreal: 3
+    note: "Godot MIT free. Unity runtime fee policy risk (verify current terms). Unreal royalty after revenue threshold. Scores reflect risk, not legal advice."
+    verification: confirm_current_unity_and_unreal_commercial_terms
+
+  - id: 17
+    name: Plugin and dependency risk
+    category: agent_vibe_maintainability
+    unity: 3
+    godot: 4
+    unreal: 3
+    note: "Unity package version conflicts common. Unreal plugin ABI/engine version coupling. Godot leaner core."
+
+  - id: 18
+    name: Scale to high-quality vertical slice
+    category: extensibility
+    unity: 5
+    godot: 3
+    unreal: 5
+    note: "Unity/Unreal proven for commercial Quest companion-class apps. Godot capable but less proven at this immersion tier."
+
+  - id: 19
+    name: Extensibility multiplayer / persistence
+    category: extensibility
+    unity: 5
+    godot: 3
+    unreal: 5
+    note: "Unity Netcode/Relay and Unreal replication mature. Godot multiplayer OK for simpler scopes."
+
+  - id: 20
+    name: Risk for this specific project
+    category: agent_vibe_maintainability
+    unity: 4
+    godot: 3
+    unreal: 3
+    note: "Unity: best match to majority of refs + agent C#. Godot: agent-friendly but XR/Meta depth risk. Unreal: proven on ref but agent/vibe friction and editor weight."
+
+# Category averages (simple mean of criteria in category), then weighted total
+# Computed offline for transparency:
+category_scores:
+  quest3_performance:
+    # ids 8,9
+    unity: 4.5
+    godot: 3.0
+    unreal: 4.5
+  agent_vibe_maintainability:
+    # ids 11,12,17,20
+    unity: 3.75
+    godot: 4.25
+    unreal: 2.75
+  xr_meta_integration:
+    # ids 1-7
+    unity: 5.0
+    godot: 3.43
+    unreal: 4.71
+  build_cloud_pipeline:
+    # ids 13-15
+    unity: 4.33
+    godot: 3.67
+    unreal: 3.67
+  content_asset_workflow:
+    # id 10
+    unity: 5.0
+    godot: 4.0
+    unreal: 4.0
+  extensibility:
+    # ids 18,19
+    unity: 5.0
+    godot: 3.0
+    unreal: 5.0
+  cost_license:
+    # id 16
+    unity: 3.0
+    godot: 5.0
+    unreal: 3.0
+
+weighted_totals:
+  # sum(category_score * weight)
+  unity: 4.42
+  godot: 3.68
+  unreal: 4.01
+  formula_note: >
+    Unity leads on paper; Unreal close on XR/scale; Godot leads agent/cost but
+    trails Meta-depth and proven companion-tier shipping. NOT a final pick.
+
+unknowns_requiring_measurement:
+  - actual Quest 3 FPS/frame times per engine prototype
+  - real APK size and cold-start for identical feature set
+  - agent correction-loop count building each prototype
+  - current Unity commercial terms for this revenue model
+  - Godot Meta passthrough production readiness on Quest 3 OS version
+
+blockers_for_final_decision:
+  - no Quest 3 hardware attached to this agent environment
+  - no cloud build credentials configured yet
+  - prototypes not yet built
+
+recommended_test_order:
+  - 1_godot_minimal  # fastest agent iteration, validates OpenXR baseline
+  - 2_unity_minimal  # closest to majority of commercial refs
+  - 3_unreal_minimal  # only if Unity/Godot leave open questions on fidelity
