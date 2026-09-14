@@ -1,0 +1,12 @@
+policy:
+  - No redistribution of original APKs or proprietary extracted assets
+  - Analysis for internal engineering only
+  - New game uses original or properly licensed material only
+
+references:
+  primary_apks: proprietary (assumed) – analysis_only
+  dialer: excluded
+
+tools:
+  apktool: Apache-2.0
+  jadx: Apache-2.0

@@ -1,0 +1,28 @@
+# APK Inventory
+
+sources:
+  - id: apk_passthru
+    name: Pass_Thru_Hot_Sauce_-_Meta_Quest_2-3-Pro_v1.3.9.apk
+    drive_file_id: 1QNiPdsb7TQRcomlzUsE03ujNR5tLeB_E
+    size_bytes: 421101177
+    role: primary
+    status: registered_in_mcp_folder
+  - id: apk_joilab
+    name: joi-lab-vr-meta-quest-23pro.apk
+    drive_file_id: 1V7V-xdJ8c3MuHAP85Ga8mDJ3_S7WuGEh
+    size_bytes: 608242436
+    role: primary
+    status: registered_in_mcp_folder
+  - id: apk_sliceoflife
+    name: SliceoflifeVR_Meta_Beta_V11.apk
+    drive_file_id: 1V5P83MW29-sZrRI98WXd4RiouWtCiYLr
+    size_bytes: 961962298
+    role: primary
+    status: registered_in_mcp_folder
+  - id: apkm_dialer
+    package: com.oplus.dialer
+    role: excluded
+    status: excluded_not_relevant
+
+drive_project_folder: 1ekX0DJtLkLntR9eu7vDqoZtHHZU4aTAR
+drive_apks_subfolder: 1m3UG1TTlgf1VcsgSr9Csafs_WxeOUJ8I

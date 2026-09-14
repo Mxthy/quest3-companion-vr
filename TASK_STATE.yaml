@@ -1,0 +1,20 @@
+updated: "2026-09-14T20:20:00Z"
+milestone: M0
+phase: persistent_backends_established
+
+completed:
+  - orientation
+  - dialer_excluded
+  - github_repo_created: Mxthy/quest3-companion-vr
+  - drive_folder_created: quest3-game
+  - drive_subfolders: apks, state, reports, archives
+  - storage_policy_defined
+
+pending:
+  - push_governance_to_github
+  - download_pilot_passthru
+  - basisscan_phase_B
+
+next_action: >
+  Push core governance files to GitHub, then start Pass_Thru pilot download
+  from Drive Mcp into working area / Drive apks as needed.
