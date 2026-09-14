@@ -1,22 +1,23 @@
-updated: "2026-09-14T20:42:00Z"
+updated: "2026-09-14T21:05:00Z"
 milestone: M1
-phase: cross_matrix_two_apks_sliceoflife_blocked
+phase: all_three_basisscans_complete
 
 completed:
-  - passthru_deep
-  - joilab_basisscan
-  - cross_apk_matrix_v1
-  - no_deeper_joilab_needed
-
-blocked:
-  - sliceoflife_not_on_dlvr_share
-  - sliceoflife_drive_over_128mb_limit
+  - passthru_unity_deep
+  - joilab_unreal
+  - sliceoflife_unity_modern_openxr
+  - cross_matrix_v2
 
 pending:
-  - sliceoflife_basisscan_when_reachable
   - ENGINE_ANALYSIS.yaml
-  - M3_design_docs_prep
+  - M3_design_docs
+  - engine_decision_matrix
+
+key_finding: >
+  2x Unity IL2CPP (Pass_Thru older OculusXRPlugin; SliceOfLife modern
+  UnityOpenXR + Voice/Avatar2/MRUK) + 1x Unreal (JOI Lab). Shared hand +
+  presence direction; engine-agnostic genre.
 
 next_action: >
-  Await Sliceoflife via new dlvr/direct URL or split parts; or proceed to
-  ENGINE_ANALYSIS + design prep with two-engine evidence set.
+  Write ENGINE_ANALYSIS.yaml consolidating evidence; then prepare engine
+  decision matrix and GAME_DESIGN outline.
