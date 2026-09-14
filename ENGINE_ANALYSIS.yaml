@@ -1,0 +1,155 @@
+# ENGINE_ANALYSIS.yaml – Quest3 Companion VR
+# Consolidated from Pass_Thru, JOI Lab, SliceOfLife basisscans (+ Pass_Thru deep)
+# Updated: 2026-09-14
+
+meta:
+  milestone: M2
+  purpose: evidence-based engine and platform picture for new Quest 3 companion game
+  sources:
+    - reports/apk/passthru_basisscan.md
+    - reports/apk/passthru_deep_analysis.md
+    - reports/apk/joilab_basisscan.md
+    - reports/apk/sliceoflife_basisscan.md
+    - reports/engine/cross_apk_matrix.md
+
+references:
+  apk_passthru:
+    package: com.metaxrdev.pths_full
+    label: PTHS Full
+    version: "1.3"
+    engine: Unity_IL2CPP
+    confidence: high
+    indicators:
+      - UnityPlayerActivity
+      - libunity.so
+      - libil2cpp.so
+      - assets/bin/Data + global-metadata.dat
+      - xrsdk-pre-init-library=OculusXRPlugin
+    xr_stack:
+      bootstrap: OculusXRPlugin
+      openxr: true
+      ovr_plugin: true
+      passthrough_required: true
+      hand_tracking: true
+      scene_anchors: true
+      lipsync: true
+      avatar_loader: true
+      interaction_sdk: Oculus.Interaction (heavy)
+    services: Unity Analytics + Purchasing
+    min_sdk: 29
+    target_sdk: 32
+    notes: clearest passthrough-first Unity reference
+
+  apk_joilab:
+    package: com.multisekai.VRHand
+    label: JOI Lab VR
+    version: "1.0"
+    engine: Unreal
+    confidence: high
+    indicators:
+      - com.epicgames.unreal.GameActivity
+      - libUnreal.so (~131MB)
+      - assets/main.obb.png (~547MB)
+      - libEOSSDK.so
+    xr_stack:
+      bootstrap: OVR_Plugin_plus_OpenXR
+      openxr: true
+      ovr_plugin: true
+      passthrough_required: true
+      hand_tracking: true
+      scene_anchors: unknown_from_badging
+      lipsync: not_observed
+      avatar_loader: not_observed
+      interaction_sdk: not_observed_as_separate_libs
+    services: Epic Online Services
+    min_sdk: 29
+    target_sdk: 29
+    notes: proves same product pillars on Unreal
+
+  apk_sliceoflife:
+    package: com.sliceoflifevr.app
+    label: SliceOfLifeVR
+    version: "1.0"
+    engine: Unity_IL2CPP
+    confidence: high
+    indicators:
+      - UnityPlayerGameActivity
+      - libunity.so
+      - libil2cpp.so (~130MB)
+      - assets/bin/Data
+      - xrsdk-pre-init-library=UnityOpenXR
+    xr_stack:
+      bootstrap: UnityOpenXR
+      openxr: true
+      ovr_plugin: true
+      passthrough_required: false  # not in uses-feature badging
+      hand_tracking: true
+      scene_anchors: true  # USE_SCENE + scene understanding perms
+      voice_wit: true
+      avatar2_body: true
+      face_eye_tracking_perms: true
+      mr_utility_kit: true
+      avpro_video: true
+      interaction_sdk: Oculus.Interaction + XR Interaction Toolkit
+    services: Meta Voice/Wit, Platform
+    min_sdk: 32
+    target_sdk: 36
+    notes: most complete modern Meta presence stack among the three
+
+engine_distribution:
+  Unity_IL2CPP: 2
+  Unreal: 1
+  Godot: 0
+  native_only: 0
+  conclusion: >
+    Genre is engine-agnostic at product level. Two shipping Unity IL2CPP
+    titles and one Unreal title share hand-centric, presence-oriented design.
+
+shared_product_pillars:
+  - standalone_quest_arm64
+  - hand_centric_interaction
+  - meta_xr_openxr_and_or_ovr
+  - optional_or_required_passthrough_or_scene_placement
+  - store_monetization_billing_common
+
+differentiated_capabilities:
+  passthrough_first_flag:
+    strongest: apk_passthru
+    also: apk_joilab
+  modern_openxr_path:
+    strongest: apk_sliceoflife
+  voice_and_avatar_presence:
+    strongest: apk_sliceoflife
+  unreal_portability_proof:
+    only: apk_joilab
+
+recommendations_for_new_game:
+  engine_decision_status: open
+  decision_must_use:
+    - quest3_standalone_support
+    - openxr_or_meta_xr
+    - agent_maintainability
+    - build_time_and_iteration
+    - performance_headroom_on_quest3
+    - license_cost_risk
+  not_decision_basis:
+    - which_engine_references_used  # both Unity and Unreal exist in set
+  suggested_technical_pillars:
+    - OpenXR / Meta XR
+    - hand grab + ray UI
+    - optional passthrough or scene anchors
+    - optional polish: voice, avatar, spatial audio
+  content_policy: >
+    Original characters, rooms, loops only. Reference APKs inform patterns
+    and architecture; no asset or code reuse.
+
+open_questions:
+  - Final engine choice after small prototypes (Unity vs Godot vs Unreal)
+  - Whether new game treats passthrough as required or optional
+  - Depth of voice/avatar scope for vertical slice vs later
+  - Exact companion loop (emerges from design phase, not APK clone)
+
+next_phase:
+  - ENGINE decision matrix with prototype criteria (M4 prep)
+  - GAME_DESIGN_DOCUMENT outline (M3)
+  - Keep analysis-only stance on reference binaries
