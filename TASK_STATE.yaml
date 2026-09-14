@@ -1,21 +1,22 @@
-updated: "2026-09-14T20:40:00Z"
+updated: "2026-09-14T20:42:00Z"
 milestone: M1
-phase: joilab_basisscan_done
+phase: cross_matrix_two_apks_sliceoflife_blocked
 
 completed:
-  - passthru_unity_il2cpp_deep
-  - joilab_download
+  - passthru_deep
   - joilab_basisscan
-  - joilab_unreal_confirmed
-  - both_passthrough_hand_focus
+  - cross_apk_matrix_v1
+  - no_deeper_joilab_needed
+
+blocked:
+  - sliceoflife_not_on_dlvr_share
+  - sliceoflife_drive_over_128mb_limit
 
 pending:
-  - download_scan_sliceoflife
-  - cross_apk_engine_matrix
-
-key_finding: >
-  Pass_Thru = Unity IL2CPP; JOI Lab = Unreal. Same Meta Passthrough + hand
-  tracking product direction on two different engines.
+  - sliceoflife_basisscan_when_reachable
+  - ENGINE_ANALYSIS.yaml
+  - M3_design_docs_prep
 
 next_action: >
-  Basisscan SliceoflifeVR from dlvr or build cross-APK comparison matrix now.
+  Await Sliceoflife via new dlvr/direct URL or split parts; or proceed to
+  ENGINE_ANALYSIS + design prep with two-engine evidence set.
