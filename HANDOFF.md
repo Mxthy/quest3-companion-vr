@@ -1,25 +1,28 @@
 # HANDOFF
 
-**Updated:** 2026-09-14 – persistent backends online
+**Updated:** 2026-09-14 – M3 complete (decision matrix + prototype plan)
 
 ## Backends
-- **GitHub (private):** https://github.com/Mxthy/quest3-companion-vr
-- **Drive folder:** quest3-game  
-  - id: `1ekX0DJtLkLntR9eu7vDqoZtHHZU4aTAR`  
-  - sub: apks / state / reports / archives
+- GitHub: https://github.com/Mxthy/quest3-companion-vr
+- Drive: quest3-game (`1ekX0DJtLkLntR9eu7vDqoZtHHZU4aTAR`)
 
-## Storage policy
-- Text/governance/docs/scripts → **GitHub**
-- APKs, large binaries, heavy reports → **Drive**
-- Local workspace = temporary only
+## Completed milestones
+- M0 structure + persistence
+- M1 three APK basisscans + cross matrix
+- M2 ENGINE_ANALYSIS.yaml
+- M3 ENGINE_DECISION_MATRIX + REPORT + PROTOTYPE_SPEC + ACCEPTANCE_TESTS
 
-## Current status
-- Dialer excluded
-- Three primary APKs still in Drive folder `Mcp` (not yet copied to quest3-game/apks)
-- No pilot analysis yet
+## Engine status
+**Not selected.** Pre-prototype weighted lean: Unity 4.42 > Unreal 4.01 > Godot 3.68.
+Final pick requires prototype metrics on Quest 3 (or farm).
 
-## Resume after clear
-1. Clone or pull `Mxthy/quest3-companion-vr`
-2. Read AGENTS.md → PROJECT_MANIFEST.yaml → TASK_STATE.yaml → HANDOFF.md
-3. Restore tools from artifacts or re-download
-4. Continue from next_action in TASK_STATE
+## Blockers
+- No Quest 3 in agent environment
+- No cloud build credentials configured
+- Prototypes not built yet
+
+## Resume order
+AGENTS.md → PROJECT_MANIFEST.yaml → TASK_STATE.yaml → HANDOFF.md → ENGINE_DECISION_MATRIX.yaml
+
+## Next action
+Execute PROTOTYPE_SPEC in order: Godot → Unity → Unreal (as needed), fill PROTOTYPE_ACCEPTANCE_TESTS, then record D-00x engine choice.
