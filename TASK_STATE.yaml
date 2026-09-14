@@ -1,17 +1,25 @@
-updated: "2026-09-14T21:12:00Z"
-milestone: M2
-phase: engine_analysis_complete
+updated: "2026-09-14T21:22:00Z"
+milestone: M3
+phase: decision_matrix_and_prototype_plan_complete
 
 completed:
-  - all_three_apk_basisscans
-  - cross_apk_matrix_v2
-  - ENGINE_ANALYSIS.yaml
+  - ENGINE_DECISION_MATRIX.yaml
+  - ENGINE_DECISION_REPORT.md
+  - PROTOTYPE_SPEC.md
+  - PROTOTYPE_ACCEPTANCE_TESTS.md
+  - HANDOFF_updated
 
 pending:
-  - engine_decision_matrix
-  - GAME_DESIGN_DOCUMENT_outline
-  - M3_architecture_docs
+  - build_godot_minimal_prototype
+  - build_unity_minimal_prototype
+  - build_unreal_minimal_if_needed
+  - fill_acceptance_metrics_on_quest3
+  - final_engine_decision_D00x
+
+blocked:
+  - no_quest3_in_agent_environment
+  - no_cloud_build_credentials
 
 next_action: >
-  Prepare engine decision matrix (Unity vs Godot vs Unreal) with Quest 3
-  criteria, then GAME_DESIGN_DOCUMENT outline for companion vertical slice.
+  User/agent with build capability executes PROTOTYPE_SPEC (Godot first),
+  measures PROTOTYPE_ACCEPTANCE_TESTS on Quest 3, then locks engine in DECISIONS.md.
