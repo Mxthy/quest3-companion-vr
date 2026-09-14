@@ -1,19 +1,21 @@
-updated: "2026-09-14T20:35:00Z"
+updated: "2026-09-14T20:40:00Z"
 milestone: M1
-phase: passthru_deep_done_ready_for_joilab
+phase: joilab_basisscan_done
 
 completed:
-  - passthru_download
-  - passthru_basisscan
-  - passthru_deep_analysis
-  - unity_il2cpp_meta_xr_confirmed
-  - interaction_sdk_passthrough_pattern_documented
+  - passthru_unity_il2cpp_deep
+  - joilab_download
+  - joilab_basisscan
+  - joilab_unreal_confirmed
+  - both_passthrough_hand_focus
 
 pending:
-  - download_scan_joilab
   - download_scan_sliceoflife
-  - cross_apk_compare
+  - cross_apk_engine_matrix
+
+key_finding: >
+  Pass_Thru = Unity IL2CPP; JOI Lab = Unreal. Same Meta Passthrough + hand
+  tracking product direction on two different engines.
 
 next_action: >
-  Download joi-lab-vr-meta-quest-23pro.apk from dlvr (fileId hTU8YqqhXWqn)
-  and run same basisscan + lightweight deep pass for comparison.
+  Basisscan SliceoflifeVR from dlvr or build cross-APK comparison matrix now.
