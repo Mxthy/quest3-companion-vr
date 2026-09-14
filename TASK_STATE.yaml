@@ -1,22 +1,19 @@
-updated: "2026-09-14T20:25:00Z"
+updated: "2026-09-14T20:35:00Z"
 milestone: M1
-phase: pilot_passthru_basisscan_done
+phase: passthru_deep_done_ready_for_joilab
 
 completed:
-  - persistent_backends
-  - dialer_excluded
-  - passthru_downloaded_via_dlvr
-  - passthru_sha256
-  - passthru_aapt2_basisscan
-  - engine_unity_il2cpp_confirmed
-  - meta_passthrough_stack_confirmed
+  - passthru_download
+  - passthru_basisscan
+  - passthru_deep_analysis
+  - unity_il2cpp_meta_xr_confirmed
+  - interaction_sdk_passthrough_pattern_documented
 
 pending:
   - download_scan_joilab
   - download_scan_sliceoflife
-  - cross_apk_engine_compare
-  - deeper_gameplay_architecture
+  - cross_apk_compare
 
 next_action: >
-  Optionally download joi-lab (~608MB) and/or Sliceoflife from same dlvr
-  share for comparative basisscan; or deepen Pass_Thru analysis first.
+  Download joi-lab-vr-meta-quest-23pro.apk from dlvr (fileId hTU8YqqhXWqn)
+  and run same basisscan + lightweight deep pass for comparison.
