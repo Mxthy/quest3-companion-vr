@@ -1,23 +1,17 @@
-updated: "2026-09-14T21:05:00Z"
-milestone: M1
-phase: all_three_basisscans_complete
+updated: "2026-09-14T21:12:00Z"
+milestone: M2
+phase: engine_analysis_complete
 
 completed:
-  - passthru_unity_deep
-  - joilab_unreal
-  - sliceoflife_unity_modern_openxr
-  - cross_matrix_v2
+  - all_three_apk_basisscans
+  - cross_apk_matrix_v2
+  - ENGINE_ANALYSIS.yaml
 
 pending:
-  - ENGINE_ANALYSIS.yaml
-  - M3_design_docs
   - engine_decision_matrix
-
-key_finding: >
-  2x Unity IL2CPP (Pass_Thru older OculusXRPlugin; SliceOfLife modern
-  UnityOpenXR + Voice/Avatar2/MRUK) + 1x Unreal (JOI Lab). Shared hand +
-  presence direction; engine-agnostic genre.
+  - GAME_DESIGN_DOCUMENT_outline
+  - M3_architecture_docs
 
 next_action: >
-  Write ENGINE_ANALYSIS.yaml consolidating evidence; then prepare engine
-  decision matrix and GAME_DESIGN outline.
+  Prepare engine decision matrix (Unity vs Godot vs Unreal) with Quest 3
+  criteria, then GAME_DESIGN_DOCUMENT outline for companion vertical slice.
