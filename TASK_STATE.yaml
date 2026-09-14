@@ -1,20 +1,22 @@
-updated: "2026-09-14T20:20:00Z"
-milestone: M0
-phase: persistent_backends_established
+updated: "2026-09-14T20:25:00Z"
+milestone: M1
+phase: pilot_passthru_basisscan_done
 
 completed:
-  - orientation
+  - persistent_backends
   - dialer_excluded
-  - github_repo_created: Mxthy/quest3-companion-vr
-  - drive_folder_created: quest3-game
-  - drive_subfolders: apks, state, reports, archives
-  - storage_policy_defined
+  - passthru_downloaded_via_dlvr
+  - passthru_sha256
+  - passthru_aapt2_basisscan
+  - engine_unity_il2cpp_confirmed
+  - meta_passthrough_stack_confirmed
 
 pending:
-  - push_governance_to_github
-  - download_pilot_passthru
-  - basisscan_phase_B
+  - download_scan_joilab
+  - download_scan_sliceoflife
+  - cross_apk_engine_compare
+  - deeper_gameplay_architecture
 
 next_action: >
-  Push core governance files to GitHub, then start Pass_Thru pilot download
-  from Drive Mcp into working area / Drive apks as needed.
+  Optionally download joi-lab (~608MB) and/or Sliceoflife from same dlvr
+  share for comparative basisscan; or deepen Pass_Thru analysis first.
