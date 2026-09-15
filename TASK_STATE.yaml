@@ -1,32 +1,29 @@
-updated: "2026-09-16T01:36:00Z"
+updated: "2026-09-16T01:43:00Z"
 milestone: M3_plus
-phase: agent_inputs_complete
+phase: adult_interaction_core_ready
 
 completed:
-  - vertical_slice_specs
-  - BUILD_AGENT_PROMPT_with_wissensspeicher
-  - WISSENSSPEICHER_USAGE.md
-  - VRM_INVENTORY_vivi
-  - HANDOFF_refresh
+  - adult_scope_confirmed_by_owner
+  - ADULT_INTERACTION_SYSTEM.md
+  - content/adult_interaction.yaml
+  - PleasureModel.ts
+  - TouchZoneSystem.ts
+  - AdultInteractionController.ts
+  - BUILD_AGENT_PROMPT_adult
 
 pending:
-  - VS-1_core_extraction
-  - VS-2_vrm_companion_presentation
-  - VS-3_webxr
-  - prop_glb_or_cc0_assets
-  - product_owner_confirm_adult_vrm_scope
+  - wire_zones_to_vrm_bones
+  - desktop_and_webxr_hand_feed
+  - reaction_audio_expression
+  - arousal_hud
+  - VS-3_webxr_session
 
 agent_entrypoints:
   - docs/BUILD_AGENT_PROMPT.md
-  - docs/VERTICAL_SLICE_BACKLOG.md
-  - docs/WISSENSSPEICHER_USAGE.md
-  - docs/vrm/VRM_INVENTORY.md
-  - docs/CONTENT_SPEC.yaml
-
-mcp:
-  wissensspeicher: connected
-  tools: [wissensspeicher___query_kbpage, wissensspeicher___query_kbsource]
+  - docs/ADULT_INTERACTION_SYSTEM.md
+  - src/core/adult/AdultInteractionController.ts
+  - content/adult_interaction.yaml
 
 next_action: >
-  Build agent starts VS-1/VS-2; uses Wissensspeicher for WebXR/Quest;
-  VRM path per VRM_INVENTORY (confirm adult scope before shipping look).
+  Presentation: attach zones to VRM bones, feed hand points each frame,
+  map events to dialogue/audio/expression; then WebXR input.
