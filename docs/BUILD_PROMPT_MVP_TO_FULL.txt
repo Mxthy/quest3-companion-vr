@@ -1,0 +1,226 @@
+# BUILD-PROMPT – MVP → vollständiger Stand (Adult WebXR Companion)
+# Datei: BUILD_PROMPT_MVP_TO_FULL.txt
+# Abgleich: siehe Anhang CHECKLIST am Ende dieser Datei
+
+## 0. Rolle
+Du bist der Build-Agent für **quest3-companion-vr**.
+Ausgangslage: vorhandenes **Companion-MVP** (Desktop Three.js / React-Three-Fiber, Soft-Props, Bond, Dialog, Phase start/playing/paused).
+
+Auftrag: **Alles, was im Repo und in den Connectors spezifiziert und als Core bereits liegt, implementieren und verdrahten** — bis der Slice spürbar adult, berührungsfähig und (soweit möglich) WebXR-spielbar ist.
+
+Du erfindest keine parallele Architektur. Du nutzt die vorhandenen Dateien und Connectoren **so, wie sie gedacht sind**.
+
+---
+
+## 1. Connectors – Pflichtnutzung
+
+### A) GitHub Mxthy/quest3-companion-vr
+- Quelle der Wahrheit für Docs, Core-TS, Content-YAML, TASK_STATE, HANDOFF.
+- Bei Start: Tree lesen, insbesondere:
+  - docs/BUILD_AGENT_PROMPT.md
+  - docs/ADULT_INTERACTION_SYSTEM.md
+  - docs/VIRTUAL_ANATOMY_AND_PROPS.md
+  - docs/CONTENT_SPEC.yaml
+  - docs/GAME_DESIGN_VERTICAL_SLICE.md
+  - docs/ARCHITECTURE_NEXT.md
+  - docs/VERTICAL_SLICE_BACKLOG.md
+  - docs/WISSENSSPEICHER_USAGE.md
+  - docs/vrm/VRM_INVENTORY.md
+  - docs/BUILD_AGENT_KNOWLEDGE_BASE.md
+  - docs/SYSTEMS_FROM_RE.yaml
+  - docs/ASSETS_ENTITIES_AND_VRM.md
+  - content/adult_interaction.yaml
+  - content/props_adult.yaml
+  - src/core/adult/* (nicht neu schreiben – importieren und verdrahten)
+  - src/presentation/adult/PlayerAnatomyView.ts
+
+### B) Wissensspeicher MCP
+- Tools: wissensspeicher___query_kbpage, wissensspeicher___query_kbsource
+- Vor Eigenbau von WebXR-Session, Controllers, Quest-Perf, KTX2, CC0-Assets:
+  - query: { "category": "webxr" } bzw. quest3, assets, textures, gltf-pipelines
+- Beispiele: webxr/gamepads-module-controllers, webxr/meta-quest-perf-bp, assets/free-asset-stores
+- KB ergänzt Repo-Docs; sie ersetzt nicht CONTENT_SPEC / Rechte-Regeln.
+
+### C) Google Drive Ordner quest3-game
+- ID (Referenz): 1ekX0DJtLkLntR9eu7vDqoZtHHZU4aTAR
+- Große Binaries: APKs (nur Analyse, nicht ins Produkt), VRM-ZIP, Archive.
+- VRM-Laufzeitdatei: DCs_Vivi_nude_v01.vrm laut docs/vrm/VRM_INVENTORY.md
+- Persistenz großer Builds/Logs nach Drive, Text-State nach GitHub.
+
+### D) Workspace
+- Ephemeral. Nach Arbeit: relevante Code-Änderungen nach GitHub pushen; Binaries nach Drive.
+
+---
+
+## 2. Harte Produktregeln
+- Adult-Build explizit gewünscht – Touch, Zonen, Arousal, virtuelles P, Wirkung sichtbar.
+- Agency-Niveau: Captain-Hardcore-Typ Steuerung (Spieler agiert, Körper reagiert) – eigene Systeme, kein CH-IP/Code/Assets.
+- Keine Meshes/Audio/Code aus Referenz-APKs im Produktbaum.
+- Soft-Props (Cup, Vinyl, Laterne) bleiben; Adult-Pfad ist zusätzlich.
+- VRM Vivi: Adult-Nutzung ok; nicht als eigenes Original-IP verkaufen (Meta/Author beachten).
+- 18+-Warnung einmal pro Session.
+- Keine Minderjährigen-Inhalte.
+- Browser-FPS nicht als native Quest-Performance ausgeben.
+
+---
+
+## 3. Was bereits im Repo liegt (nicht neu erfinden – verdrahten)
+
+### Core (engine-agnostisch)
+| Modul | Pfad |
+|-------|------|
+| PleasureModel | src/core/adult/PleasureModel.ts |
+| TouchZoneSystem | src/core/adult/TouchZoneSystem.ts |
+| AdultInteractionController | src/core/adult/AdultInteractionController.ts |
+| VirtualAnatomy | src/core/adult/VirtualAnatomy.ts |
+| IntimateContact | src/core/adult/IntimateContact.ts |
+| PlayerAnatomyView | src/presentation/adult/PlayerAnatomyView.ts |
+
+### Content
+| Datei | Nutzung |
+|-------|---------|
+| content/adult_interaction.yaml | Zonen, Rates, Adult-Dialog |
+| content/props_adult.yaml | Soft- + Adult-Props, Sockets |
+| docs/CONTENT_SPEC.yaml | Raum, Bond, Soft-Dialog, Save |
+
+### Docs
+- docs/ADULT_INTERACTION_SYSTEM.md
+- docs/VIRTUAL_ANATOMY_AND_PROPS.md
+- docs/ARCHITECTURE_NEXT.md
+
+---
+
+## 4. Zielbild nach diesem Lauf
+1. MVP-Loop (Enter, Props, Bond, Pause, Save) unvermindert
+2. VRM-Companion sehen (Vivi oder Platzhalter)
+3. Körperzonen per Hand/Controller → Arousal, Zeilen, Expression
+4. Virtuelles P aus Headset-Pose (Höhe ~1.65m-Referenz, Yaw)
+5. Adult-Props greifbar (auch Geo-Stubs)
+6. Orgasmus-Peak lesbar
+7. Optional: Enter VR, Teleport/Snap, gleiche Core-Logik
+
+---
+
+## 5. Implementierungsreihenfolge
+
+### Phase 1 – Core ins MVP hängen
+- Companion-Store/Phase nicht zerschießen.
+- AdultInteractionController + IntimateContactSystem instanziieren.
+- YAML laden oder DEFAULTS + Dialog-Konstanten.
+- Pro Frame (playing): Handpunkte → tick.
+
+### Phase 2 – VRM + Zonen
+- VRM laden, Bones → Zonen.
+- Events → Dialog aus adult_interaction.yaml + ExpressionWeights.
+
+### Phase 3 – Virtuelles P
+- HMD/Camera → computeVirtualAnatomy → Mesh.
+- IntimateContact.tick mit zones + props.
+- Prefer local-floor.
+
+### Phase 4 – Props
+- Soft wie MVP; Adult aus props_adult.yaml.
+- Platzhalter-Meshes ok, IDs/Sockets müssen stimmen.
+
+### Phase 5 – WebXR
+- immersive-vr, Grip/Trigger, Teleport/Snap.
+- Wissensspeicher webxr/* bei Unklarheit.
+
+### Phase 6 – Feinschliff
+- 18+-Gate, Mute, Save; Kurzreport Limits.
+
+---
+
+## 6. Frame-Loop (Soll)
+if phase !== playing: skip oder nur Decay
+hmd = XR viewer OR camera
+anatomy = computeVirtualAnatomy(hmd)
+apply shaft mesh transform
+zones = VRM bones
+propsSockets = adult props
+hands = controllers OR desktop
+out = IntimateContact.tick(...)
+events → dialogue + audio + blendshapes
+soft props parallel
+
+---
+
+## 7. Abnahme (DoD)
+- Soft-MVP-Loop ok
+- >=3 Zonen reagieren
+- Arousal steigt/fällt
+- Orgasmus-Event auslösbar
+- Virtuelles P folgt HMD
+- Schaft-Zonen-Kontakt wirkt
+- >=1 Adult-Prop
+- VRM oder Platzhalter
+- Keine APK-Assets
+- STATUS-Report
+
+---
+
+## 8. Output-Format
+STATUS / PHASE / ERLEDIGT / DATEIEN / CONNECTORS_GENUTZT / OFFEN / NÄCHSTER SCHRITT
+
+---
+
+## 9. Erster Befehl
+1. GitHub-Tree + genannte Docs/Core lesen.
+2. MVP-Einstiegspunkte finden.
+3. Phase 1→3 ohne Rückfrage (außer Blocker; fehlende VRM → Platzhalter).
+4. Wissensspeicher gezielt bei WebXR/Assets.
+
+Los.
+
+================================================================================
+ANHANG – CHECKLIST Abgleich (Stand Repo main, 2026-09-16)
+================================================================================
+Legende: OK = liegt im GitHub-Repo | FEHLT = nicht im Repo | EXT = extern erwartet
+
+### Docs (Prompt Abschnitt 1A)
+OK  docs/BUILD_AGENT_PROMPT.md
+OK  docs/ADULT_INTERACTION_SYSTEM.md
+OK  docs/VIRTUAL_ANATOMY_AND_PROPS.md
+OK  docs/CONTENT_SPEC.yaml
+OK  docs/GAME_DESIGN_VERTICAL_SLICE.md
+OK  docs/ARCHITECTURE_NEXT.md
+OK  docs/VERTICAL_SLICE_BACKLOG.md
+OK  docs/WISSENSSPEICHER_USAGE.md
+OK  docs/vrm/VRM_INVENTORY.md
+OK  docs/BUILD_AGENT_KNOWLEDGE_BASE.md
+OK  docs/SYSTEMS_FROM_RE.yaml
+OK  docs/ASSETS_ENTITIES_AND_VRM.md
+OK  docs/vrm/VRM_KB_INDEX.md
+
+### Content
+OK  content/adult_interaction.yaml
+OK  content/props_adult.yaml
+
+### Core / Presentation
+OK  src/core/adult/PleasureModel.ts
+OK  src/core/adult/TouchZoneSystem.ts
+OK  src/core/adult/AdultInteractionController.ts
+OK  src/core/adult/VirtualAnatomy.ts
+OK  src/core/adult/IntimateContact.ts
+OK  src/presentation/adult/PlayerAnatomyView.ts
+
+### Governance
+OK  AGENTS.md
+OK  HANDOFF.md
+OK  TASK_STATE.yaml
+OK  PROJECT_MANIFEST.yaml
+
+### Bewusst NICHT im Git (externe Connectoren / Binaries)
+EXT  MVP-App-Tree (Experience, Store) – Workspace / früheres ZIP, nicht in diesem Repo
+EXT  DCs_Vivi_nude_v01.vrm – Drive/Attachment laut VRM_INVENTORY (nicht committen)
+EXT  models/props/*.glb – nur Pfad-Platzhalter in props_adult.yaml
+EXT  APKs – Drive, nur Analyse
+EXT  Wissensspeicher-Inhalte – live MCP, nicht im Git
+
+### Prompt-Datei selbst
+OK  docs/BUILD_PROMPT_MVP_TO_FULL.txt  (diese Aufforderung)
+
+### Fazit Abgleich
+Alle im Prompt als Repo-Pfade genannten Docs, YAML und src/core/adult-Module sind vorhanden.
+MVP-Laufzeitcode und VRM-Binary sind absichtlich extern (Workspace/Drive).
+Agent muss MVP aus Workspace einbinden und VRM von Drive/Attachment laden oder Platzhalter nutzen.
