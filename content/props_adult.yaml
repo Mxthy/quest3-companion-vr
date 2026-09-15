@@ -1,0 +1,92 @@
+meta:
+  version: 1
+  note: Original prop definitions for companion slice. Mesh paths placeholders.
+
+# Soft / atmosphere (always)
+props_soft:
+  - id: cup
+    mesh: models/props/cup.glb
+    grabable: true
+    place_anchor: table_a
+    on_use: { bond: 5, event: prop_cup }
+  - id: vinyl
+    mesh: models/props/vinyl.glb
+    grabable: true
+    place_anchor: shelf_b
+    on_use: { bond: 5, event: prop_vinyl, toggle: musicOn }
+  - id: lantern
+    mesh: models/props/lantern.glb
+    grabable: true
+    place_anchor: floor_c
+    on_use: { bond: 5, event: prop_lantern, toggle: lanternLit }
+
+# Adult play props (explicit build)
+props_adult:
+  - id: toy_wand
+    mesh: models/props/toy_wand.glb
+    grabable: true
+    two_handed: false
+    socket:
+      kind: toy
+      local_offset: [0, 0.05, 0.1]
+      radius: 0.06
+      sensitivity: 1.3
+    on_grab_line: toy_grab
+  - id: toy_ring
+    mesh: models/props/toy_ring.glb
+    grabable: true
+    socket:
+      kind: toy
+      local_offset: [0, 0, 0]
+      radius: 0.05
+      sensitivity: 1.15
+  - id: pillow_soft
+    mesh: models/props/pillow.glb
+    grabable: true
+    place_anchor: bed_or_floor
+    socket:
+      kind: surface
+      local_offset: [0, 0.08, 0]
+      radius: 0.18
+      sensitivity: 0.6
+    note: Support / pose prop; not required for climax
+  - id: lube_bottle
+    mesh: models/props/lube.glb
+    grabable: true
+    place_anchor: table_a
+    on_use: { event: prop_lube, arousal_bonus: 5 }
+
+# Companion interaction affordances (no mesh — bone sockets)
+character_sockets:
+  - id: mouth
+    zone: mouth
+    accepts: [shaft, finger, toy_wand]
+  - id: breast_l
+    zone: breast_l
+    accepts: [hand, shaft]
+  - id: breast_r
+    zone: breast_r
+    accepts: [hand, shaft]
+  - id: groin
+    zone: groin
+    accepts: [hand, shaft, toy_wand, toy_ring]
+  - id: glute_l
+    zone: glute_l
+    accepts: [hand, shaft]
+  - id: glute_r
+    zone: glute_r
+    accepts: [hand, shaft]
+
+dialogue_prop_adult:
+  toy_grab:
+    - "Oh— du hast was mitgebracht."
+    - "Zeig her."
+  prop_lube:
+    - "Gut. Nicht hetzen."
+    - "Ja… so."
+  shaft_zone_groin:
+    - "Da… ja, genau."
+    - "Tiefer ist erlaubt."
+  shaft_zone_mouth:
+    - "Mmm."
+    - "Langsam."
