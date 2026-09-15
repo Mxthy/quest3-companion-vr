@@ -1,25 +1,31 @@
-updated: "2026-09-16T01:10:00Z"
-milestone: M3
-phase: build_agent_knowledge_base_ready
+updated: "2026-09-16T01:23:00Z"
+milestone: M3_plus
+phase: vertical_slice_specs_ready
 
 completed:
-  - full_apk_basisscans
-  - engine_analysis
-  - engine_decision_matrix
-  - BUILD_AGENT_KNOWLEDGE_BASE.md
-  - SYSTEMS_FROM_RE.yaml
+  - RE_and_engine_docs
+  - BUILD_AGENT_KNOWLEDGE_BASE
+  - GAME_DESIGN_VERTICAL_SLICE
+  - CONTENT_SPEC
+  - ARCHITECTURE_NEXT
+  - VERTICAL_SLICE_BACKLOG
+  - BUILD_AGENT_PROMPT
+  - ASSETS_ENTITIES_AND_VRM
 
 pending:
-  - webxr_preprototype_on_mvp_loop
-  - native_engine_prototypes
-  - final_engine_decision
+  - VS-1_core_extraction
+  - VS-2_presentation_vrm
+  - VS-3_webxr
+  - original_prop_and_vrm_assets
 
 agent_entrypoints:
+  - docs/BUILD_AGENT_PROMPT.md
+  - docs/VERTICAL_SLICE_BACKLOG.md
+  - docs/CONTENT_SPEC.yaml
+  - docs/GAME_DESIGN_VERTICAL_SLICE.md
+  - docs/ARCHITECTURE_NEXT.md
   - docs/BUILD_AGENT_KNOWLEDGE_BASE.md
-  - docs/SYSTEMS_FROM_RE.yaml
-  - ENGINE_ANALYSIS.yaml
-  - PROTOTYPE_SPEC.md
 
 next_action: >
-  Build agent reads BUILD_AGENT_KNOWLEDGE_BASE + SYSTEMS_FROM_RE, implements
-  original vertical slice (WebXR first recommended), no APK asset reuse.
+  Build agent starts VS-1/VS-2 using CONTENT_SPEC + core extraction;
+  WebXR as VS-3; VRM from character sheets when assets ready.
