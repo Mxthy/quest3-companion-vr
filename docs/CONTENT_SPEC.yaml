@@ -1,0 +1,114 @@
+# CONTENT_SPEC.yaml – vertical slice content contracts
+# Build agents: implement data-driven; do not hardcode only in UI strings.
+
+meta:
+  version: 1
+  language_default: de
+  languages_optional: [en]
+
+room:
+  id: room_01
+  scale: intimate  # ~3x3 to 4x4 m playable
+  mood: evening_warm
+  lighting:
+    key: warm_soft
+    fill: cool_window_optional
+    practicals: [lantern, window]
+  anchors:
+    table_a: { role: place_cup }
+    shelf_b: { role: place_vinyl }
+    floor_c: { role: place_lantern_alt }
+    seat_d: { role: sit }
+  collision: simple_box_walls
+  passthrough_mode: optional  # off by default in slice
+
+companion:
+  id: companion_01
+  display_name_placeholder: "Elara"  # replace if product renames
+  visual: vrm_avatar
+  height_m: 1.55
+  position: { x: 0.4, y: 0.0, z: -1.2 }
+  behaviors:
+    - idle_breathe
+    - look_at_player_when_near
+    - wave_or_nod_on_first_proximity  # optional one-shot
+  proximity_m: 1.1
+  expression_hooks:
+    idle: neutral
+    talk: aa_or_joy_soft
+    blink: periodic
+
+props:
+  - id: cup
+    mesh: prop_cup.glb
+    grabable: true
+    two_handed: false
+    place_anchor: table_a
+    on_use: { bond: 5, event: prop_cup, sfx: pickup_soft }
+  - id: vinyl
+    mesh: prop_vinyl.glb
+    grabable: true
+    place_anchor: shelf_b
+    on_use: { bond: 5, event: prop_vinyl, toggle: musicOn, sfx: place_click }
+  - id: lantern
+    mesh: prop_lantern.glb
+    grabable: true
+    place_anchor: floor_c
+    on_use: { bond: 5, event: prop_lantern, toggle: lanternLit, sfx: soft_chime }
+
+dialogue:
+  # pools; agent may expand lines but keep tone
+  enter:
+    - "Du bist wieder da. Gut."
+    - "Der Raum hat auf dich gewartet."
+  proximity:
+    - "Bleib. Nur einen Moment."
+    - "Ich höre dich, auch wenn du still bist."
+  prop_cup:
+    - "Warm. Danke."
+    - "Jetzt bleibt der Abend etwas länger."
+  prop_vinyl:
+    - "Diese Platte ist für Regen, der nicht kommt."
+    - "Leise reicht."
+  prop_lantern:
+    - "Ein zweites Licht. Besser."
+    - "Jetzt sehen wir uns."
+  all_props:
+    - "Tasse, Platte, Licht. Du hast den Raum verstanden."
+  high_bond:
+    - "Ich merke dich, bevor die Tür aufgeht."
+    - "Nähe reicht. Nichts beweisen."
+  seated:
+    - "Setz dich. Die Stadt kann draußen bleiben."
+  leave:
+    - "Bis du wiederkommst."
+
+audio:
+  bus:
+    - master
+    - sfx
+    - music
+    - voice
+  cues:
+    pickup_soft: { gain_db: -8, spatial: true }
+    place_click: { gain_db: -10, spatial: true }
+    soft_chime: { gain_db: -12, spatial: true }
+    music_loop: { gain_db: -18, loop: true, spatial: false }
+  rules:
+    - mute_persists_in_save
+    - unlock_audio_on_enter
+
+ui:
+  prompts:
+    look: "Schauen"
+    grab: "Greifen"
+    place: "Abstellen"
+    sit: "Setzen"
+    talk: "Näher"
+  hud:
+    bond_visible: false  # optional subtle later
+    pause_menu: [resume, mute, leave]
+
+save:
+  keys: [bond, visits, used, muted]
+  storage: local  # PlayerPrefs / localStorage / file
