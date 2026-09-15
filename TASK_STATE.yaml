@@ -1,25 +1,25 @@
-updated: "2026-09-14T21:22:00Z"
+updated: "2026-09-16T01:10:00Z"
 milestone: M3
-phase: decision_matrix_and_prototype_plan_complete
+phase: build_agent_knowledge_base_ready
 
 completed:
-  - ENGINE_DECISION_MATRIX.yaml
-  - ENGINE_DECISION_REPORT.md
-  - PROTOTYPE_SPEC.md
-  - PROTOTYPE_ACCEPTANCE_TESTS.md
-  - HANDOFF_updated
+  - full_apk_basisscans
+  - engine_analysis
+  - engine_decision_matrix
+  - BUILD_AGENT_KNOWLEDGE_BASE.md
+  - SYSTEMS_FROM_RE.yaml
 
 pending:
-  - build_godot_minimal_prototype
-  - build_unity_minimal_prototype
-  - build_unreal_minimal_if_needed
-  - fill_acceptance_metrics_on_quest3
-  - final_engine_decision_D00x
+  - webxr_preprototype_on_mvp_loop
+  - native_engine_prototypes
+  - final_engine_decision
 
-blocked:
-  - no_quest3_in_agent_environment
-  - no_cloud_build_credentials
+agent_entrypoints:
+  - docs/BUILD_AGENT_KNOWLEDGE_BASE.md
+  - docs/SYSTEMS_FROM_RE.yaml
+  - ENGINE_ANALYSIS.yaml
+  - PROTOTYPE_SPEC.md
 
 next_action: >
-  User/agent with build capability executes PROTOTYPE_SPEC (Godot first),
-  measures PROTOTYPE_ACCEPTANCE_TESTS on Quest 3, then locks engine in DECISIONS.md.
+  Build agent reads BUILD_AGENT_KNOWLEDGE_BASE + SYSTEMS_FROM_RE, implements
+  original vertical slice (WebXR first recommended), no APK asset reuse.
