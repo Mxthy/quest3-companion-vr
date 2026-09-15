@@ -1,29 +1,21 @@
-updated: "2026-09-16T01:43:00Z"
+updated: "2026-09-16T01:48:00Z"
 milestone: M3_plus
-phase: adult_interaction_core_ready
+phase: virtual_anatomy_and_intimate_contact_ready
 
 completed:
-  - adult_scope_confirmed_by_owner
-  - ADULT_INTERACTION_SYSTEM.md
-  - content/adult_interaction.yaml
-  - PleasureModel.ts
-  - TouchZoneSystem.ts
-  - AdultInteractionController.ts
-  - BUILD_AGENT_PROMPT_adult
+  - adult_touch_core
+  - VirtualAnatomy_from_HMD
+  - IntimateContact_shaft_zones_props
+  - props_adult.yaml
+  - PlayerAnatomyView_helper
+  - VIRTUAL_ANATOMY_AND_PROPS.md
 
 pending:
-  - wire_zones_to_vrm_bones
-  - desktop_and_webxr_hand_feed
-  - reaction_audio_expression
-  - arousal_hud
-  - VS-3_webxr_session
-
-agent_entrypoints:
-  - docs/BUILD_AGENT_PROMPT.md
-  - docs/ADULT_INTERACTION_SYSTEM.md
-  - src/core/adult/AdultInteractionController.ts
-  - content/adult_interaction.yaml
+  - threejs_wire_hmd_to_anatomy_mesh
+  - vrm_bone_zone_attachments
+  - prop_meshes_placeholder_or_glb
+  - webxr_local_floor
 
 next_action: >
-  Presentation: attach zones to VRM bones, feed hand points each frame,
-  map events to dialogue/audio/expression; then WebXR input.
+  In app frame loop: HMD → computeVirtualAnatomy → shaft mesh;
+  VRM bones → zones; IntimateContact.tick; soft+adult props grab.
