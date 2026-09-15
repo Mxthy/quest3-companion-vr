@@ -1,0 +1,104 @@
+# SYSTEMS_FROM_RE.yaml – abstract systems for original implementation
+# Confidence: high = seen in multiple refs or strong APK evidence
+#             medium = strong in one ref or metadata patterns
+#             design = from web MVP / product design, not APK logic dump
+
+product:
+  genre: companion_presence_vr
+  platform: meta_quest_3_standalone
+  content_policy: original_only
+
+systems:
+  xr_session:
+    confidence: high
+    requirements: [openxr_or_meta_xr, head_tracking, arm64_android]
+    refs: [passthru, joilab, sliceoflife]
+
+  hand_interaction:
+    confidence: high
+    requirements: [hand_tracking_or_controller, grab, release, ray_or_direct]
+    patterns_from_re:
+      - pinch_and_pose_anim_params
+      - align_on_grab
+      - hand_pointer_pose
+      - ray_interactable
+      - pointable_canvas
+    refs: [passthru, joilab, sliceoflife]
+
+  locomotion:
+    confidence: medium
+    requirements: [teleport_optional, snap_turn_optional, look_yaw_pitch_limits_optional]
+    patterns_from_re: [AllowTeleport, AllowYawLook, AllowPitchLook]
+
+  passthrough_mr:
+    confidence: high
+    requirements: [optional_or_required_flag_per_product]
+    refs:
+      passthru: required_feature
+      joilab: required_feature
+      sliceoflife: scene_understanding_without_required_passthrough_flag
+
+  scene_anchors:
+    confidence: medium
+    requirements: [optional_spatial_anchors, scene_planes_if_passthrough_product]
+    refs: [passthru, sliceoflife]
+
+  companion_presence:
+    confidence: design
+    requirements: [npc_or_avatar_placeholder, proximity_trigger, idle_or_look_at_user]
+    web_mvp: elara_proximity_speech
+
+  interactable_props:
+    confidence: design
+    requirements: [exactly_3_in_vertical_slice, grab_place, optional_toggle_light_or_music]
+    web_mvp_ids: [cup, vinyl, lantern]
+
+  dialogue:
+    confidence: design
+    requirements: [event_driven_line_pools, no_full_branching_required_in_p0]
+    events: [enter, talk, prop_use, high_bond, all_props_used]
+
+  progression_bond:
+    confidence: design
+    requirements: [numeric_bond, visit_counter, soft_thresholds]
+    web_mvp: bond_plus_used_flags
+
+  audio:
+    confidence: high
+    requirements: [grab_place_sfx, optional_spatial, mute]
+    refs_note: lipsync_avatar_audio_on_unity_refs_as_polish_not_p0
+
+  ui_xr:
+    confidence: high
+    requirements: [world_or_panel_ui, pause_exit, prompt_text]
+    patterns_from_re: [PointableCanvas, menu_patterns]
+
+  save:
+    confidence: design
+    requirements: [local_persist_bond_visits_flags]
+
+  monetization:
+    confidence: high
+    requirements: [out_of_scope_for_vertical_slice]
+    refs_note: billing_present_on_peers_not_required_for_mvp
+
+build_order:
+  - xr_session
+  - hand_interaction
+  - interactable_props
+  - companion_presence
+  - dialogue
+  - audio
+  - ui_xr
+  - progression_bond
+  - save
+  - locomotion
+  - passthrough_mr
+  - scene_anchors
+
+non_goals_p0:
+  - multiplayer
+  - full_meta_voice_pipeline
+  - full_avatar_sdk
+  - video_player_narrative
+  - iap
