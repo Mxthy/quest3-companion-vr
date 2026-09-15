@@ -1,31 +1,32 @@
-updated: "2026-09-16T01:23:00Z"
+updated: "2026-09-16T01:36:00Z"
 milestone: M3_plus
-phase: vertical_slice_specs_ready
+phase: agent_inputs_complete
 
 completed:
-  - RE_and_engine_docs
-  - BUILD_AGENT_KNOWLEDGE_BASE
-  - GAME_DESIGN_VERTICAL_SLICE
-  - CONTENT_SPEC
-  - ARCHITECTURE_NEXT
-  - VERTICAL_SLICE_BACKLOG
-  - BUILD_AGENT_PROMPT
-  - ASSETS_ENTITIES_AND_VRM
+  - vertical_slice_specs
+  - BUILD_AGENT_PROMPT_with_wissensspeicher
+  - WISSENSSPEICHER_USAGE.md
+  - VRM_INVENTORY_vivi
+  - HANDOFF_refresh
 
 pending:
   - VS-1_core_extraction
-  - VS-2_presentation_vrm
+  - VS-2_vrm_companion_presentation
   - VS-3_webxr
-  - original_prop_and_vrm_assets
+  - prop_glb_or_cc0_assets
+  - product_owner_confirm_adult_vrm_scope
 
 agent_entrypoints:
   - docs/BUILD_AGENT_PROMPT.md
   - docs/VERTICAL_SLICE_BACKLOG.md
+  - docs/WISSENSSPEICHER_USAGE.md
+  - docs/vrm/VRM_INVENTORY.md
   - docs/CONTENT_SPEC.yaml
-  - docs/GAME_DESIGN_VERTICAL_SLICE.md
-  - docs/ARCHITECTURE_NEXT.md
-  - docs/BUILD_AGENT_KNOWLEDGE_BASE.md
+
+mcp:
+  wissensspeicher: connected
+  tools: [wissensspeicher___query_kbpage, wissensspeicher___query_kbsource]
 
 next_action: >
-  Build agent starts VS-1/VS-2 using CONTENT_SPEC + core extraction;
-  WebXR as VS-3; VRM from character sheets when assets ready.
+  Build agent starts VS-1/VS-2; uses Wissensspeicher for WebXR/Quest;
+  VRM path per VRM_INVENTORY (confirm adult scope before shipping look).
