@@ -41,11 +41,29 @@ Du erfindest keine parallele Architektur. Du nutzt die vorhandenen Dateien und C
 - Beispiele: webxr/gamepads-module-controllers, webxr/meta-quest-perf-bp, assets/free-asset-stores
 - KB ergänzt Repo-Docs; sie ersetzt nicht CONTENT_SPEC / Rechte-Regeln.
 
-### C) Google Drive Ordner quest3-game
-- ID (Referenz): 1ekX0DJtLkLntR9eu7vDqoZtHHZU4aTAR
-- Große Binaries: APKs (nur Analyse, nicht ins Produkt), VRM-ZIP, Archive.
-- VRM-Laufzeitdatei: DCs_Vivi_nude_v01.vrm laut docs/vrm/VRM_INVENTORY.md
-- Persistenz großer Builds/Logs nach Drive, Text-State nach GitHub.
+### C) Google Drive – Pflichtpfade (Stand geprüft 2026-09-16)
+
+**Projekt-Ordner (Governance-Struktur, Unterordner aktuell LEER):**
+- quest3-game (id: 1ekX0DJtLkLntR9eu7vDqoZtHHZU4aTAR)
+  - apks/     (leer – APKs liegen noch unter Mcp/)
+  - archives/ (leer – VRM/Workspace hier ablegen)
+  - reports/  (leer)
+  - state/    (leer)
+
+**Arbeitsordner mit Inhalt (hier liegen die Binaries):**
+- Mcp (id: 1agT4Lhby1aqMSgM1Je0fHIMsBYzf6nRR)
+  - Pass_Thru_Hot_Sauce_…v1.3.9.apk (~401 MB) – Analyse only
+  - joi-lab-vr-meta-quest-23pro.apk (~580 MB) – Analyse only
+  - SliceoflifeVR_Meta_Beta_V11.apk (~917 MB) – Analyse only
+  - grok-workspace.zip (~4.6 MB) – **MVP-Quellcode**
+  - diverse .smali / oplus dialer apkm – nicht produktrelevant
+
+**FEHLT auf Drive (muss nachgezogen werden):**
+- DCs_Vivi_nude_v01.vrm / vivi.vrm ZIP → nach quest3-game/archives/ oder Mcp/
+- Prop-GLBs (optional Stubs im Code)
+
+Agent: MVP aus Mcp/grok-workspace.zip laden; VRM von Attachment oder nach Upload von Drive.
+Persistenz: fertige Archives → quest3-game/archives/, Text → GitHub.
 
 ### D) Workspace
 - Ephemeral. Nach Arbeit: relevante Code-Änderungen nach GitHub pushen; Binaries nach Drive.
@@ -166,61 +184,32 @@ STATUS / PHASE / ERLEDIGT / DATEIEN / CONNECTORS_GENUTZT / OFFEN / NÄCHSTER SCH
 
 ## 9. Erster Befehl
 1. GitHub-Tree + genannte Docs/Core lesen.
-2. MVP-Einstiegspunkte finden.
+2. MVP aus Drive Mcp/grok-workspace.zip laden und Einstiegspunkte finden.
 3. Phase 1→3 ohne Rückfrage (außer Blocker; fehlende VRM → Platzhalter).
 4. Wissensspeicher gezielt bei WebXR/Assets.
 
 Los.
 
 ================================================================================
-ANHANG – CHECKLIST Abgleich (Stand Repo main, 2026-09-16)
+ANHANG – CHECKLIST Abgleich (GitHub + Drive, 2026-09-16)
 ================================================================================
-Legende: OK = liegt im GitHub-Repo | FEHLT = nicht im Repo | EXT = extern erwartet
+Legende: OK | LEER | FEHLT | EXT
 
-### Docs (Prompt Abschnitt 1A)
-OK  docs/BUILD_AGENT_PROMPT.md
-OK  docs/ADULT_INTERACTION_SYSTEM.md
-OK  docs/VIRTUAL_ANATOMY_AND_PROPS.md
-OK  docs/CONTENT_SPEC.yaml
-OK  docs/GAME_DESIGN_VERTICAL_SLICE.md
-OK  docs/ARCHITECTURE_NEXT.md
-OK  docs/VERTICAL_SLICE_BACKLOG.md
-OK  docs/WISSENSSPEICHER_USAGE.md
-OK  docs/vrm/VRM_INVENTORY.md
-OK  docs/BUILD_AGENT_KNOWLEDGE_BASE.md
-OK  docs/SYSTEMS_FROM_RE.yaml
-OK  docs/ASSETS_ENTITIES_AND_VRM.md
-OK  docs/vrm/VRM_KB_INDEX.md
+### Docs / Content / Core (GitHub) – alle OK
+(siehe frühere Liste: alle Prompt-Pfade unter docs/, content/, src/core/adult/ vorhanden)
 
-### Content
-OK  content/adult_interaction.yaml
-OK  content/props_adult.yaml
+### Google Drive Abgleich (nachgeprüft)
+OK   Ordner quest3-game + Unterordner apks/archives/reports/state (Struktur)
+LEER quest3-game/apks, archives, reports, state (keine Dateien darin)
+OK   Ordner Mcp mit APKs + grok-workspace.zip (MVP)
+OK   Pass_Thru / joi-lab / Sliceoflife APKs in Mcp (Analyse only)
+OK   grok-workspace.zip in Mcp = MVP-Quelle für Build-Agent
+FEHLT VRM (DCs_Vivi_nude_v01.vrm / vivi ZIP) – nicht auf Drive gefunden
+FEHLT Prop-GLBs auf Drive (Code-Stubs ok)
+OK   Wissensspeicher = MCP live, nicht Drive
 
-### Core / Presentation
-OK  src/core/adult/PleasureModel.ts
-OK  src/core/adult/TouchZoneSystem.ts
-OK  src/core/adult/AdultInteractionController.ts
-OK  src/core/adult/VirtualAnatomy.ts
-OK  src/core/adult/IntimateContact.ts
-OK  src/presentation/adult/PlayerAnatomyView.ts
-
-### Governance
-OK  AGENTS.md
-OK  HANDOFF.md
-OK  TASK_STATE.yaml
-OK  PROJECT_MANIFEST.yaml
-
-### Bewusst NICHT im Git (externe Connectoren / Binaries)
-EXT  MVP-App-Tree (Experience, Store) – Workspace / früheres ZIP, nicht in diesem Repo
-EXT  DCs_Vivi_nude_v01.vrm – Drive/Attachment laut VRM_INVENTORY (nicht committen)
-EXT  models/props/*.glb – nur Pfad-Platzhalter in props_adult.yaml
-EXT  APKs – Drive, nur Analyse
-EXT  Wissensspeicher-Inhalte – live MCP, nicht im Git
-
-### Prompt-Datei selbst
-OK  docs/BUILD_PROMPT_MVP_TO_FULL.txt  (diese Aufforderung)
-
-### Fazit Abgleich
-Alle im Prompt als Repo-Pfade genannten Docs, YAML und src/core/adult-Module sind vorhanden.
-MVP-Laufzeitcode und VRM-Binary sind absichtlich extern (Workspace/Drive).
-Agent muss MVP aus Workspace einbinden und VRM von Drive/Attachment laden oder Platzhalter nutzen.
+### Fazit
+GitHub: Specs + Adult-Core vollständig.
+Drive: MVP und APKs in **Mcp**; **quest3-game-Unterordner leer**.
+VRM fehlt auf Drive → Attachment hochladen nach archives/ oder Platzhalter.
+Empfehlung: Dateien in die vorgesehenen quest3-game-Pfade verschieben (apks/, archives/).
