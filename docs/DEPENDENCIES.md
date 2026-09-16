@@ -6,45 +6,25 @@
 |---------|------|
 | `typescript` (dev) | Typecheck `src/core/**` via `npm run typecheck:core` |
 
-Core under `src/core/interaction` and `src/core/adult` is **framework-free** (plain TypeScript). No runtime npm deps required to use the state/collider math.
+Core under `src/core/` is mostly **framework-free**. Physics soft body has no npm dep. Rapier is **peer** of the app.
 
-## Peer deps (only when wiring into the Grok/R3F companion app)
-
-| Package | Used by |
-|---------|---------|
-| `react` | drop-in UI / R3F |
-| `three` | ContactBridge meshes |
-| `@react-three/fiber` | ContactBridge `useFrame` |
-| `@react-three/drei` | existing Experience (shadows) |
-| `zustand` | companion store |
-
-Install **in the app that runs the preview**, not necessarily in this governance repo:
+## Peer deps (preview / Quest app)
 
 ```bash
-npm i three @react-three/fiber @react-three/drei zustand
+npm i three @react-three/fiber @react-three/drei @react-three/xr @react-three/rapier zustand
 npm i -D @types/three typescript
 ```
 
-Optional later:
-- `@pixiv/three-vrm` — VRM avatar load
-- `vite` / Next — as chosen by the app scaffold
+Optional ship:
+- Basis transcoder static files for KTX2Loader
+- meshopt decoder (Three examples)
 
-## Drive binaries (not npm)
+## Architecture docs
 
-| Asset | Location |
-|-------|----------|
-| MVP source zip | Drive `quest3-game/archives/grok-workspace.zip` |
-| VRM pack | Drive `quest3-game/archives/vivi_vrm.zip` |
-| Reference APKs | Drive `Mcp/` (see `apks/APKS_LOCATION.txt`) |
+- `docs/QUEST3_ARCHITECTURE_LEVERS.md` — workers, forward, FFR, instancing, zero-alloc
+- `docs/QUEST3_PHYSICS.md` — Rapier + Verlet
+- `docs/ASSET_PIPELINE.md` — glTF / Meshopt / KTX2
 
-## Path aliases (app)
+## Drive binaries
 
-```json
-{
-  "@/core/*": ["src/core/*"],
-  "@/lib/*": ["src/lib/*"],
-  "@/components/*": ["src/components/*"]
-}
-```
-
-See `tsconfig.core.json` for this repo’s core-only check.
+MVP zip, VRM, APKs — see `docs/DRIVE_AND_CONNECTORS.md`.
