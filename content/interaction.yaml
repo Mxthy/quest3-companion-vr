@@ -1,0 +1,28 @@
+# Neutral interaction content (bands / hints — no narrative policy)
+meta:
+  version: 1
+
+controls_hint: "F hold · R burst · walk near avatar zones"
+
+bands:
+  low: { min: 0, max: 15 }
+  mid: { min: 15, max: 40 }
+  high: { min: 40, max: 75 }
+  peak_build: { min: 75, max: 95 }
+  peak: { min: 95, max: 100 }
+
+zone_ids:
+  - head
+  - face
+  - chest_l
+  - chest_r
+  - torso
+  - center
+  - hip_l
+  - hip_r
+  - back_l
+  - back_r
+  - thigh_l
+  - thigh_r
+  - hand_l
+  - hand_r
