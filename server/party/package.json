@@ -1,0 +1,16 @@
+{
+  "name": "quest3-party-stub",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "deploy": "partykit deploy",
+    "dev": "partykit dev"
+  },
+  "devDependencies": {
+    "partykit": "^0.0.110"
+  },
+  "partykit": {
+    "main": "index.ts",
+    "name": "quest3-companion-room"
+  }
+}
