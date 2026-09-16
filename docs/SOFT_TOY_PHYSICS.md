@@ -1,9 +1,13 @@
-# Soft-Toy Physics (Verlet)
+# Soft-Toy Physics (Verlet) + Quest 3
 
-## Why Verlet (not full FEM / PhysX)
+## Stack with Rapier
 
-Quest / WebXR budget: lightweight **position-based dynamics** (Verlet + distance constraints).
-No native plugin required. Suitable for wand jiggle, ring flex, pillow squash.
+See **`docs/QUEST3_PHYSICS.md`**.
+
+- **Rapier:** rigid cup/table/floor, kinematic hands + CCD
+- **Verlet:** wand / ring / pillow soft deformation only
+
+Do **not** simulate silicone as Rapier soft-body (cost). Pin Verlet handle to the same world point as the kinematic grab when held.
 
 ## Core
 
@@ -11,40 +15,34 @@ No native plugin required. Suitable for wand jiggle, ring flex, pillow squash.
 
 | Factory | Use |
 |---------|-----|
-| `createWandSoftBody` | Segment chain, pinned base when held |
+| `createWandSoftBody` | Segment chain |
 | `createRingSoftBody` | 8-point loop |
 | `createPillowSoftBody` | 2×2×2 lattice |
 
-`SoftBody.tick(dt)` → gravity, damping, constraint iterations, ground plane.
+`SoftBody.tick(dt)` — clamp `dt` ≤ `1/30`; prefer stepping near 90 Hz display.
 
 ## R3F
 
 `integration/companion/drop-in/SoftToys.tsx` → `<SoftToyScene />`
 
-- Hold: pin point 0 to camera reach (or controller)
-- Release: unpin, soft settle
-- Desktop test: **T** soft-hold wand, **G** release (until store HeldId extended)
+Desktop: **T** soft-hold wand, **G** release (until store HeldId includes toys).
 
 ## Wire
 
 ```tsx
+import { RapierRigidLayer } from "./RapierScene";
 import { SoftToyScene } from "./SoftToys";
-// in Scene:
-<SoftToyScene />
-```
 
-Optional later: `@react-three/rapier` rigid colliders for cup/table only; keep soft toys on Verlet.
+<>
+  <RapierRigidLayer />
+  <SoftToyScene />
+</>
+```
 
 ## Tuning
 
 | Param | Effect |
 |-------|--------|
-| `damping` 0.96–0.99 | less / more residual motion |
-| `stiffness` on connect | firmer silicone |
-| `iterations` 4–8 | stability vs cost |
-| `gravity` | lighter toys use weaker Y |
-
-## Do not
-
-- Run 100+ constraint iterations per frame on Quest
-- Mix heavy convex colliders on every soft segment
+| damping 0.96–0.99 | residual motion |
+| stiffness | firmer silicone |
+| iterations 4–6 | Quest-safe |
