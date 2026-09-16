@@ -1,0 +1,55 @@
+slice: vertical_balanced
+target_hz: [72, 90]
+
+pillars:
+  performance:
+    max_dynamic_rigid: 3
+    max_soft_toys_active: 1  # start with 1; raise only if G3 green
+    max_realtime_lights: 2
+    prefer_baked_light: true
+    ffr: medium_or_high
+    zero_alloc_in_tick: true
+  content:
+    rooms: 1
+    companion: 1_placeholder_or_vrm_optional
+    soft_props: [cup, vinyl, lantern]
+    soft_toys_optional: [toy_wand]  # ring/pillow later
+  playability:
+    phases: [start, playing, paused]
+    grab_ids: [cup, vinyl, lantern]
+    contact_systems: optional_after_G0
+    one_input_map: true
+  implementation:
+    physics_rigid: rapier_optional_after_G1
+    physics_soft: verlet_one_toy
+    no_parallel_dialog_engines: true
+    no_double_sim_same_prop: true
+
+sequence:
+  - id: A
+    name: soft_loop_baseline
+    gate: G0
+  - id: B
+    name: contact_bridge
+    requires: [A]
+    gate: G2
+  - id: C
+    name: rapier_floor_one_dynamic
+    requires: [A]
+    gate: G1
+  - id: D
+    name: one_soft_toy_verlet
+    requires: [A]
+    gate: G3
+  - id: E
+    name: ffr_res_scale
+    requires: [G1]
+  - id: F
+    name: glb_ktx2_replace
+    requires: [A]
+
+kill_switches:
+  - disable_soft_toys
+  - disable_rapier_dynamics
+  - disable_contact_hud
+  - reduce_shadows_to_contact_only

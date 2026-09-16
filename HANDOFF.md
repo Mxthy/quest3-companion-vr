@@ -2,22 +2,20 @@
 
 **Updated:** 2026-09-16
 
+## Priority doc
+**`docs/BALANCED_SLICE.md`** + **`docs/FEATURE_BUDGET.yaml`**
+
+Balance: Leistung · Inhalt · Spielbarkeit · Umsetzung. Sequence A→F, gates G0–G3.
+
 ## Backends
 - GitHub: https://github.com/Mxthy/quest3-companion-vr
-- Drive quest3-game + archives (MVP zip, VRM) — see `docs/DRIVE_AND_CONNECTORS.md`
-- Wissensspeicher MCP — `docs/WISSENSSPEICHER_USAGE.md`
+- Drive: `docs/DRIVE_AND_CONNECTORS.md`
 
-## Repo now includes
-- `package.json` / `tsconfig.core.json` / scripts (`sync-check`, `smoke-intensity`, `list-docs`)
-- Full `README.md`, `docs/REPO_INDEX.md`, `docs/DEPENDENCIES.md`
-- Neutral core: `src/core/interaction/*`
-- Drop-in: `integration/companion/drop-in/*`
-- PO override: `docs/PRODUCT_OWNER_OVERRIDE_INTERACTION.md`
+## Do next (stable path)
+1. Measure Soft-Loop FPS (Gate G0)
+2. Only then ContactBridge **or** Rapier floor+1 cup — not both at once if FPS tight
+3. One Verlet toy max until G3 green
+4. Kill switches in FEATURE_BUDGET if unstable
 
-## Next (live app)
-1. `npm run sync:check` in this repo
-2. Apply `integration/companion/drop-in/APPLY.md` into the companion preview app
-3. Preview: zones + intensity HUD + proxy
-
-## Resume order
-`README.md` → `docs/REPO_INDEX.md` → `TASK_STATE.yaml` → `PRODUCT_OWNER_OVERRIDE_INTERACTION.md` → `drop-in/APPLY.md`
+## Resume
+README → BALANCED_SLICE → FEATURE_BUDGET → drop-in/APPLY (only items in current sequence step)
