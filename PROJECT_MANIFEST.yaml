@@ -10,39 +10,61 @@ project:
     state: 1pUL7ylF-VCiXGNWT0ap08lYdWhOGD2W9
     reports: 1QXqZjy6MLfEvD8NlBDT3Usul6ZNiWJB8
     archives: 1smmfCSzzOqqIB5lQY9XUY5v4wdYyCvVD
-  local_root: /home/workdir/quest3-game
+  drive_mcp_folder_id: 1agT4Lhby1aqMSgM1Je0fHIMsBYzf6nRR
   created: "2026-09-14"
-  status: persistent_backends_ready
-  target_platform: Meta Quest 3 (standalone)
-  genre_direction: companion / intimate VR (Cherry-VR-class)
+  updated: "2026-09-16"
+  status: interaction_core_and_dropin_ready
+  target_platform: Meta Quest 3 / WebXR companion slice
+
+npm:
+  package_json: true
+  scripts:
+    - typecheck:core
+    - test:intensity
+    - docs:list
+    - sync:check
+  peer_for_app:
+    - three
+    - "@react-three/fiber"
+    - "@react-three/drei"
+    - react
+    - zustand
+
+core_libraries:
+  preferred: src/core/interaction/
+  legacy_alias: src/core/adult/
+  drop_in: integration/companion/drop-in/
 
 primary_references:
   - id: apk_passthru
     name: Pass_Thru_Hot_Sauce_-_Meta_Quest_2-3-Pro_v1.3.9.apk
     drive_file_id: 1QNiPdsb7TQRcomlzUsE03ujNR5tLeB_E
-    size_bytes: 421101177
-    role: primary
+    role: analysis_only
   - id: apk_joilab
     name: joi-lab-vr-meta-quest-23pro.apk
     drive_file_id: 1V7V-xdJ8c3MuHAP85Ga8mDJ3_S7WuGEh
-    size_bytes: 608242436
-    role: primary
+    role: analysis_only
   - id: apk_sliceoflife
     name: SliceoflifeVR_Meta_Beta_V11.apk
     drive_file_id: 1V5P83MW29-sZrRI98WXd4RiouWtCiYLr
-    size_bytes: 961962298
-    role: primary
-
-excluded:
-  - id: apkm_dialer
-    package: com.oplus.dialer
-    reason: system dialer, not VR
+    role: analysis_only
+  - id: mvp_zip
+    name: grok-workspace.zip
+    drive_path: quest3-game/archives/
+    role: app_source
+  - id: vrm_zip
+    name: vivi_vrm.zip
+    drive_path: quest3-game/archives/
+    role: optional_avatar
 
 storage_policy:
-  github: governance, docs, scripts, text reports, task state
-  drive: apks, binaries, heavy reports, state snapshots, archives
+  github: governance, docs, scripts, core TS, drop-ins, task state
+  drive: apks, binaries, archives, heavy reports
   local: ephemeral working copy only
 
-milestones:
-  current: M0
-  next: M1
+docs_entry:
+  - docs/REPO_INDEX.md
+  - docs/DEPENDENCIES.md
+  - docs/DRIVE_AND_CONNECTORS.md
+  - docs/PRODUCT_OWNER_OVERRIDE_INTERACTION.md
+  - integration/companion/drop-in/APPLY.md
