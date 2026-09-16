@@ -1,21 +1,19 @@
-updated: "2026-09-16T01:48:00Z"
-milestone: M3_plus
-phase: virtual_anatomy_and_intimate_contact_ready
+updated: "2026-09-16T16:34:00Z"
+milestone: contact_wire
+phase: drop_in_ready
 
 completed:
-  - adult_touch_core
-  - VirtualAnatomy_from_HMD
-  - IntimateContact_shaft_zones_props
-  - props_adult.yaml
-  - PlayerAnatomyView_helper
-  - VIRTUAL_ANATOMY_AND_PROPS.md
+  - neutral_interaction_core
+  - ContactBridge_drop_in
+  - experience_with_bridge
+  - store_contact_fields
+  - IntensityHud
+  - APPLY_checklist
 
-pending:
-  - threejs_wire_hmd_to_anatomy_mesh
-  - vrm_bone_zone_attachments
-  - prop_meshes_placeholder_or_glb
-  - webxr_local_floor
+pending_in_user_preview:
+  - copy_drop_in_into_running_app
+  - verify_zones_intensity_proxy_in_preview
+  - map_xr_grip_trigger_to_holding_burst
 
 next_action: >
-  In app frame loop: HMD → computeVirtualAnatomy → shaft mesh;
-  VRM bones → zones; IntimateContact.tick; soft+adult props grab.
+  Apply integration/companion/drop-in/APPLY.md in the live app tree; then preview test.
