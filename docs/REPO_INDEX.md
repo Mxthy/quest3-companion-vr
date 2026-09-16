@@ -1,46 +1,25 @@
-# Repository index
+# Repo-Index – quest3-companion-vr
 
-## Layout
+## Docs (Architektur & Balance)
+- `BALANCED_SLICE.md` – Vier-Säulen-Budget, Gates
+- `BALANCED_CLOUD_ARCHITECTURE.md` – **Client / Edge / Cloud Split**, PartyKit, RAG, NPC
+- `QUEST3_ARCHITECTURE_LEVERS.md` – 5 Performance-Hebel
+- `QUEST3_PHYSICS.md` – Rapier + Verlet
+- `ASSET_PIPELINE.md` – glTF/Meshopt/KTX2
+- `FEATURE_BUDGET.yaml` – harte Zahlen + Kill-Switches
 
-```
-quest3-companion-vr/
-├── AGENTS.md, HANDOFF.md, TASK_STATE.yaml, PROJECT_MANIFEST.yaml
-├── README.md, package.json, tsconfig.core.json, .gitignore
-├── content/           # YAML content contracts
-├── docs/              # Specs, overrides, design
-├── integration/       # Drop-ins for the live companion app
-├── src/core/          # Framework-free systems (interaction + adult legacy)
-├── src/presentation/  # Mesh transform helpers
-├── scripts/           # Node utilities
-└── reports/           # APK/engine text reports
-```
+## Core
+- `src/core/interaction/` – ContactController, Intensity, ColliderZones, TrackingProxy
+- `src/core/physics/` – SoftVerlet
+- `src/core/perf/pools.ts` – Zero-Alloc
 
-## Docs map
+## Integration (Drop-in)
+- `integration/companion/drop-in/` – ContactBridge, SoftToys, RapierScene, toys, propTextures
 
-| Doc | Purpose |
-|-----|---------|
-| `PRODUCT_OWNER_OVERRIDE_INTERACTION.md` | Binding: contact systems P0 |
-| `NEUTRAL_INTERACTION_SYSTEMS.md` | Collider / intensity / proxy |
-| `GAME_DESIGN_VERTICAL_SLICE.md` | Soft loop beats |
-| `CONTENT_SPEC.yaml` | Soft content |
-| `ARCHITECTURE_NEXT.md` | core vs adapters |
-| `DEPENDENCIES.md` | npm + Drive |
-| `DRIVE_AND_CONNECTORS.md` | GitHub / Drive / MCP IDs |
-| `integration/companion/drop-in/APPLY.md` | Apply order |
+## Content
+- `content/adult_interaction.yaml`, `content/props_adult.yaml`, `content/interaction.yaml`
 
-## Code map
-
-| Path | Purpose |
-|------|---------|
-| `src/core/interaction/*` | **Preferred** contact systems |
-| `src/core/adult/*` | Legacy explicit naming (compat) |
-| `integration/companion/drop-in/*` | Copy into app |
-
-## Scripts
-
-| npm script | Action |
-|------------|--------|
-| `typecheck:core` | tsc on src/core |
-| `test:intensity` | smoke intensity tick |
-| `docs:list` | print docs tree |
-| `sync:check` | verify critical paths exist |
+## Connectors
+- GitHub: dieses Repo
+- Drive: `quest3-game/` (archives, apks)
+- Wissensspeicher MCP: `networking/*`, `ai-vibe/*`, `webxr/*`, `quest3/*`
