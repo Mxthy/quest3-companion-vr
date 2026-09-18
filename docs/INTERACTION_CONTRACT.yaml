@@ -1,0 +1,101 @@
+# Source of truth for Godot Quest lab + agents. Change numbers here, not in invented code.
+# Runtime: Godot 4.6+ / OpenXR / XR Tools (pin exact versions in LAB_VERSIONS.md when lab exists).
+
+meta:
+  product: elara_companion
+  target: meta_quest_3
+  primary_runtime: godot_openxr
+  refresh_hz_target: [72, 90]
+
+phases:
+  - start
+  - playing
+  - paused
+
+items:
+  grabbable:
+    - id: cup
+      mass_kg: 0.3
+    - id: vinyl
+      mass_kg: 0.2
+    - id: lantern
+      mass_kg: 0.4
+  rules:
+    grabbable_only_in_phase: playing
+
+input:
+  # Map via OpenXR action map; names are logical
+  grip_grab: true          # hold to grab
+  trigger_use: true        # optional use while held
+  stick_move: true         # direct locomotion
+  stick_snap_turn: true
+  snap_turn_degrees: 30
+  teleport_enabled: true   # comfort option; can disable per profile
+
+locomotion:
+  mode_default: direct_and_snap
+  teleport: optional
+  comfort:
+    v_vignette: true
+    smooth_turn: false     # default snap for Quest comfort
+
+grab:
+  implementation: xr_tools_pickable   # not custom ray grab
+  physics_hands: optional_physics_template
+  release_applies_velocity: true
+  max_held: 1
+
+contact_zones:
+  # Neutral collider/state system — data only; parallel to soft props
+  enabled: true
+  intensity_min: 0.0
+  intensity_max: 1.0
+  peak_event: true
+  bones:
+    - head
+    - chest_l
+    - chest_r
+    - center
+    - hip_l
+    - hip_r
+  update: per_physics_frame
+  mesh_requirement: none   # zones work without nude mesh; placeholder avatar OK
+
+domain:
+  bond_min: 0
+  bond_on_pick: 1
+  held_id: string
+  save: local_first
+
+physics_layers_names:
+  # Align with XR Tools demo where possible
+  - Static World
+  - Dynamic World
+  - Pickable Objects
+  - Player Hands
+  - Held Objects
+  - Player Body
+
+performance:
+  dynamic_lights_max: 2
+  softbody_default: off
+  foveation: preferred
+  kill_switch_contact: true
+
+acceptance_p0:
+  - openxr_session_starts_on_quest
+  - grab_and_release_three_props
+  - snap_turn_works
+  - phase_start_playing_paused
+  - domain_held_and_bond_update_on_pick
+  - contact_intensity_rises_and_falls_if_enabled
+  - no_custom_grab_solver_if_pickable_works
+
+agent_rules:
+  fail_closed: true
+  may_not_invent:
+    - button_bindings
+    - layer_indices
+    - bone_names_not_listed
+    - softbody_on_without_budget_flag
+  on_unknown: QUESTION_AND_STOP

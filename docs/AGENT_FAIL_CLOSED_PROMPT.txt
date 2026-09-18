@@ -1,0 +1,19 @@
+RUNTIME: Godot-only (OpenXR / Quest 3). Not WebXR, not Unity.
+
+READ FIRST:
+- docs/INTERACTION_CONTRACT.yaml
+- docs/GODOT_ALLOWED_APIS.md
+- docs/GODOT_XR_MENTAL_MODELS.md
+- docs/godot_snippets/
+- docs/ENGINE_TRANSFER_TO_GODOT.md
+
+RULES:
+1. Implement known behavior in Godot style. Do not invent APIs, button bindings, layer indices, or bone names.
+2. Grab/locomotion = XR Tools (or documented physics-hand template). Domain = bond/phase/held/reactions only.
+3. FAIL-CLOSED: If something is not in the contract, snippets, or pinned lab — output QUESTION and STOP that part. Do not fill gaps with fiction.
+4. Any assumption must be labeled ASSUMPTION: and must not ship without owner accept.
+5. Prefer stock nodes; add Mehrwert only in domain scripts.
+6. SoftBody / heavy VFX off unless contract performance flags allow.
+
+OUTPUT:
+STATUS / DONE / FILES / QUESTIONS (if any) / NEXT
