@@ -1,0 +1,112 @@
+meta:
+  version: 1
+  adult: true
+  warning: "Adult sexual content. 18+ only."
+
+arousal:
+  max: 100
+  base_rate_per_sec: 8
+  grab_multiplier: 1.75
+  intense_burst: 12
+  decay_per_sec: 6
+  decay_afterglow_per_sec: 4
+  orgasm_threshold: 100
+  post_orgasm_level: 35
+  refractory_sec: 12
+  levels:
+    idle: [0, 15]
+    tease: [15, 40]
+    hot: [40, 75]
+    peak_build: [75, 95]
+    orgasm: [95, 100]
+
+bond:
+  on_reach_hot: 3
+  on_orgasm: 8
+  on_first_zone_grab: 2
+
+zones:
+  - id: head
+    radius_m: 0.12
+    sensitivity: 0.7
+    unlock_bond: 0
+  - id: mouth
+    radius_m: 0.08
+    sensitivity: 1.1
+    unlock_bond: 0
+  - id: breast_l
+    radius_m: 0.11
+    sensitivity: 1.2
+    unlock_bond: 0
+  - id: breast_r
+    radius_m: 0.11
+    sensitivity: 1.2
+    unlock_bond: 0
+  - id: waist
+    radius_m: 0.14
+    sensitivity: 0.9
+    unlock_bond: 0
+  - id: hip_l
+    radius_m: 0.12
+    sensitivity: 1.0
+    unlock_bond: 0
+  - id: hip_r
+    radius_m: 0.12
+    sensitivity: 1.0
+    unlock_bond: 0
+  - id: glute_l
+    radius_m: 0.12
+    sensitivity: 1.15
+    unlock_bond: 0
+  - id: glute_r
+    radius_m: 0.12
+    sensitivity: 1.15
+    unlock_bond: 0
+  - id: thigh_l
+    radius_m: 0.13
+    sensitivity: 0.85
+    unlock_bond: 0
+  - id: thigh_r
+    radius_m: 0.13
+    sensitivity: 0.85
+    unlock_bond: 0
+  - id: groin
+    radius_m: 0.1
+    sensitivity: 1.45
+    unlock_bond: 0
+  - id: hand_l
+    radius_m: 0.07
+    sensitivity: 0.5
+    unlock_bond: 0
+  - id: hand_r
+    radius_m: 0.07
+    sensitivity: 0.5
+    unlock_bond: 0
+
+dialogue_adult:
+  zone_enter:
+    breast_l: ["Da… ja.", "Deine Hand ist warm."]
+    breast_r: ["Nicht so schüchtern.", "Mmm."]
+    groin: ["Du weißt, was du willst.", "Näher."]
+    glute_l: ["Hey—", "Unverschämt. Mach weiter."]
+    glute_r: ["Hey—", "Unverschämt. Mach weiter."]
+    mouth: ["…", "Wenn du willst."]
+    default: ["Ich spüre dich.", "Ja."]
+  level_tease:
+    - "Nur anfassen ist schon unfair."
+    - "Du machst mich unruhig."
+  level_hot:
+    - "Nicht aufhören."
+    - "Härter ist auch erlaubt."
+  level_peak_build:
+    - "Ich— gleich—"
+    - "Bei dir… ja—"
+  orgasm:
+    - "Ah—!"
+    - "Verdammt…"
+  afterglow:
+    - "Bleib noch."
+    - "…Danke. Fürs Tempo."
+  stop_high:
+    - "Schon gut. Ich bin noch da."
+    - "Wann du willst, weiter."

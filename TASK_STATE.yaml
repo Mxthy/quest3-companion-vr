@@ -1,6 +1,6 @@
-updated: "2026-09-16T16:34:00Z"
-milestone: contact_wire
-phase: drop_in_ready
+updated: "2026-09-19T21:20:00Z"
+milestone: adult_core_mvp
+phase: mvp_wired_typecheck_green
 
 completed:
   - neutral_interaction_core
@@ -9,11 +9,19 @@ completed:
   - store_contact_fields
   - IntensityHud
   - APPLY_checklist
+  - adult_core_modules_from_repo
+  - zone_anchors_on_elara
+  - arousal_hud_18plus_gate
+  - toy_stub_wand
+  - wired_mvp_pushed_to_github_app
 
 pending_in_user_preview:
   - copy_drop_in_into_running_app
-  - verify_zones_intensity_proxy_in_preview
+  - verify_adult_zones_intensity_in_preview
   - map_xr_grip_trigger_to_holding_burst
+  - fps_measurement_gate_g0_recheck
+  - vrm_vivi_replaces_placeholder
 
 next_action: >
-  Apply integration/companion/drop-in/APPLY.md in the live app tree; then preview test.
+  Run app/ locally, verify adult zones + arousal HUD in preview (PROTOTYPE_ACCEPTANCE_TESTS),
+  then measure soft-loop FPS with adult loop active (Gate G0 re-check).

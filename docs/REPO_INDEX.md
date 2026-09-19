@@ -8,6 +8,9 @@
 - `ASSET_PIPELINE.md` – glTF/Meshopt/KTX2
 - `FEATURE_BUDGET.yaml` – harte Zahlen + Kill-Switches
 
+## App
+- `app/` – Wired companion MVP (Adult Core Phase 1): adult.ts bridge, zone anchors on Elara, arousal HUD, 18+ gate; see `app/README.md`
+
 ## Core
 - `src/core/interaction/` – ContactController, Intensity, ColliderZones, TrackingProxy
 - `src/core/physics/` – SoftVerlet

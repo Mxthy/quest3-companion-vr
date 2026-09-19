@@ -1,6 +1,7 @@
 # Status Now (auto)
 
 ## Repo (main)
+- App: app/ = wired companion MVP (Adult Core Phase 1, typecheck green; preview verify pending)
 - Core: adult/*, interaction/*, perf/pools, physics/SoftVerlet
 - Integration: contact-bridge, RapierScene, SoftToys, propTextures, toys, PartySocket, FoveationController
 - Server: party/index.ts (PartyKit stub)
@@ -23,4 +24,4 @@
 - P1 Edge: stub ready, pending deploy
 
 ## Next action
-Wire FoveationController + deploy PartyKit stub. Measure both.
+Verify adult zones + arousal HUD in app/ preview; re-measure Gate G0 with adult loop active. Then VRM Vivi / WebXR tier.

@@ -28,6 +28,7 @@ npm run sync:check
 |------|------|
 | `src/core/interaction/` | Intensity, colliders, HMD proxy, ContactController |
 | `integration/companion/drop-in/` | ContactBridge, experience, HUD, store fields |
+| `app/` | Wired companion MVP (Adult Core Phase 1, typecheck green) |
 | `docs/` | Specs, override, design, Drive map |
 | `content/` | YAML contracts |
 | `reports/` | APK / engine text reports |
