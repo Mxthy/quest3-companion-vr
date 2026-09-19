@@ -1,6 +1,6 @@
-updated: "2026-09-19T21:20:00Z"
+updated: "2026-09-19T21:45:00Z"
 milestone: adult_core_mvp
-phase: mvp_wired_typecheck_green
+phase: adult_wiring_verified
 
 completed:
   - neutral_interaction_core
@@ -14,14 +14,18 @@ completed:
   - arousal_hud_18plus_gate
   - toy_stub_wand
   - wired_mvp_pushed_to_github_app
+  - headless_browser_verification
+  - gate_enter_walk_zone_look_touch_ok
+  - arousal_curve_to_orgasm_ok
+  - zone_dialogue_from_yaml_ok
 
 pending_in_user_preview:
-  - copy_drop_in_into_running_app
-  - verify_adult_zones_intensity_in_preview
+  - verify_on_user_machine_headset_feel
   - map_xr_grip_trigger_to_holding_burst
   - fps_measurement_gate_g0_recheck
   - vrm_vivi_replaces_placeholder
+  - q_spank_zone_test_on_glutes
 
 next_action: >
-  Run app/ locally, verify adult zones + arousal HUD in preview (PROTOTYPE_ACCEPTANCE_TESTS),
-  then measure soft-loop FPS with adult loop active (Gate G0 re-check).
+  Phase 2 (VRM Vivi + bones->zones) next; user-side FPS re-check (Gate G0)
+  before adding VRM mesh cost. Browser proxy metrics are NOT native Quest numbers.

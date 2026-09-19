@@ -1,4 +1,5 @@
-import { Canvas } from "@react-three/fiber";
+import { useEffect } from "react";
+import { useThree, Canvas } from "@react-three/fiber";
 import { ContactShadows } from "@react-three/drei";
 import * as THREE from "three";
 import { AdultBridge } from "./adult-bridge";
@@ -6,6 +7,45 @@ import { Elara } from "./elara";
 import { Interactables } from "./interactables";
 import { Player } from "./player";
 import { Room } from "./room";
+import { useCompanion } from "@/lib/companion/store";
+import { adultRuntime, useAdultHud } from "@/lib/companion/adult";
+
+/** Testability probe: window.__quest = { state(), adult() } when ?debug=1 */
+function DebugProbe() {
+  const camera = useThree((s) => s.camera);
+  useEffect(() => {
+    if (!window.location.search.includes("debug=1")) return;
+    const w = window as unknown as Record<string, unknown>;
+    w.__quest = {
+      state: () => {
+        const s = useCompanion.getState();
+        return {
+          phase: s.phase,
+          bond: s.bond,
+          nearElara: s.nearElara,
+          held: s.held,
+          speech: s.speech,
+        };
+      },
+      adult: () => useAdultHud.getState(),
+      input: () => adultRuntime.input,
+      camera: () => {
+        const v = camera.getWorldPosition(new THREE.Vector3());
+        const d = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.getWorldQuaternion(new THREE.Quaternion()));
+        return { pos: [v.x, v.y, v.z], dir: [d.x, d.y, d.z] };
+      },
+      anchors: () => {
+        const out: Record<string, number[]> = {};
+        for (const [id, obj] of adultRuntime.anchors) {
+          const v = obj.getWorldPosition(new THREE.Vector3());
+          out[id] = [v.x, v.y, v.z];
+        }
+        return out;
+      },
+    };
+  }, []);
+  return null;
+}
 
 function Scene() {
   return (
@@ -17,6 +57,7 @@ function Scene() {
       <Interactables />
       <AdultBridge />
       <Player />
+      <DebugProbe />
       <ContactShadows
         position={[0, 0.002, 0]}
         opacity={0.28}

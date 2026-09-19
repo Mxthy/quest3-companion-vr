@@ -14,12 +14,16 @@ Balance: Leistung · Inhalt · Spielbarkeit · Umsetzung. Sequence A→F, gates 
 
 ## State
 - `app/` = wired companion MVP (Grok workspace + Adult Core Phase 1), typecheck green
+- Headless browser verification PASSED (scripts/verify-adult.mjs, ?debug=1 probe):
+  18+ gate, walk, proximity, look=touch zones (breast_l), arousal idle->tease->hot->peak_build->orgasm->refractory,
+  bond 3->13..16, Erregung HUD, zone dialogue from adult_interaction.yaml, zero console errors
 - Adult core modules live in `src/core/adult/`, wired via `app/src/lib/companion/adult.ts`
 - Zone anchors on Elara placeholder, arousal HUD, 18+ gate, toy stub `toy_wand`
 
 ## Do next (stable path)
-1. Run `app/` (npm install, npm run dev) and verify adult zones + HUD in preview
-2. Measure Soft-Loop FPS WITH adult loop active (Gate G0 re-check)
+1. Phase 2: VRM Vivi + bones -> zones (keep placeholder fallback)
+2. Measure Soft-Loop FPS WITH adult loop active on user machine (Gate G0 re-check)
+   (headless browser proxy verified; not a native Quest metric)
 3. Only then next feature per FEATURE_BUDGET (VRM Vivi, WebXR tier) — one at a time if FPS tight
 4. Kill switches in FEATURE_BUDGET if unstable
 
