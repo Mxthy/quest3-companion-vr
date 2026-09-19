@@ -16,3 +16,4 @@ build/
 .next/
 .turbo/
 coverage/
+app/public/models/

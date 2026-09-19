@@ -1,6 +1,8 @@
 # CHANGELOG
 
-## 2026-09-19
+## 2026-09-20
+- vivi.vrm activated: VRM path verified end-to-end on real rig (arousal->orgasm on breast zones,
+  spank on glute_r, 0 console errors); binary stays on Drive, public/models/ gitignored
 - Phase 2 scaffold: @pixiv/three-vrm loader + bone-based zone anchors with Elara fallback (typecheck green, fallback regression passed)
 - Spank verified headless: glute zone + Q -> YAML spank dialogue, 0 errors (verify-spank.mjs, debug teleport probe)
 - Headless browser verification of adult wiring PASSED: 18+ gate, walk/proximity,

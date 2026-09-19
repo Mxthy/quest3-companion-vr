@@ -27,10 +27,13 @@ Balance: Leistung · Inhalt · Spielbarkeit · Umsetzung. Sequence A→F, gates 
   (ZONE_BONES map, offsets in bone space). Idle: A-pose arms, spine breathing, head tracks player.
 - Spank path verified headless: teleport behind + pitch aim -> glute_l, Q -> spank
   dialogue "Unverschamt. Mach weiter.", 0 console errors.
+- vivi.vrm (DCs_Vivi_nude_v01) placed at app/public/models/vivi.vrm (gitignored,
+  binary->Drive rule): VRM path ACTIVE and verified on the real rig 2026-09-20
+  (orgasm reached via breast zones, spank on glute_r, 0 console errors).
 
 ## Do next (stable path)
-1. Place vivi.vrm in app/public/models/ (from vivi.vrm..ZIP on Drive) -> smoke test VRM path
-2. User-side FPS re-check (Gate G0)
+1. User-side FPS re-check (Gate G0) WITH Vivi loaded - VRM adds ~14MB mesh+tex cost
+2. Then Phase 3 per CONTENT_SPEC (toys/props wiring)
 2. Measure Soft-Loop FPS WITH adult loop active on user machine (Gate G0 re-check)
    (headless browser proxy verified; not a native Quest metric)
 3. Only then next feature per FEATURE_BUDGET (VRM Vivi, WebXR tier) — one at a time if FPS tight
