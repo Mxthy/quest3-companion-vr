@@ -2,6 +2,8 @@
 import { chromium } from "playwright";
 
 const URL = "http://127.0.0.1:8080/?debug=1";
+// expected: /models/vivi.vrm 404 until Phase 2 asset lands
+const EXPECTED_404 = "/models/vivi.vrm";
 const shots = "/workspace/screenshots";
 const log = (...a) => console.log(...a);
 const q = (expr) => page.evaluate(expr);
@@ -9,7 +11,12 @@ const q = (expr) => page.evaluate(expr);
 const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
 const errors = [];
-page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
+page.on("console", (m) => {
+  if (m.type() !== "error") return;
+  const url = m.location()?.url || "";
+  if (url.includes(EXPECTED_404)) return;
+  errors.push(m.text());
+});
 page.on("pageerror", (e) => errors.push(String(e)));
 
 await page.goto(URL, { waitUntil: "networkidle" });

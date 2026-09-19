@@ -3,11 +3,12 @@ import { useThree, Canvas } from "@react-three/fiber";
 import { ContactShadows } from "@react-three/drei";
 import * as THREE from "three";
 import { AdultBridge } from "./adult-bridge";
-import { Elara } from "./elara";
+import { VrmCompanion } from "./vrm-companion";
 import { Interactables } from "./interactables";
 import { Player } from "./player";
 import { Room } from "./room";
 import { useCompanion } from "@/lib/companion/store";
+import { playerSim } from "@/lib/companion/player-ref";
 import { adultRuntime, useAdultHud } from "@/lib/companion/adult";
 
 /** Testability probe: window.__quest = { state(), adult() } when ?debug=1 */
@@ -29,6 +30,11 @@ function DebugProbe() {
       },
       adult: () => useAdultHud.getState(),
       input: () => adultRuntime.input,
+      teleport: (x: number, z: number, yaw: number) => {
+        playerSim.position.set(x, 1.62, z);
+        playerSim.yaw = yaw;
+        playerSim.speed = 0;
+      },
       camera: () => {
         const v = camera.getWorldPosition(new THREE.Vector3());
         const d = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.getWorldQuaternion(new THREE.Quaternion()));
@@ -53,7 +59,7 @@ function Scene() {
       <color attach="background" args={["#120e0c"]} />
       <fog attach="fog" args={["#120e0c", 10, 20]} />
       <Room />
-      <Elara />
+      <VrmCompanion />
       <Interactables />
       <AdultBridge />
       <Player />

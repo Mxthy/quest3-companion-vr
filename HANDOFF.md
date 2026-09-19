@@ -20,8 +20,17 @@ Balance: Leistung · Inhalt · Spielbarkeit · Umsetzung. Sequence A→F, gates 
 - Adult core modules live in `src/core/adult/`, wired via `app/src/lib/companion/adult.ts`
 - Zone anchors on Elara placeholder, arousal HUD, 18+ gate, toy stub `toy_wand`
 
+## Phase 2 status (2026-09-19/20)
+- vrm-companion.tsx: loads /models/vivi.vrm via @pixiv/three-vrm; falls back to Elara
+  when the file is 404/invalid (verified headless: full arousal curve still passes).
+  Zone anchors = detached Object3Ds refreshed per frame from humanoid bone world poses
+  (ZONE_BONES map, offsets in bone space). Idle: A-pose arms, spine breathing, head tracks player.
+- Spank path verified headless: teleport behind + pitch aim -> glute_l, Q -> spank
+  dialogue "Unverschamt. Mach weiter.", 0 console errors.
+
 ## Do next (stable path)
-1. Phase 2: VRM Vivi + bones -> zones (keep placeholder fallback)
+1. Place vivi.vrm in app/public/models/ (from vivi.vrm..ZIP on Drive) -> smoke test VRM path
+2. User-side FPS re-check (Gate G0)
 2. Measure Soft-Loop FPS WITH adult loop active on user machine (Gate G0 re-check)
    (headless browser proxy verified; not a native Quest metric)
 3. Only then next feature per FEATURE_BUDGET (VRM Vivi, WebXR tier) — one at a time if FPS tight

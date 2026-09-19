@@ -1,6 +1,8 @@
 # CHANGELOG
 
 ## 2026-09-19
+- Phase 2 scaffold: @pixiv/three-vrm loader + bone-based zone anchors with Elara fallback (typecheck green, fallback regression passed)
+- Spank verified headless: glute zone + Q -> YAML spank dialogue, 0 errors (verify-spank.mjs, debug teleport probe)
 - Headless browser verification of adult wiring PASSED: 18+ gate, walk/proximity,
   look=touch zones, arousal curve to orgasm + refractory, bond gains, HUD, YAML dialogue
 - app/scripts/verify-adult.mjs (Playwright) + ?debug=1 store probe added

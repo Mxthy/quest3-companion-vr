@@ -1,6 +1,6 @@
 updated: "2026-09-19T21:45:00Z"
 milestone: adult_core_mvp
-phase: adult_wiring_verified
+phase: phase2_vrm_scaffold
 
 completed:
   - neutral_interaction_core
@@ -18,14 +18,17 @@ completed:
   - gate_enter_walk_zone_look_touch_ok
   - arousal_curve_to_orgasm_ok
   - zone_dialogue_from_yaml_ok
+  - q_spank_glute_verified_headless
+  - vrm_companion_scaffold_with_fallback
+  - verify-spank.mjs_with_debug_teleport
 
 pending_in_user_preview:
   - verify_on_user_machine_headset_feel
   - map_xr_grip_trigger_to_holding_burst
   - fps_measurement_gate_g0_recheck
   - vrm_vivi_replaces_placeholder
-  - q_spank_zone_test_on_glutes
 
 next_action: >
-  Phase 2 (VRM Vivi + bones->zones) next; user-side FPS re-check (Gate G0)
-  before adding VRM mesh cost. Browser proxy metrics are NOT native Quest numbers.
+  Drop vivi.vrm (from vivi.vrm..ZIP, Drive) into app/public/models/vivi.vrm
+  to activate VRM path (bone zone map in vrm-companion.tsx ZONE_BONES).
+  Then user-side FPS re-check (Gate G0); browser proxy metrics are NOT native Quest numbers.
