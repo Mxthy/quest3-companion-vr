@@ -3,7 +3,7 @@ import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { playerSim } from "@/lib/companion/player-ref";
 import { useCompanion } from "@/lib/companion/store";
-import { registerAdultAnchor, unregisterAdultAnchor } from "@/lib/companion/adult";
+import { registerAdultAnchor, unregisterAdultAnchor } from "./adult-anchors";
 import type { ZoneId } from "@/core/adult/TouchZoneSystem";
 
 /** Adult touch-zone anchors in torso space (content/adult_interaction.yaml zones).

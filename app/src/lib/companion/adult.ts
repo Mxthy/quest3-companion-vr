@@ -5,11 +5,10 @@
  */
 
 import { create } from "zustand";
-import * as THREE from "three";
 import { AdultInteractionController } from "@/core/adult/AdultInteractionController";
 import { IntimateContactSystem } from "@/core/adult/IntimateContact";
 import type { ArousalLevel, PleasureConfig } from "@/core/adult/PleasureModel";
-import type { ZoneId } from "@/core/adult/TouchZoneSystem";
+import type { ZoneId, Vec3 } from "@/core/adult/TouchZoneSystem";
 
 /** arousal: content/adult_interaction.yaml */
 export const ADULT_PLEASURE_CFG: PleasureConfig = {
@@ -97,14 +96,17 @@ export const adultRuntime = {
     intensePressed: false,
     spankPressed: false,
   } as AdultInput,
-  /** Zone anchor Object3Ds attached to the companion body (Elara placeholder now, VRM bones later). */
-  anchors: new Map<ZoneId, THREE.Object3D>(),
+  /**
+   * XR hand/controller touch points in world space, written by the XR input
+   * adapter each frame and consumed by the adult bridge (plain Vec3 data —
+   * never an engine object; Unity ports map its poses onto the same channel).
+   * Cleared by the bridge after consumption.
+   */
+  xrTouchPoints: [] as Vec3[],
 };
 
-export function registerAdultAnchor(id: ZoneId, obj: THREE.Object3D) {
-  adultRuntime.anchors.set(id, obj);
-}
-
-export function unregisterAdultAnchor(id: ZoneId) {
-  adultRuntime.anchors.delete(id);
+/** True while an immersive XR session is active (render adapter flag). */
+export let xrActive = false;
+export function setXrActive(v: boolean) {
+  xrActive = v;
 }

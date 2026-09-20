@@ -10,6 +10,8 @@ import { Room } from "./room";
 import { useCompanion } from "@/lib/companion/store";
 import { playerSim } from "@/lib/companion/player-ref";
 import { adultRuntime, useAdultHud } from "@/lib/companion/adult";
+import { XrLayer } from "./xr-vr";
+import { adultAnchors } from "./adult-anchors";
 
 /** Testability probe: window.__quest = { state(), adult() } when ?debug=1 */
 function DebugProbe() {
@@ -31,7 +33,7 @@ function DebugProbe() {
       adult: () => useAdultHud.getState(),
       input: () => adultRuntime.input,
       teleport: (x: number, z: number, yaw: number) => {
-        playerSim.position.set(x, 1.62, z);
+        playerSim.position = { x, y: 1.62, z };
         playerSim.yaw = yaw;
         playerSim.speed = 0;
       },
@@ -42,7 +44,7 @@ function DebugProbe() {
       },
       anchors: () => {
         const out: Record<string, number[]> = {};
-        for (const [id, obj] of adultRuntime.anchors) {
+        for (const [id, obj] of adultAnchors) {
           const v = obj.getWorldPosition(new THREE.Vector3());
           out[id] = [v.x, v.y, v.z];
         }
@@ -63,6 +65,7 @@ function Scene() {
       <Interactables />
       <AdultBridge />
       <Player />
+      <XrLayer />
       <DebugProbe />
       <ContactShadows
         position={[0, 0.002, 0]}

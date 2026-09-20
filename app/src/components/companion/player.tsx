@@ -5,12 +5,14 @@ import { interactObjects } from "@/lib/companion/interact";
 import { heldKeys, installControlsProbe, playerSim } from "@/lib/companion/player-ref";
 import { promptFor, useCompanion } from "@/lib/companion/store";
 import { updateListener } from "@/lib/companion/audio";
+import { setXrActive, xrActive } from "@/lib/companion/adult";
 import { COLLIDERS, ROOM_BOUNDS } from "./room";
 import { CupMesh, LanternMesh, ToyWandMesh, VinylMesh } from "./interactables";
 
 const FORWARD = new THREE.Vector3();
 const RIGHT = new THREE.Vector3();
 const NEXT = new THREE.Vector3();
+const POS = new THREE.Vector3(); // THREE mirror of playerSim.position (render layer math)
 const RAY = new THREE.Raycaster();
 const NDC = new THREE.Vector2(0, 0);
 const SEAT = new THREE.Vector3(0.62, 1.18, 0.72);
@@ -120,6 +122,9 @@ export function Player() {
     const dt = Math.min(raw, 0.1);
     const phase = useCompanion.getState().phase;
     const seated = useCompanion.getState().seated;
+    const inXR = xrActive; // immersive session: XR adapter owns the camera/rig
+    if (inXR) camera.getWorldPosition(POS);
+    else POS.set(playerSim.position.x, playerSim.position.y, playerSim.position.z);
 
     if (phase === "start") {
       const t = state.clock.elapsedTime;
@@ -134,7 +139,7 @@ export function Player() {
     RIGHT.set(Math.cos(playerSim.yaw), 0, -Math.sin(playerSim.yaw));
 
     if (phase === "paused") {
-      camera.position.copy(playerSim.position);
+      camera.position.set(playerSim.position.x, playerSim.position.y, playerSim.position.z);
       camera.rotation.order = "YXZ";
       camera.rotation.y = playerSim.yaw;
       camera.rotation.x = playerSim.pitch;
@@ -142,24 +147,29 @@ export function Player() {
       return;
     }
 
-    if (seated && !wasSeated.current) {
-      const dx = 0 - SEAT.x;
-      const dz = -1.45 - SEAT.z;
-      playerSim.yaw = Math.atan2(-dx, -dz);
-      playerSim.pitch = -0.06;
-    }
-    wasSeated.current = seated;
-
-    if (seated) {
-      playerSim.position.lerp(SEAT, 1 - Math.exp(-6 * dt));
-      camera.position.copy(playerSim.position);
+    if (inXR) {
+      // XR: rig/locomotion is owned by the XR adapter; keep sim in sync for proximity/audio.
+      playerSim.position.x = POS.x;
+      playerSim.position.y = POS.y;
+      playerSim.position.z = POS.z;
+      playerSim.speed = 0;
+      if (seated) useCompanion.getState().stand();
+    } else if (seated) {
+      POS.lerp(SEAT, 1 - Math.exp(-6 * dt));
+      playerSim.position.x = POS.x;
+      playerSim.position.y = POS.y;
+      playerSim.position.z = POS.z;
+      camera.position.set(POS.x, POS.y, POS.z);
       camera.rotation.order = "YXZ";
       camera.rotation.y = playerSim.yaw;
       camera.rotation.x = playerSim.pitch;
       const keys = heldKeys();
       if (keys.has("KeyW") || keys.has("KeyA") || keys.has("KeyS") || keys.has("KeyD")) {
         useCompanion.getState().stand();
-        playerSim.position.set(0.62, 1.62, 1.05);
+        POS.set(0.62, 1.62, 1.05);
+        playerSim.position.x = POS.x;
+        playerSim.position.y = POS.y;
+        playerSim.position.z = POS.z;
       }
       playerSim.speed = 0;
     } else {
@@ -178,14 +188,17 @@ export function Player() {
         az /= len;
       }
       const speed = 2.15;
-      NEXT.copy(playerSim.position);
+      NEXT.copy(POS);
       NEXT.addScaledVector(FORWARD, az * speed * dt);
       NEXT.addScaledVector(RIGHT, ax * speed * dt);
-      if (!blocked(NEXT.x, playerSim.position.z)) playerSim.position.x = NEXT.x;
-      if (!blocked(playerSim.position.x, NEXT.z)) playerSim.position.z = NEXT.z;
-      playerSim.position.y = 1.62;
+      if (!blocked(NEXT.x, POS.z)) POS.x = NEXT.x;
+      if (!blocked(POS.x, NEXT.z)) POS.z = NEXT.z;
+      POS.y = 1.62;
+      playerSim.position.x = POS.x;
+      playerSim.position.y = POS.y;
+      playerSim.position.z = POS.z;
       playerSim.speed = Math.hypot(az, ax) * speed;
-      camera.position.copy(playerSim.position);
+      camera.position.set(POS.x, POS.y, POS.z);
       camera.rotation.order = "YXZ";
       camera.rotation.y = playerSim.yaw;
       camera.rotation.x = playerSim.pitch;
@@ -197,7 +210,7 @@ export function Player() {
     playerSim.looking = lookId;
     useCompanion.getState().setLook(lookId);
 
-    const dist = Math.hypot(playerSim.position.x, playerSim.position.z + 1.52);
+    const dist = Math.hypot(POS.x, POS.z + 1.52);
     useCompanion.getState().setNear(dist < 2.15);
 
     const prompt = promptFor(useCompanion.getState());
@@ -206,9 +219,9 @@ export function Player() {
     }
 
     updateListener(
-      playerSim.position.x,
-      playerSim.position.y,
-      playerSim.position.z,
+      POS.x,
+      POS.y,
+      POS.z,
       FORWARD.x,
       FORWARD.z,
     );

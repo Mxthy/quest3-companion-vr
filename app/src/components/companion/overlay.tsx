@@ -4,6 +4,7 @@ import { useAdultHud } from "@/lib/companion/adult";
 import { playerSim } from "@/lib/companion/player-ref";
 import { resumeIfNeeded, unlockAudio } from "@/lib/companion/audio";
 import { useCompanion } from "@/lib/companion/store";
+import { enterVR, isVRSupported } from "./xr-vr";
 
 function Joystick() {
   const wrap = useRef<HTMLDivElement>(null);
@@ -64,6 +65,10 @@ let ageConfirmedThisSession = false;
 
 export function Overlay() {
   const phase = useCompanion((s) => s.phase);
+  const [vrSupported, setVrSupported] = useState(false);
+  useEffect(() => {
+    isVRSupported().then(setVrSupported);
+  }, []);
   const bond = useCompanion((s) => s.bond);
   const speech = useCompanion((s) => s.speech);
   const prompt = useCompanion((s) => s.prompt);
@@ -116,6 +121,16 @@ export function Overlay() {
               </div>
             </div>
             <div className="pointer-events-auto flex gap-2">
+              {vrSupported && (
+                <button
+                  type="button"
+                  onClick={() => void enterVR()}
+                  className="rounded-md border border-border bg-surface/80 px-3 text-sm font-medium text-fg"
+                  aria-label="In VR starten"
+                >
+                  VR
+                </button>
+              )}
               <button
                 type="button"
                 onClick={toggleMute}

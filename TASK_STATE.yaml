@@ -1,8 +1,9 @@
-updated: "2026-09-20T19:10:00Z"
+updated: "2026-09-20T19:55:00Z"
 milestone: shared_core_vr_demo
-phase: pivot_shared_core_webxr
+phase: xr_immersive_live
 
 completed:
+  - xr_immersive_mode  # 2026-09-20: XR-Adapter (xr-vr.tsx) live auf Pages, Desktop-Paritaet verifiziert
   - neutral_interaction_core
   - ContactBridge_drop_in
   - experience_with_bridge
@@ -42,10 +43,13 @@ roadmap_decision_2026_09_20: >
   Haende/Controller, Locomotion, Comfort) + Core-Refactoring (src/core ohne three.js).
 
 next_action: >
-  GATE G0 FPS TEST ON QUEST (user): open https://quest-companion-dif.pages.dev in the
-  Quest 3 browser WITH Vivi loaded, report FPS. Live regression already green (orgasm
-  at burst 10, 0 blocking errors, one cosmetic 404 TBD).
-  Deploy recipe: NITRO_PRESET=cloudflare_pages npm run build (in app/) then
-  `npx wrangler pages deploy dist --project-name=quest-companion --branch=main` with
-  CLOUDFLARE_API_TOKEN=Base44-Deploy token + account id. vite.config preset is
-  env-overridable now (default stays vercel). vivi.vrm stays out of git (Drive rule).
+  GATE G0 IMMERSIVE FPS TEST ON QUEST (user): open https://quest-companion-dif.pages.dev
+  in the Quest 3 browser, start the game, tap the new VR button (only visible when
+  immersive-vr supported), verify hands tracked + pinch=grab + finger-tip touch zones +
+  snap-turn locomotion + in-VR HUD, report FPS (target 72 stable) and any tracking loss.
+  Desktop parity verified 2026-09-20: verify-adult + verify-spank green on prod, arousal
+  curve bit-identical to pre-refactor (86/peak_build at 10 bursts, bond 16; orgasm needs
+  more bursts at current pacing - tuning TBD, not a regression).
+  Deploy recipe unchanged: NITRO_PRESET=cloudflare_pages npm run build (in app/) then
+  `npx wrangler pages deploy dist --project-name=quest-companion --branch=main`.
+  vivi.vrm stays out of git (Drive rule); prod serves it from dist upload (200 OK).

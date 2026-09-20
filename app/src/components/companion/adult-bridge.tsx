@@ -22,6 +22,7 @@ import { DEFAULT_ZONES, type ZoneId } from "@/core/adult/TouchZoneSystem";
 import type { Vec3 } from "@/core/adult/VirtualAnatomy";
 import { playSoft, speakTone } from "@/lib/companion/audio";
 import { playerSim } from "@/lib/companion/player-ref";
+import { adultAnchors } from "./adult-anchors";
 import { useCompanion } from "@/lib/companion/store";
 import {
   ADULT_BOND,
@@ -43,7 +44,7 @@ const ZONE_DEFS = new Map(DEFAULT_ZONES.map((z) => [z.id, z]));
 function DebugZones() {
   const meshes = useMemo(() => new Map<ZoneId, THREE.Mesh>(), []);
   useFrame(() => {
-    for (const [id, obj] of adultRuntime.anchors) {
+    for (const [id, obj] of adultAnchors) {
       const m = meshes.get(id);
       if (!m) continue;
       obj.getWorldPosition(m.position);
@@ -198,7 +199,7 @@ export function AdultBridge() {
 
     // 1) Zone world positions from Elara anchors
     const zones: ZoneSample[] = [];
-    for (const [id, obj] of adultRuntime.anchors) {
+    for (const [id, obj] of adultAnchors) {
       const def = ZONE_DEFS.get(id);
       if (!def) continue;
       obj.getWorldPosition(TMP);
@@ -207,12 +208,12 @@ export function AdultBridge() {
       zones.push({ id, position: pos, radius: def.radius_m, sensitivity: def.sensitivity });
     }
 
-    // 2) Desktop hand point: center ray nearest point inside a zone radius
-    RAY.setFromCamera(CENTER, camera);
-    const origin = RAY.ray.origin;
-    const dir = RAY.ray.direction;
-    const handPoints: Vec3[] = [];
-    if (s.nearElara) {
+    // 2) Hand points: XR hands/controllers take precedence, else desktop center-ray (look=touch)
+    const handPoints: Vec3[] = adultRuntime.xrTouchPoints;
+    if (handPoints.length === 0 && s.nearElara) {
+      RAY.setFromCamera(CENTER, camera);
+      const origin = RAY.ray.origin;
+      const dir = RAY.ray.direction;
       let bestZone: ZoneSample | null = null;
       let bestPoint: Vec3 | null = null;
       let bestDist = Infinity;
@@ -243,6 +244,7 @@ export function AdultBridge() {
     });
     adultRuntime.input.intensePressed = false;
     adultRuntime.input.spankPressed = false;
+    if (adultRuntime.xrTouchPoints.length > 0) adultRuntime.xrTouchPoints = [];
 
     // 4) Tick intimate contact (virtual anatomy + pleasure)
     camera.getWorldPosition(CAM_POS);

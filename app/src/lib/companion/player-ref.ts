@@ -1,7 +1,8 @@
-import * as THREE from "three";
+/** Plain {x,y,z} — sim layer keeps no engine types (platform-adapters contract). */
+export type SimVec3 = { x: number; y: number; z: number };
 
 export const playerSim = {
-  position: new THREE.Vector3(0.18, 1.62, 2.62),
+  position: { x: 0.18, y: 1.62, z: 2.62 } as SimVec3,
   yaw: 0,
   pitch: -0.06,
   speed: 0,

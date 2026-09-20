@@ -14,7 +14,7 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { VRM, VRMLoaderPlugin, VRMUtils } from "@pixiv/three-vrm";
 import * as THREE from "three";
 import { Elara } from "./elara";
-import { registerAdultAnchor, unregisterAdultAnchor } from "@/lib/companion/adult";
+import { registerAdultAnchor, unregisterAdultAnchor } from "./adult-anchors";
 import { playerSim } from "@/lib/companion/player-ref";
 import type { ZoneId } from "@/core/adult/TouchZoneSystem";
 

@@ -1,6 +1,6 @@
 # HANDOFF
 
-**Updated:** 2026-09-19
+**Updated:** 2026-09-20 (2)
 
 ## Priority doc
 **`docs/BALANCED_SLICE.md`** + **`docs/FEATURE_BUDGET.yaml`**
@@ -13,6 +13,17 @@ Balance: Leistung · Inhalt · Spielbarkeit · Umsetzung. Sequence A→F, gates 
 - Wissensbasis MCP: zevra-vault-core (KnowledgeEntry)
 
 ## State
+- **XR immersive mode LIVE on Pages (2026-09-20 abends)** — VR button (VR-capable browsers only),
+  hands via frame.getJointPose (index-tip zone hit-test, generous radii, pinch=grab),
+  controllers (squeeze=grab, trigger=touch+burst), snap-turn locomotion (30 deg) + thumbstick move,
+  in-VR HUD (world-space, Billboard). Adapter isolation per platform-adapters: ONLY
+  `app/src/components/companion/xr-vr.tsx` touches WebXR; sim channel = adultRuntime.xrTouchPoints (plain Vec3).
+- Sim layer three.js-free: anchors registry moved to adapter (`adult-anchors.ts`), playerSim plain {x,y,z},
+  experience/elara/vrm-companion now write via adapter registry
+- `npm run assets` offline GLB pipeline (raw-assets/ -> public/models/, dedup/weld/prune/resample/meshopt,
+  KTX2 wenn toktx verfuegbbar, 100k-Tris-Budget-Warnung, VRM roh)
+- Desktop parity verified on prod: verify-adult + verify-spank green, arousal curve bit-identical
+  to pre-refactor (86 peak_build @ 10 bursts, bond 16). Hand visuals (XRHandModel) + KTX2 deferred.
 - `app/` = wired companion MVP (Grok workspace + Adult Core Phase 1), typecheck green
 - Headless browser verification PASSED (scripts/verify-adult.mjs, ?debug=1 probe):
   18+ gate, walk, proximity, look=touch zones (breast_l), arousal idle->tease->hot->peak_build->orgasm->refractory,

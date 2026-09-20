@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { chromium } from "playwright";
-const URL = "http://127.0.0.1:8080/?debug=1";
+const URL = (process.env.Q3_BASE ?? "http://127.0.0.1:8080") + "/?debug=1";
 const EXPECTED_404 = "/models/vivi.vrm";
 const log = (...a) => console.log(...a);
 const q = (expr) => page.evaluate(expr);

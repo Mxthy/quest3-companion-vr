@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.vercel/
+.nitro/
+.wrangler/
+.grok/
+screenshots/
+raw-assets/
+*.vrm
+*.log

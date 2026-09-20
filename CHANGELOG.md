@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## 2026-09-20 (3)
+- XR immersive mode live: VR-Button im Overlay, XR-Adapter (xr-vr.tsx) als einzige WebXR-Schicht
+  (platform-adapters-Kontrakt), Hand-Pinch=Grab + Fingerspitzen-Hit-Test, Controller-Squeeze/Trigger,
+  Snap-Turn-Locomotion, In-VR-HUD; Sim-Layer three.js-befreit (Anker-Registry, playerSim plain)
+- Asset-Pipeline npm run assets (offline-Backen, Meshopt, 100k-Tris-Budget)
+- Desktop-Paritaet: verify-adult/verify-spank gruen auf Prod, Kurve bit-identisch zum Prae-Refactor
+- Hand-Visuals (XRHandModel) + KTX2-Texturen aufgeschoben (Toktx fehlt in Sandbox; Modell-GLTF via CDN)
+
 ## 2026-09-20 (2)
 - Deployed to Cloudflare Pages (quest-companion-dif.pages.dev), live regression green incl. orgasm
 - vite.config: NITRO_PRESET override, wrangler devDep, verify-adult.mjs Q3_BASE param
