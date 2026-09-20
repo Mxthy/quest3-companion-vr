@@ -1,6 +1,9 @@
 # CHANGELOG
 
-## 2026-09-20
+## 2026-09-20 (2)
+- Deployed to Cloudflare Pages (quest-companion-dif.pages.dev), live regression green incl. orgasm
+- vite.config: NITRO_PRESET override, wrangler devDep, verify-adult.mjs Q3_BASE param
+- Agent rule: vault-check-before-code; separate deploy token Base44-Deploy created
 - vivi.vrm activated: VRM path verified end-to-end on real rig (arousal->orgasm on breast zones,
   spank on glute_r, 0 console errors); binary stays on Drive, public/models/ gitignored
 - Phase 2 scaffold: @pixiv/three-vrm loader + bone-based zone anchors with Elara fallback (typecheck green, fallback regression passed)

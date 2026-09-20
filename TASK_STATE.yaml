@@ -1,6 +1,6 @@
-updated: "2026-09-20T01:10:00Z"
+updated: "2026-09-20T19:00:00Z"
 milestone: adult_core_mvp
-phase: phase2_vrm_verified
+phase: deployed_to_cloudflare
 
 completed:
   - neutral_interaction_core
@@ -24,6 +24,8 @@ completed:
   - vivi_vrm_placed_in_public_models
   - vrm_path_orgasm_verified
   - vrm_path_spank_verified
+  - cloudflare_pages_deploy_quest_companion_dif_pages_dev
+  - live_regression_orgasm_verified
 
 pending_in_user_preview:
   - verify_on_user_machine_headset_feel
@@ -32,7 +34,10 @@ pending_in_user_preview:
   - vrm_vivi_replaces_placeholder
 
 next_action: >
-  Gate G0: user-side FPS re-check WITH VRM Vivi loaded (soft headless proxy passed
-  arousal-to-orgasm and spank on the rig; browser metrics are NOT native Quest numbers).
-  vivi.vrm intentionally NOT in git (binary->Drive rule): place from vivi.vrm..ZIP
-  into app/public/models/ on new checkouts (gitignored).
+  GATE G0 FPS TEST ON QUEST (user): open https://quest-companion-dif.pages.dev in the
+  Quest 3 browser WITH Vivi loaded, report FPS. Live regression already green (orgasm
+  at burst 10, 0 blocking errors, one cosmetic 404 TBD).
+  Deploy recipe: NITRO_PRESET=cloudflare_pages npm run build (in app/) then
+  `npx wrangler pages deploy dist --project-name=quest-companion --branch=main` with
+  CLOUDFLARE_API_TOKEN=Base44-Deploy token + account id. vite.config preset is
+  env-overridable now (default stays vercel). vivi.vrm stays out of git (Drive rule).

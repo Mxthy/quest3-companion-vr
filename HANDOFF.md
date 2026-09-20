@@ -41,3 +41,18 @@ Balance: Leistung · Inhalt · Spielbarkeit · Umsetzung. Sequence A→F, gates 
 
 ## Resume
 README → app/README.md → BALANCED_SLICE → FEATURE_BUDGET → PROTOTYPE_ACCEPTANCE_TESTS
+
+
+## Deployment (2026-09-20)
+- LIVE: https://quest-companion-dif.pages.dev (Cloudflare Pages, project quest-companion,
+  account 2115ac9b105867afb7dc06c60d47f112). Full regression green in prod:
+  18+ gate, walk, breast zones -> orgasm (burst 10), HUD; one cosmetic 404 (TBD).
+- Build: `NITRO_PRESET=cloudflare_pages npm run build` in app/ (vite.config.ts preset
+  now env-overridable, default vercel untouched). Deploy: `npx wrangler pages deploy dist
+  --project-name=quest-companion --branch=main` (wrangler now a devDependency).
+- Tokens (Cloudflare): Base44-Deploy (Workers/Pages/KV/Routes write, account-scoped;
+  zone rights to add later when a zone exists). Stored as CLOUDFLARE_DEPLOY_TOKEN in
+  agent secrets. The broad admin token is NOT in the repo.
+- Agent rule active: check zevra-vault-core MCP before any code change
+  (.agents/rules/check-vault-before-code.md). Vault currently EMPTY on
+  nitro/cloudflare-deploy/webxr-performance - gap to backfill.

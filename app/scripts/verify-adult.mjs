@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { chromium } from "playwright";
 
-const URL = "http://127.0.0.1:8080/?debug=1";
+const URL = (process.env.Q3_BASE ?? "http://127.0.0.1:8080") + "/?debug=1";
 // expected: /models/vivi.vrm 404 until Phase 2 asset lands
 const EXPECTED_404 = "/models/vivi.vrm";
 const shots = "/workspace/screenshots";
