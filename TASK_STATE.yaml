@@ -1,6 +1,6 @@
-updated: "2026-09-20T19:00:00Z"
-milestone: adult_core_mvp
-phase: deployed_to_cloudflare
+updated: "2026-09-20T19:10:00Z"
+milestone: shared_core_vr_demo
+phase: pivot_shared_core_webxr
 
 completed:
   - neutral_interaction_core
@@ -30,8 +30,16 @@ completed:
 pending_in_user_preview:
   - verify_on_user_machine_headset_feel
   - map_xr_grip_trigger_to_holding_burst
-  - fps_measurement_gate_g0_recheck
+  - fps_measurement_gate_g0_recheck_now_in_immersive_mode
   - vrm_vivi_replaces_placeholder
+
+roadmap_decision_2026_09_20: >
+  PIVOT (Eva): Endziel ist ein Unity-kompiliertes natives Spiel (Quest APK, Unity 6 +
+  OpenXR, Multiview). Die WebXR-App ist eine VORLAEUFIGE DEMO und muss so gebaut werden,
+  dass die Engine austauschbar bleibt. Bindend: life-vibe/architecture/platform-adapters -
+  Simulation ist das Spiel, WebXR + Unity sind nur Rendering/Input-Clients. Gameplay
+  importiert NIEMALS rohe XR-APIs. Phase 2.5: echtes VR im WebXR-Demo (XR-Session,
+  Haende/Controller, Locomotion, Comfort) + Core-Refactoring (src/core ohne three.js).
 
 next_action: >
   GATE G0 FPS TEST ON QUEST (user): open https://quest-companion-dif.pages.dev in the

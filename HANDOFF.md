@@ -56,3 +56,18 @@ README → app/README.md → BALANCED_SLICE → FEATURE_BUDGET → PROTOTYPE_ACC
 - Agent rule active: check zevra-vault-core MCP before any code change
   (.agents/rules/check-vault-before-code.md). Vault currently EMPTY on
   nitro/cloudflare-deploy/webxr-performance - gap to backfill.
+
+
+## Roadmap-Pivot (2026-09-20, Eva)
+- ENDFZIEL: Unity 6 + OpenXR + Multiview als natives Quest-APK (siehe Vault
+  life-vibe/quest/unity-openxr). WebXR-App = austauschbare Demo.
+- Architektur verbindlich (Vault life-vibe/architecture/platform-adapters):
+  geteilte Simulations-Kern (Arousal, Zonen, Dialog, Bond, Events) OHNE three.js/XR-Imports
+  in src/core/; Rendering/Input in Adaptern (clients/webxr spaeter clients/unity).
+  Gameplay konsumiert InputActions, nie rohe Controller-APIs.
+- Reihenfolge: (1) Core-Refactoring + WebXR-Immersive-Modus im Demo-Client,
+  (2) G0-FPS-Gate neu als immersive Messung, (3) Assets ueber GLB-Pipeline
+  (KTX2/Meshopt/LOD, Quest-Budgets), (4) Unity-Scaffold als eigenstaendiger Client.
+- AAA-Assets: Agent kann prozedurale/stilisierte Welt + Beleuchtung bauen; photorealistische
+  AAA-Assets muessen geliefert oder lizenziert werden (Unity Asset Store / Fab / Meta), dann
+  durch die GLB-Pipeline. VRM bleibt Companion-Format (Bone-Identitaet = Asset-Identity).
