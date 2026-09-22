@@ -1,84 +1,56 @@
-# HANDOFF
+---
+title: Quest Companion VR handoff
+summary: Quest 3 G0 performance optimization status and next physical-device check.
+---
 
-**Updated:** 2026-09-20 (2)
+# Quest Companion VR handoff
 
-## Priority doc
-**`docs/BALANCED_SLICE.md`** + **`docs/FEATURE_BUDGET.yaml`**
+## Current state
 
-Balance: Leistung · Inhalt · Spielbarkeit · Umsetzung. Sequence A→F, gates G0–G3.
+The immersive Quest 3 baseline from 2026-09-20 was 33.3 FPS over 889 samples, with 879.3 mean draw calls and 277,704 mean triangles. The draw-call count strongly identifies the shadow-rendering pipeline as the first bottleneck: a shadow-casting point light uses a six-face cubemap shadow, then the scene is rendered in stereo. This is a better explanation for the 33 FPS result than the 14.8 MB VRM download size alone.
 
-## Backends
-- GitHub: https://github.com/Mxthy/quest3-companion-vr
-- Drive: `docs/DRIVE_AND_CONNECTORS.md`
-- Wissensbasis MCP: zevra-vault-core (KnowledgeEntry)
+## Implemented on 2026-09-22
 
-## State
-- **XR immersive mode LIVE on Pages (2026-09-20 abends)** — VR button (VR-capable browsers only),
-  hands via frame.getJointPose (index-tip zone hit-test, generous radii, pinch=grab),
-  controllers (squeeze=grab, trigger=touch+burst), snap-turn locomotion (30 deg) + thumbstick move,
-  in-VR HUD (world-space, Billboard). Adapter isolation per platform-adapters: ONLY
-  `app/src/components/companion/xr-vr.tsx` touches WebXR; sim channel = adultRuntime.xrTouchPoints (plain Vec3).
-- Sim layer three.js-free: anchors registry moved to adapter (`adult-anchors.ts`), playerSim plain {x,y,z},
-  experience/elara/vrm-companion now write via adapter registry
-- `npm run assets` offline GLB pipeline (raw-assets/ -> public/models/, dedup/weld/prune/resample/meshopt,
-  KTX2 wenn toktx verfuegbbar, 100k-Tris-Budget-Warnung, VRM roh)
-- Desktop parity verified on prod: verify-adult + verify-spank green, arousal curve bit-identical
-  to pre-refactor (86 peak_build @ 10 bursts, bond 16). Hand visuals (XRHandModel) + KTX2 deferred.
-- `app/` = wired companion MVP (Grok workspace + Adult Core Phase 1), typecheck green
-- Headless browser verification PASSED (scripts/verify-adult.mjs, ?debug=1 probe):
-  18+ gate, walk, proximity, look=touch zones (breast_l), arousal idle->tease->hot->peak_build->orgasm->refractory,
-  bond 3->13..16, Erregung HUD, zone dialogue from adult_interaction.yaml, zero console errors
-- Adult core modules live in `src/core/adult/`, wired via `app/src/lib/companion/adult.ts`
-- Zone anchors on Elara placeholder, arousal HUD, 18+ gate, toy stub `toy_wand`
+- Immersive XR disables dynamic shadow-map passes.
+- Drei ContactShadows is desktop-only and limited to one 512px update.
+- Vivi no longer casts dynamic shadows.
+- Fixed foveation changed from 0.2 to 0.75.
+- Applied official three-vrm runtime utilities: unnecessary-vertex removal, skeleton combination, and morph combination.
+- `session_start` telemetry now records the exact XR quality profile, framebuffer size, GPU renderer string, and browser user agent.
 
-## Phase 2 status (2026-09-19/20)
-- vrm-companion.tsx: loads /models/vivi.vrm via @pixiv/three-vrm; falls back to Elara
-  when the file is 404/invalid (verified headless: full arousal curve still passes).
-  Zone anchors = detached Object3Ds refreshed per frame from humanoid bone world poses
-  (ZONE_BONES map, offsets in bone space). Idle: A-pose arms, spine breathing, head tracks player.
-- Spank path verified headless: teleport behind + pitch aim -> glute_l, Q -> spank
-  dialogue "Unverschamt. Mach weiter.", 0 console errors.
-- vivi.vrm (DCs_Vivi_nude_v01) placed at app/public/models/vivi.vrm (gitignored,
-  binary->Drive rule): VRM path ACTIVE and verified on the real rig 2026-09-20
-  (orgasm reached via breast zones, spank on glute_r, 0 console errors).
+The gameplay core and normalized VRM bone anchors are unchanged. Desktop and production adult-zone and spank regressions pass with zero console errors. The optimized build is live at https://quest-companion-dif.pages.dev.
 
-## Do next (stable path)
-1. User-side FPS re-check (Gate G0) WITH Vivi loaded - VRM adds ~14MB mesh+tex cost
-2. Then Phase 3 per CONTENT_SPEC (toys/props wiring)
-2. Measure Soft-Loop FPS WITH adult loop active on user machine (Gate G0 re-check)
-   (headless browser proxy verified; not a native Quest metric)
-3. Only then next feature per FEATURE_BUDGET (VRM Vivi, WebXR tier) — one at a time if FPS tight
-4. Kill switches in FEATURE_BUDGET if unstable
+## Asset facts
 
-## Resume
-README → app/README.md → BALANCED_SLICE → FEATURE_BUDGET → PROTOTYPE_ACCEPTANCE_TESTS
+`public/models/vivi.vrm` is 14.8 MB and intentionally gitignored. Inspection shows about 71.6k render vertices, 17.3k uploaded vertices, 93 glTF primitives, and 26 PNG textures. The textures are estimated at roughly 121 MB uncompressed GPU memory, including two 2048px body maps and a 2048px thumbnail. Generic glTF Transform reports the legacy `VRM` extension as unsupported, so the binary must not be rewritten with that generic path until metadata, expressions, spring bones, and normalized humanoid bones are proven intact.
+
+## Next check
+
+When the Quest 3 is available, run immersive VR continuously for at least two minutes. Compare FPS, draw calls, triangles, framebuffer, renderer, and render-probe brightness against the baseline. G0 remains unapproved until the real headset sustains the 72 Hz target (13.89 ms theoretical frame budget) without unacceptable visual loss.
 
 
-## Deployment (2026-09-20)
-- LIVE: https://quest-companion-dif.pages.dev (Cloudflare Pages, project quest-companion,
-  account 2115ac9b105867afb7dc06c60d47f112). Full regression green in prod:
-  18+ gate, walk, breast zones -> orgasm (burst 10), HUD; one cosmetic 404 (TBD).
-- Build: `NITRO_PRESET=cloudflare_pages npm run build` in app/ (vite.config.ts preset
-  now env-overridable, default vercel untouched). Deploy: `npx wrangler pages deploy dist
-  --project-name=quest-companion --branch=main` (wrangler now a devDependency).
-- Tokens (Cloudflare): Base44-Deploy (Workers/Pages/KV/Routes write, account-scoped;
-  zone rights to add later when a zone exists). Stored as CLOUDFLARE_DEPLOY_TOKEN in
-  agent secrets. The broad admin token is NOT in the repo.
-- Agent rule active: check zevra-vault-core MCP before any code change
-  (.agents/rules/check-vault-before-code.md). Vault currently EMPTY on
-  nitro/cloudflare-deploy/webxr-performance - gap to backfill.
+## Phase 3 props, 2026-09-22
+
+The engine-neutral `PropInteractionSystem` now mirrors the adult prop contract for `toy_wand`, `toy_ring`, `pillow_soft`, and `lube_bottle`. Allowed zones, socket offsets, radii, sensitivities, and the fixed lube arousal bonus are processed without Three.js or WebXR imports. Desktop and XR adapters feed the same core contract. XR supports direct pickup through hand pinch or controller squeeze and renders held props from the tracked pose.
+
+Focused core tests pass 3/3. The browser prop regression, adult interaction regression, and spank regression pass with zero console errors. The Cloudflare production bundle builds successfully. The new release is not live yet: Wrangler returned Cloudflare API authentication error `10000` while deploying. Refresh `CLOUDFLARE_API_TOKEN` with Pages deployment permission, then deploy and repeat the live smoke tests before marking Phase 3 live. The broader repository suite still has eight unrelated existing PWA metadata fixture failures.
 
 
-## Roadmap-Pivot (2026-09-20, Eva)
-- ENDFZIEL: Unity 6 + OpenXR + Multiview als natives Quest-APK (siehe Vault
-  life-vibe/quest/unity-openxr). WebXR-App = austauschbare Demo.
-- Architektur verbindlich (Vault life-vibe/architecture/platform-adapters):
-  geteilte Simulations-Kern (Arousal, Zonen, Dialog, Bond, Events) OHNE three.js/XR-Imports
-  in src/core/; Rendering/Input in Adaptern (clients/webxr spaeter clients/unity).
-  Gameplay konsumiert InputActions, nie rohe Controller-APIs.
-- Reihenfolge: (1) Core-Refactoring + WebXR-Immersive-Modus im Demo-Client,
-  (2) G0-FPS-Gate neu als immersive Messung, (3) Assets ueber GLB-Pipeline
-  (KTX2/Meshopt/LOD, Quest-Budgets), (4) Unity-Scaffold als eigenstaendiger Client.
-- AAA-Assets: Agent kann prozedurale/stilisierte Welt + Beleuchtung bauen; photorealistische
-  AAA-Assets muessen geliefert oder lizenziert werden (Unity Asset Store / Fab / Meta), dann
-  durch die GLB-Pipeline. VRM bleibt Companion-Format (Bone-Identitaet = Asset-Identity).
+## Phase 3 live release, 2026-09-22
+
+Phase 3 is live at `https://quest-companion-dif.pages.dev` (deployment `https://039e8a29.quest-companion-dif.pages.dev`). Production HTTP returned 200. Live `verify-props`, `verify-adult`, and `verify-spank` all passed with zero console errors.
+
+The Pages rollout used an ephemeral least-privilege token created through Cloudflare's API from the existing token-manager credential. It was limited to this account, verified against `quest-companion`, used only in Wrangler's child-process environment, and revoked immediately after deployment. The reusable Superagent skill is `cloudflare-scoped-pages-token`; it repeats this create, verify, deploy, revoke lifecycle without exposing or persisting the temporary token.
+
+Remaining gate: perform the immersive Quest 3 G0 FPS/device check on the live Phase 3 build. The ZEVRA Vault had no focused Cloudflare API-token entry; consider adding the validated ephemeral-token pattern.
+
+## Native C++ OpenXR bootstrap, 2026-09-22
+
+The native engine direction now has a bounded Android/C++ scaffold at `native/QuestCompanionNative`. It follows the Vault contracts for an ARM64-only GameActivity application, Khronos OpenXR Loader AAR, Android loader initialization, and reproducible GitHub compilation. The previous Unity scaffold remains available as a fallback under its renamed Unity workflow.
+
+The pinned native matrix is JDK 17, Gradle 8.9, AGP 8.7.3, compile/target SDK 35, minimum SDK 29, NDK 27.2.12479018, CMake 3.22.1, GameActivity 4.4.2, and OpenXR Loader 1.1.63. The C++ bootstrap calls `xrInitializeLoaderKHR`, requires the Android-create-instance and Vulkan-enable2 extensions, creates the OpenXR instance, polls events, and discovers/logs the HMD system. It also emits stable Logcat tags `QuestCompanion` and `QuestCompanionXR`.
+
+`.github/workflows/build-native-quest-apk.yml` installs the pinned toolchain, builds a debug-signed `arm64-v8a` APK, verifies the manifest and ABI, calculates SHA-256, and stores the APK plus unstripped native symbols for 14 days. Workflow actions are pinned to immutable commit revisions. `npm run validate:native`, `npm run validate:unity`, and Android XML parsing pass locally.
+
+This is only a statically validated bootstrap. The local sandbox has no JDK, Android SDK, CMake, or Git remote, so no real APK was compiled or uploaded in this run. Do not claim rendering or device readiness yet. The next gate is a successful GitHub workflow artifact. Only after that should Vulkan device creation, OpenXR session state, swapchains, stereo multiview, input, and VRM loading be implemented in separate verified gates.
+

@@ -1,55 +1,117 @@
-updated: "2026-09-20T19:55:00Z"
-milestone: shared_core_vr_demo
-phase: xr_immersive_live
+project: quest-companion-vr
+updated: 2026-09-22
+phase: native_openxr_bootstrap_scaffold
+target:
+  device: Meta Quest 3
+  refresh_hz: 72
+  frame_budget_ms: 13.89
+baseline_2026_09_20:
+  source: production Quest telemetry
+  samples: 889
+  fps:
+    mean: 33.3
+    min: 21
+    p95: 40
+    max: 57
+  draw_calls:
+    mean: 879.3
+    min: 841
+    p95: 897
+    max: 930
+  triangles:
+    mean: 277704
+    p95: 291116
+analysis:
+  primary_bottleneck: dynamic point-light cubemap shadow; six extra scene passes plus stereo explain roughly 879 draw calls
+  secondary_bottlenecks:
+    - per-frame ContactShadows pass
+    - VRM skin and morph CPU work
+    - 26 PNG textures, about 121 MB estimated uncompressed GPU memory
+changes_2026_09_22:
+  - dynamic WebGL shadow map disabled during immersive XR
+  - ContactShadows desktop-only, one frame at 512 resolution
+  - avatar castShadow disabled
+  - fixed foveation raised from 0.2 to 0.75
+  - three-vrm runtime optimizations: removeUnnecessaryVertices, combineSkeletons, combineMorphs
+  - XR session telemetry now records quality profile, framebuffer, renderer and user agent
+validation:
+  current_live_deployment: https://quest-companion-dif.pages.dev
+  phase3_live: passed
+  phase3_deployment: https://039e8a29.quest-companion-dif.pages.dev
+  production_alias: https://quest-companion-dif.pages.dev
+  production_http: 200
+  cloudflare_build: passed
+  typecheck: passed
+  prop_core_tests: 3_passed
+  verify_props: passed_zero_console_errors
+  verify_adult: passed_zero_console_errors
+  verify_spank: passed_zero_console_errors
+  unrelated_existing_pwa_metadata_tests: 8_failed
+phase3_props_2026_09_22:
+  status: live_verified
+  props:
+    - toy_wand
+    - toy_ring
+    - pillow_soft
+    - lube_bottle
+  architecture:
+    - engine-neutral PropInteractionSystem owns definitions and allowed-zone collision math
+    - desktop and XR adapters feed the same core data contract
+    - XR pinch and controller squeeze support direct pickup and held-pose rendering
+    - authored socket offsets, sensitivities, accepted zones and lube bonus are wired
+  deployment_security:
+    - temporary least-privilege token minted through Cloudflare API
+    - scoped to one account with Pages Read/Write plus Wrangler metadata reads
+    - token verified against the exact project and revoked after deployment
+next:
+  - push or sync the scaffold so GitHub can run build-native-quest-apk.yml
+  - accept the bootstrap gate only after GitHub produces a non-empty arm64-v8a APK and symbol artifact
+  - inspect the first workflow log before implementing Vulkan device, OpenXR session or swapchains
+  - when Quest 3 is available, install the bootstrap APK and capture QuestCompanion/QuestCompanionXR logcat
+  - continue the existing immersive WebXR G0 test when physical Quest 3 access returns
+constraints:
+  - validate every code change against zevra-vault-core first
+  - VRM binaries stay out of Git
+  - physical headset remains final authority for FPS and thermals
 
-completed:
-  - xr_immersive_mode  # 2026-09-20: XR-Adapter (xr-vr.tsx) live auf Pages, Desktop-Paritaet verifiziert
-  - neutral_interaction_core
-  - ContactBridge_drop_in
-  - experience_with_bridge
-  - store_contact_fields
-  - IntensityHud
-  - APPLY_checklist
-  - adult_core_modules_from_repo
-  - zone_anchors_on_elara
-  - arousal_hud_18plus_gate
-  - toy_stub_wand
-  - wired_mvp_pushed_to_github_app
-  - headless_browser_verification
-  - gate_enter_walk_zone_look_touch_ok
-  - arousal_curve_to_orgasm_ok
-  - zone_dialogue_from_yaml_ok
-  - q_spank_glute_verified_headless
-  - vrm_companion_scaffold_with_fallback
-  - verify-spank.mjs_with_debug_teleport
-  - vivi_vrm_placed_in_public_models
-  - vrm_path_orgasm_verified
-  - vrm_path_spank_verified
-  - cloudflare_pages_deploy_quest_companion_dif_pages_dev
-  - live_regression_orgasm_verified
-
-pending_in_user_preview:
-  - verify_on_user_machine_headset_feel
-  - map_xr_grip_trigger_to_holding_burst
-  - fps_measurement_gate_g0_recheck_now_in_immersive_mode
-  - vrm_vivi_replaces_placeholder
-
-roadmap_decision_2026_09_20: >
-  PIVOT (Eva): Endziel ist ein Unity-kompiliertes natives Spiel (Quest APK, Unity 6 +
-  OpenXR, Multiview). Die WebXR-App ist eine VORLAEUFIGE DEMO und muss so gebaut werden,
-  dass die Engine austauschbar bleibt. Bindend: life-vibe/architecture/platform-adapters -
-  Simulation ist das Spiel, WebXR + Unity sind nur Rendering/Input-Clients. Gameplay
-  importiert NIEMALS rohe XR-APIs. Phase 2.5: echtes VR im WebXR-Demo (XR-Session,
-  Haende/Controller, Locomotion, Comfort) + Core-Refactoring (src/core ohne three.js).
-
-next_action: >
-  GATE G0 IMMERSIVE FPS TEST ON QUEST (user): open https://quest-companion-dif.pages.dev
-  in the Quest 3 browser, start the game, tap the new VR button (only visible when
-  immersive-vr supported), verify hands tracked + pinch=grab + finger-tip touch zones +
-  snap-turn locomotion + in-VR HUD, report FPS (target 72 stable) and any tracking loss.
-  Desktop parity verified 2026-09-20: verify-adult + verify-spank green on prod, arousal
-  curve bit-identical to pre-refactor (86/peak_build at 10 bursts, bond 16; orgasm needs
-  more bursts at current pacing - tuning TBD, not a regression).
-  Deploy recipe unchanged: NITRO_PRESET=cloudflare_pages npm run build (in app/) then
-  `npx wrangler pages deploy dist --project-name=quest-companion --branch=main`.
-  vivi.vrm stays out of git (Drive rule); prod serves it from dist upload (200 OK).
+native_runtime_2026_09_22:
+  status: scaffold_static_validated_apk_build_pending
+  path: native/QuestCompanionNative
+  scope: companion-specific Android C++ OpenXR runtime, not a general engine
+  vault_contract:
+    - native-quest-runtime/toolchain/android-ndk-github-actions-apk/overview
+    - native-quest-runtime/components/android-gameactivity-lifecycle/overview
+    - native-quest-runtime/components/meta-openxr-sdk-samples/cheatsheet
+  build_matrix:
+    jdk: 17
+    gradle: 8.9
+    agp: 8.7.3
+    compile_sdk: 35
+    target_sdk: 35
+    min_sdk: 29
+    ndk: 27.2.12479018
+    cmake: 3.22.1
+    game_activity: 4.4.2
+    openxr_loader: 1.1.63
+    abi: arm64-v8a
+    cpp: 20
+  implemented:
+    - GameActivity lifecycle shell
+    - xrInitializeLoaderKHR Android bootstrap
+    - required Android-create-instance and Vulkan-enable2 extension gates
+    - OpenXR instance creation, runtime logging and HMD system discovery
+    - pinned GitHub Actions debug APK build with checksum and unstripped symbols
+    - 16 KB native page-size linker alignment and basic native hardening
+    - repository guards against VRM, APK, AAB, keystore and generated native binaries
+  validation:
+    static_native_scaffold: passed
+    unity_fallback_scaffold: passed
+    android_xml: passed
+    dependency_aar_interfaces: verified
+    actual_apk_compile: pending_github_actions
+    physical_device: pending_quest3
+  explicit_nonclaims:
+    - no Vulkan device or render pipeline yet
+    - no OpenXR session, swapchains or stereo frame yet
+    - no controller or hand tracking yet
+    - no VRM loader yet
