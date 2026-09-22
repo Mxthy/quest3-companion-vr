@@ -64,7 +64,7 @@ phase3_props_2026_09_22:
     - scoped to one account with Pages Read/Write plus Wrangler metadata reads
     - token verified against the exact project and revoked after deployment
 next:
-  - inspect GitHub run 35744768797 and accept the bootstrap gate only after it produces a non-empty arm64-v8a APK and symbol artifact
+  - install the verified debug APK from GitHub run 35745713618 on Quest 3 and capture bootstrap logcat
   - inspect the first workflow log before implementing Vulkan device, OpenXR session or swapchains
   - when Quest 3 is available, install the bootstrap APK and capture QuestCompanion/QuestCompanionXR logcat
   - continue the existing immersive WebXR G0 test when physical Quest 3 access returns
@@ -107,17 +107,27 @@ native_runtime_2026_09_22:
     unity_fallback_scaffold: passed
     android_xml: passed
     dependency_aar_interfaces: verified
-    actual_apk_compile: third_retry_pending_after_vulkan_header_fix
+    actual_apk_compile: passed
     physical_device: pending_quest3
     github_commit: 6ec8d6c83b12bd1e6001dcac0b0b9601d5755590
-    github_workflow_run: 35744768797
-    github_workflow_url: https://github.com/Mxthy/quest3-companion-vr/actions/runs/35744768797
+    first_github_workflow_run: 35744768797
+    first_github_workflow_url: https://github.com/Mxthy/quest3-companion-vr/actions/runs/35744768797
     first_ci_failure: android-actions/setup-android requested removed SDK package tools
     remediation: use the runner preinstalled SDK and install only pinned packages with sdkmanager
     second_ci_failure: sdkmanager was installed but absent from PATH
     second_remediation: resolve the newest preinstalled cmdline-tools sdkmanager by absolute path
     third_ci_failure: OpenXR Vulkan extension types compiled before Vulkan declarations
     third_remediation: include vulkan/vulkan.h before openxr/openxr_platform.h
+    successful_github_commit: bafb2b089e52d83187bec800532dc1ac11962d51
+    successful_github_workflow_run: 35745713618
+    successful_github_workflow_url: https://github.com/Mxthy/quest3-companion-vr/actions/runs/35745713618
+    artifact_id: 10702583169
+    artifact_name: quest-companion-native-4
+    artifact_expires: 2026-10-06T15:13:55Z
+    apk_bytes: 4004237
+    apk_sha256: 95400146bdf35e220f055ebdb34ec995d9e80b353149a85d263dcedb278e1bdf
+    checksum_verified: true
+    unstripped_symbol_bytes: 999104
   explicit_nonclaims:
     - no Vulkan device or render pipeline yet
     - no OpenXR session, swapchains or stereo frame yet

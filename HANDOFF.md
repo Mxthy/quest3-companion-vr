@@ -58,3 +58,11 @@ Run `35744768797` failed before compilation inside `android-actions/setup-androi
 Retry run `35745028019` reached the pinned toolchain step but failed because `sdkmanager` was installed under the hosted runner's Android SDK and not exported on `PATH`. The workflow now resolves the newest preinstalled `cmdline-tools/*/bin/sdkmanager` by absolute path, exports `ANDROID_HOME`/`ANDROID_SDK_ROOT`, and keeps all installed packages explicitly pinned.
 Run `35745257630` successfully installed the complete pinned Android toolchain and reached C++ compilation. Compilation then exposed a deterministic include-order defect: `openxr_platform.h` saw `XR_USE_GRAPHICS_API_VULKAN` before Vulkan types were declared. `openxr_bootstrap.cpp` now includes `vulkan/vulkan.h` before the OpenXR platform header.
 
+## Native APK compiler gate passed, 2026-09-22
+
+GitHub Actions run `35745713618` completed successfully from commit `bafb2b089e52d83187bec800532dc1ac11962d51`: https://github.com/Mxthy/quest3-companion-vr/actions/runs/35745713618. Every workflow step passed, including pinned Android toolchain installation, Gradle/CMake compilation, APK manifest and `arm64-v8a` verification, checksum generation, unstripped symbol collection, and artifact upload.
+
+Artifact `quest-companion-native-4` (`10702583169`) contains a 4,004,237-byte debug APK, its SHA-256 file, a 999,104-byte unstripped `libquest_companion.so`, and the pinned version catalog. The downloaded APK checksum was independently verified as `95400146bdf35e220f055ebdb34ec995d9e80b353149a85d263dcedb278e1bdf`. GitHub retains the artifact until 2026-10-06 15:13:55 UTC.
+
+The compiler gate is now green. The runtime is still only an OpenXR bootstrap: the next gate is physical installation and Logcat confirmation on Quest 3, followed by Vulkan device/session/swapchain work. Do not claim stereo rendering, controller tracking, hand tracking, VRM rendering, thermals, or 72 Hz yet.
+
