@@ -107,7 +107,7 @@ native_runtime_2026_09_22:
     unity_fallback_scaffold: passed
     android_xml: passed
     dependency_aar_interfaces: verified
-    actual_apk_compile: second_retry_pending_after_sdkmanager_path_fix
+    actual_apk_compile: third_retry_pending_after_vulkan_header_fix
     physical_device: pending_quest3
     github_commit: 6ec8d6c83b12bd1e6001dcac0b0b9601d5755590
     github_workflow_run: 35744768797
@@ -116,6 +116,8 @@ native_runtime_2026_09_22:
     remediation: use the runner preinstalled SDK and install only pinned packages with sdkmanager
     second_ci_failure: sdkmanager was installed but absent from PATH
     second_remediation: resolve the newest preinstalled cmdline-tools sdkmanager by absolute path
+    third_ci_failure: OpenXR Vulkan extension types compiled before Vulkan declarations
+    third_remediation: include vulkan/vulkan.h before openxr/openxr_platform.h
   explicit_nonclaims:
     - no Vulkan device or render pipeline yet
     - no OpenXR session, swapchains or stereo frame yet

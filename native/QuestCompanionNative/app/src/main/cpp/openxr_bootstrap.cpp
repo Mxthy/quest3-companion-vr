@@ -1,6 +1,7 @@
 #include "openxr_bootstrap.h"
 
 #include <android/log.h>
+#include <vulkan/vulkan.h>
 #include <openxr/openxr_platform.h>
 
 #include <algorithm>
