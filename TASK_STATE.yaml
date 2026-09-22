@@ -64,8 +64,7 @@ phase3_props_2026_09_22:
     - scoped to one account with Pages Read/Write plus Wrangler metadata reads
     - token verified against the exact project and revoked after deployment
 next:
-  - push or sync the scaffold so GitHub can run build-native-quest-apk.yml
-  - accept the bootstrap gate only after GitHub produces a non-empty arm64-v8a APK and symbol artifact
+  - inspect GitHub run 35744768797 and accept the bootstrap gate only after it produces a non-empty arm64-v8a APK and symbol artifact
   - inspect the first workflow log before implementing Vulkan device, OpenXR session or swapchains
   - when Quest 3 is available, install the bootstrap APK and capture QuestCompanion/QuestCompanionXR logcat
   - continue the existing immersive WebXR G0 test when physical Quest 3 access returns
@@ -108,8 +107,11 @@ native_runtime_2026_09_22:
     unity_fallback_scaffold: passed
     android_xml: passed
     dependency_aar_interfaces: verified
-    actual_apk_compile: pending_github_actions
+    actual_apk_compile: github_actions_queued
     physical_device: pending_quest3
+    github_commit: 6ec8d6c83b12bd1e6001dcac0b0b9601d5755590
+    github_workflow_run: 35744768797
+    github_workflow_url: https://github.com/Mxthy/quest3-companion-vr/actions/runs/35744768797
   explicit_nonclaims:
     - no Vulkan device or render pipeline yet
     - no OpenXR session, swapchains or stereo frame yet
