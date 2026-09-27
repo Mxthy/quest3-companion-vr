@@ -5,7 +5,11 @@ import { interactObjects } from "@/lib/companion/interact";
 import { heldKeys, installControlsProbe, playerSim } from "@/lib/companion/player-ref";
 import { promptFor, useCompanion } from "@/lib/companion/store";
 import { updateListener } from "@/lib/companion/audio";
-import { setXrActive, xrActive } from "@/lib/companion/adult";
+import { xrActive } from "@/lib/companion/adult";
+import {
+  nonXrStandingEyeHeight,
+  shouldStandFromMovement,
+} from "@/lib/companion/view-height.mjs";
 import { COLLIDERS, ROOM_BOUNDS } from "./room";
 import { CupMesh, LanternMesh, ToyWandMesh, VinylMesh } from "./interactables";
 
@@ -43,7 +47,7 @@ export function Player() {
   const dragging = useRef(false);
   const moved = useRef(false);
   const last = useRef({ x: 0, y: 0 });
-  const wasSeated = useRef(false);
+  const coarsePointer = useRef(false);
 
   useEffect(() => {
     installControlsProbe();
@@ -68,9 +72,17 @@ export function Player() {
     window.addEventListener("keydown", onDown);
     window.addEventListener("keyup", onUp);
     window.addEventListener("blur", clear);
-    document.addEventListener("visibilitychange", () => {
+    const onVisibility = () => {
       if (document.hidden) clear();
-    });
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+
+    const pointerMq = window.matchMedia("(pointer: coarse)");
+    const updatePointer = () => {
+      coarsePointer.current = pointerMq.matches;
+    };
+    updatePointer();
+    pointerMq.addEventListener("change", updatePointer);
 
     const el = gl.domElement;
     const onPointerDown = (e: PointerEvent) => {
@@ -111,6 +123,8 @@ export function Player() {
       window.removeEventListener("keydown", onDown);
       window.removeEventListener("keyup", onUp);
       window.removeEventListener("blur", clear);
+      document.removeEventListener("visibilitychange", onVisibility);
+      pointerMq.removeEventListener("change", updatePointer);
       el.removeEventListener("pointerdown", onPointerDown);
       el.removeEventListener("pointermove", onPointerMove);
       el.removeEventListener("pointerup", onPointerUp);
@@ -123,6 +137,7 @@ export function Player() {
     const phase = useCompanion.getState().phase;
     const seated = useCompanion.getState().seated;
     const inXR = xrActive; // immersive session: XR adapter owns the camera/rig
+    const standingEyeHeight = nonXrStandingEyeHeight(coarsePointer.current);
     if (inXR) camera.getWorldPosition(POS);
     else POS.set(playerSim.position.x, playerSim.position.y, playerSim.position.z);
 
@@ -164,9 +179,10 @@ export function Player() {
       camera.rotation.y = playerSim.yaw;
       camera.rotation.x = playerSim.pitch;
       const keys = heldKeys();
-      if (keys.has("KeyW") || keys.has("KeyA") || keys.has("KeyS") || keys.has("KeyD")) {
+      const keyboardMovement = keys.has("KeyW") || keys.has("KeyA") || keys.has("KeyS") || keys.has("KeyD");
+      if (shouldStandFromMovement(playerSim.touchMove.x, playerSim.touchMove.y, keyboardMovement)) {
         useCompanion.getState().stand();
-        POS.set(0.62, 1.62, 1.05);
+        POS.set(0.62, standingEyeHeight, 1.05);
         playerSim.position.x = POS.x;
         playerSim.position.y = POS.y;
         playerSim.position.z = POS.z;
@@ -193,7 +209,7 @@ export function Player() {
       NEXT.addScaledVector(RIGHT, ax * speed * dt);
       if (!blocked(NEXT.x, POS.z)) POS.x = NEXT.x;
       if (!blocked(POS.x, NEXT.z)) POS.z = NEXT.z;
-      POS.y = 1.62;
+      POS.y = standingEyeHeight;
       playerSim.position.x = POS.x;
       playerSim.position.y = POS.y;
       playerSim.position.z = POS.z;
