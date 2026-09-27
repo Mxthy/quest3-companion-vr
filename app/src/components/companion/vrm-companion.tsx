@@ -2,10 +2,6 @@
  * VRM companion (Phase 2): loads /models/vivi.vrm when present and maps the
  * adult touch zones onto humanoid bones. Falls back to the Elara placeholder
  * (same anchor contract) when the file is missing or fails to load.
- *
- * Anchor strategy: detached Object3Ds in a scene-root group; each frame the
- * bone world pose is copied in (world pos + world-quaternion-rotated offset).
- * This survives rig differences (raw bone names, proxy hierarchies).
  */
 
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
@@ -20,7 +16,6 @@ import type { ZoneId } from "@/core/adult/TouchZoneSystem";
 
 const VRM_URL = "/models/vivi.vrm";
 
-/** Zone -> humanoid bone + local offset (bone space, meters). */
 const ZONE_BONES: Array<[ZoneId, string, [number, number, number]]> = [
   ["head", "head", [0, 0.08, 0.02]],
   ["mouth", "head", [0, -0.06, 0.09]],
@@ -41,6 +36,18 @@ const ZONE_BONES: Array<[ZoneId, string, [number, number, number]]> = [
 const Q_TMP = new THREE.Quaternion();
 const OFF_TMP = new THREE.Vector3();
 
+type RestPose = {
+  spineX: number;
+  chestZ: number;
+  hipsY: number;
+  leftArmZ: number;
+  rightArmZ: number;
+  leftForearmZ: number;
+  rightForearmZ: number;
+  headX: number;
+  headY: number;
+};
+
 function VrmBody({ vrm }: { vrm: VRM }) {
   const root = useRef<THREE.Group>(null);
   const anchorsRoot = useRef<THREE.Group>(null);
@@ -53,12 +60,33 @@ function VrmBody({ vrm }: { vrm: VRM }) {
     return map;
   }, [vrm]);
 
-  // A-pose arms + anchor registration
+  const head = vrm.humanoid.getNormalizedBoneNode("head");
+  const spine = vrm.humanoid.getNormalizedBoneNode("spine");
+  const chest = vrm.humanoid.getNormalizedBoneNode("chest");
+  const hips = vrm.humanoid.getNormalizedBoneNode("hips");
+  const leftUpperArm = vrm.humanoid.getNormalizedBoneNode("leftUpperArm");
+  const rightUpperArm = vrm.humanoid.getNormalizedBoneNode("rightUpperArm");
+  const leftLowerArm = vrm.humanoid.getNormalizedBoneNode("leftLowerArm");
+  const rightLowerArm = vrm.humanoid.getNormalizedBoneNode("rightLowerArm");
+  const restPose = useRef<RestPose | null>(null);
+
+  // Relax the imported T/A pose once, then animate small offsets around it.
   useLayoutEffect(() => {
-    const lArm = vrm.humanoid.getNormalizedBoneNode("leftUpperArm");
-    const rArm = vrm.humanoid.getNormalizedBoneNode("rightUpperArm");
-    if (lArm) lArm.rotation.z = 1.15;
-    if (rArm) rArm.rotation.z = -1.15;
+    restPose.current = {
+      spineX: spine?.rotation.x ?? 0,
+      chestZ: chest?.rotation.z ?? 0,
+      hipsY: hips?.rotation.y ?? 0,
+      leftArmZ: 1.0,
+      rightArmZ: -1.0,
+      leftForearmZ: (leftLowerArm?.rotation.z ?? 0) - 0.12,
+      rightForearmZ: (rightLowerArm?.rotation.z ?? 0) + 0.12,
+      headX: head?.rotation.x ?? 0,
+      headY: head?.rotation.y ?? 0,
+    };
+    if (leftUpperArm) leftUpperArm.rotation.z = 1.0;
+    if (rightUpperArm) rightUpperArm.rotation.z = -1.0;
+    if (leftLowerArm) leftLowerArm.rotation.z = restPose.current.leftForearmZ;
+    if (rightLowerArm) rightLowerArm.rotation.z = restPose.current.rightForearmZ;
 
     const g = anchorsRoot.current;
     if (!g) return;
@@ -71,7 +99,7 @@ function VrmBody({ vrm }: { vrm: VRM }) {
     return () => {
       for (const [z] of found) unregisterAdultAnchor(z);
     };
-  }, [vrm]);
+  }, [chest, head, hips, leftLowerArm, leftUpperArm, rightLowerArm, rightUpperArm, spine]);
 
   useEffect(() => {
     return () => {
@@ -79,27 +107,35 @@ function VrmBody({ vrm }: { vrm: VRM }) {
     };
   }, [vrm]);
 
-  const head = vrm.humanoid.getNormalizedBoneNode("head");
-  const spine = vrm.humanoid.getNormalizedBoneNode("spine");
-
   useFrame((state, raw) => {
     const dt = Math.min(raw, 0.1);
     const t = state.clock.elapsedTime;
+    const rest = restPose.current;
 
-    // Breathing via spine sway; head tracks the player like the placeholder.
-    if (spine) spine.rotation.x = Math.sin(t * 1.35) * 0.012;
-    if (head) {
-      const dx = playerSim.position.x - 0;
-      const dz = playerSim.position.z - -1.52;
-      const yaw = THREE.MathUtils.clamp(Math.atan2(dx, dz), -0.85, 0.85);
-      head.rotation.y = THREE.MathUtils.damp(head.rotation.y, yaw, 3.4, dt);
-      const pitch = THREE.MathUtils.clamp((playerSim.position.y - 1.35) * 0.12, -0.18, 0.16);
-      head.rotation.x = THREE.MathUtils.damp(head.rotation.x, pitch, 3.4, dt);
+    if (rest) {
+      const breath = Math.sin(t * 1.35);
+      const weight = Math.sin(t * 0.42);
+      if (spine) spine.rotation.x = rest.spineX + breath * 0.018;
+      if (chest) chest.rotation.z = rest.chestZ + weight * 0.025;
+      if (hips) hips.rotation.y = rest.hipsY + weight * 0.018;
+      if (leftUpperArm) leftUpperArm.rotation.z = rest.leftArmZ + breath * 0.022 + weight * 0.015;
+      if (rightUpperArm) rightUpperArm.rotation.z = rest.rightArmZ - breath * 0.022 + weight * 0.015;
+      if (leftLowerArm) leftLowerArm.rotation.z = rest.leftForearmZ + Math.sin(t * 0.7) * 0.018;
+      if (rightLowerArm) rightLowerArm.rotation.z = rest.rightForearmZ - Math.sin(t * 0.7) * 0.018;
+
+      if (head) {
+        const dx = playerSim.position.x;
+        const dz = playerSim.position.z + 1.52;
+        const yaw = THREE.MathUtils.clamp(Math.atan2(dx, dz), -0.85, 0.85);
+        head.rotation.y = THREE.MathUtils.damp(head.rotation.y, rest.headY + yaw, 3.4, dt);
+        const pitch = THREE.MathUtils.clamp((playerSim.position.y - 1.35) * 0.12, -0.18, 0.16);
+        const idleNod = Math.sin(t * 0.55) * 0.012;
+        head.rotation.x = THREE.MathUtils.damp(head.rotation.x, rest.headX + pitch + idleNod, 3.4, dt);
+      }
     }
 
     vrm.update(dt);
 
-    // Refresh anchor world positions from bone poses.
     if (anchorsRoot.current) {
       for (const [zone, [bone, off]] of bones) {
         const target = anchorsRoot.current.children.find(
@@ -107,7 +143,7 @@ function VrmBody({ vrm }: { vrm: VRM }) {
         );
         if (!target || !bone) continue;
         bone.getWorldPosition(target.position);
-        target.getWorldQuaternion(Q_TMP);
+        bone.getWorldQuaternion(Q_TMP);
         OFF_TMP.copy(off).applyQuaternion(Q_TMP);
         target.position.add(OFF_TMP);
       }
