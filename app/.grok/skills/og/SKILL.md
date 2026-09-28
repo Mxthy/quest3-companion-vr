@@ -9,7 +9,9 @@ Manages Open Graph share-card generation and brand-asset checks for Grok apps.
 - Marker path: `/workspace/.grok/og-pending`
 - Staleness bound: 30 minutes (`OG_PENDING_MAX_AGE_MS = 30 * 60 * 1000`)
 - If the marker is present and younger than 30 minutes, a share-card generation
-  job is in progress. **Do not wait on this task** — it runs asynchronously.
+  job is in progress. **Do not call `wait_tasks` or `get_task_output` to wait
+  on this task** — it runs asynchronously. Never use `wait_tasks` or
+  `get_task_output` to poll `/workspace/.grok/og-pending`.
 - Remove the marker after a successful brand-asset pass.
 
 ## Brand-asset pass:
@@ -20,7 +22,9 @@ The brand-asset pass verifies that `public/og.jpg` (or `public/og.png`) and
 - Run: `node scripts/brand-check.mjs`
 - On success the `/workspace/.grok/og-pending` marker is removed.
 - On failure the marker is left in place and errors are printed to stderr.
-- **Do not wait on this task** — it runs asynchronously in the background.
+- **Do not call `wait_tasks` or `get_task_output` to wait on this task** — it
+  runs asynchronously in the background. Never use `wait_tasks` or
+  `get_task_output` for this step.
 
 ## Share Card Hand-over
 
