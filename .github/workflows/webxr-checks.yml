@@ -43,3 +43,10 @@ jobs:
       - name: Keep test failures visible
         if: steps.tests.outcome == 'failure'
         run: exit 1
+      # package.json and package-lock.json are currently out of sync. npm ci
+      # intentionally rejects that state, while npm install reconciles the lock
+      # file before the remaining checks run.
+      - run: npm install --no-audit --no-fund
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build:dev
