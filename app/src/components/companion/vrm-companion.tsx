@@ -6,6 +6,13 @@
 
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
+import {
+  setImmersionMix,
+  setSourcePosition,
+  tickCloth,
+  tickClosePulse,
+} from "@/lib/companion/apartment";
+import { useCompanion } from "@/lib/companion/store";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { VRM, VRMLoaderPlugin, VRMUtils } from "@pixiv/three-vrm";
 import * as THREE from "three";
@@ -34,6 +41,8 @@ const ZONE_BONES: Array<[ZoneId, string, [number, number, number]]> = [
 ];
 
 const Q_TMP = new THREE.Quaternion();
+const HEAD_POS = new THREE.Vector3();
+const LAST_VIVI = { x: 0, z: 0, yaw: 0 };
 const OFF_TMP = new THREE.Vector3();
 
 type RestPose = {
@@ -135,6 +144,29 @@ function VrmBody({ vrm }: { vrm: VRM }) {
     }
 
     vrm.update(dt);
+
+    // Ported apartment spatial sources — Vivi head/cloth/feet (Zevra-KB:
+    // positional sources need per-frame positions or they drift/stick).
+    if (head) {
+      head.getWorldPosition(HEAD_POS);
+      setSourcePosition("vivi_head", HEAD_POS.x, HEAD_POS.y, HEAD_POS.z);
+      setSourcePosition("vivi_cloth", HEAD_POS.x, HEAD_POS.y - 0.35, HEAD_POS.z);
+    }
+    setSourcePosition("vivi_feet", vrm.scene.position.x, 0.05, vrm.scene.position.z);
+    const dx = playerSim.position.x - (head ? HEAD_POS.x : vrm.scene.position.x);
+    const dz = playerSim.position.z - (head ? HEAD_POS.z : vrm.scene.position.z);
+    const proximity = THREE.MathUtils.clamp(1 - Math.hypot(dx, dz) / 2.5, 0, 1);
+    const viviMoving =
+      Math.hypot(vrm.scene.position.x - LAST_VIVI.x, vrm.scene.position.z - LAST_VIVI.z) > 0.002;
+    const viviTurning = Math.abs(vrm.scene.rotation.y - LAST_VIVI.yaw) > 0.01;
+    LAST_VIVI.x = vrm.scene.position.x;
+    LAST_VIVI.z = vrm.scene.position.z;
+    LAST_VIVI.yaw = vrm.scene.rotation.y;
+    tickCloth({ dt, proximity, turning: viviTurning, moving: viviMoving });
+    const st = useCompanion.getState();
+    tickClosePulse({ dt, proximity, consent: st.companion.consentScope.length > 0 });
+    const night = st.gameMinutes < 6 * 60 || st.gameMinutes >= 22 * 60;
+    setImmersionMix(proximity, st.companion.trust / 100, night);
 
     if (anchorsRoot.current) {
       for (const [zone, [bone, off]] of bones) {

@@ -5,6 +5,13 @@ import { interactObjects } from "@/lib/companion/interact";
 import { heldKeys, installControlsProbe, playerSim } from "@/lib/companion/player-ref";
 import { promptFor, useCompanion } from "@/lib/companion/store";
 import { updateListener } from "@/lib/companion/audio";
+import {
+  setAmbience,
+  setSourcePosition,
+  tickFootsteps,
+  unlockAudio as unlockApartmentAudio,
+  updateAudioListener,
+} from "@/lib/companion/apartment";
 import { xrActive } from "@/lib/companion/adult";
 import {
   nonXrStandingEyeHeight,
@@ -14,6 +21,9 @@ import { COLLIDERS, ROOM_BOUNDS } from "./room";
 import { CupMesh, LanternMesh, ToyWandMesh, VinylMesh } from "./interactables";
 
 const FORWARD = new THREE.Vector3();
+const FWD3 = new THREE.Vector3();
+let apartmentUnlocked = false;
+let ambienceOn = false;
 const RIGHT = new THREE.Vector3();
 const NEXT = new THREE.Vector3();
 const POS = new THREE.Vector3(); // THREE mirror of playerSim.position (render layer math)
@@ -135,6 +145,10 @@ export function Player() {
   useFrame((state, raw) => {
     const dt = Math.min(raw, 0.1);
     const phase = useCompanion.getState().phase;
+    if (phase !== "playing" && ambienceOn) {
+      setAmbience(false);
+      ambienceOn = false;
+    }
     const seated = useCompanion.getState().seated;
     const inXR = xrActive; // immersive session: XR adapter owns the camera/rig
     const standingEyeHeight = nonXrStandingEyeHeight(coarsePointer.current);
@@ -241,6 +255,22 @@ export function Player() {
       FORWARD.x,
       FORWARD.z,
     );
+
+    // Ported apartment spatial layer — listener must ride the camera every
+    // frame or sources collapse to mono (Zevra-KB: webaudio-positional pitfalls).
+    camera.getWorldDirection(FWD3);
+    updateAudioListener(
+      { x: POS.x, y: POS.y, z: POS.z },
+      { x: FWD3.x, y: FWD3.y, z: FWD3.z },
+    );
+    setSourcePosition("player_feet", POS.x, 0.05, POS.z);
+    tickFootsteps({ dt, moving: playerSim.speed > 0.4, isPlayer: true });
+    if (!apartmentUnlocked) {
+      apartmentUnlocked = true;
+      unlockApartmentAudio();
+      setAmbience(true);
+      ambienceOn = true;
+    }
 
     const held = useCompanion.getState().held;
     if (hand.current) {
