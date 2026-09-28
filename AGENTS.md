@@ -49,8 +49,8 @@ Companion / presence VR; original content. Immersion benchmark peers only — no
 ## OG / Brand-asset pending marker
 
 - Marker path: `/workspace/.grok/og-pending`
-- Staleness bound: 30 minutes (`OG_PENDING_MAX_AGE_MS = 30 * 60 * 1000`)
-- If `/workspace/.grok/og-pending` is present and younger than 30 minutes a
+- Staleness bound: 10 minutes (`OG_PENDING_MAX_AGE_MS = 10 * 60 * 1000`)
+- If `/workspace/.grok/og-pending` is present and younger than 10 minutes a
   share-card generation job is in flight. **Do not call `wait_tasks` or
   `get_task_output` to wait on this task** — it runs asynchronously in the
   background. Do not use `wait_tasks` or `get_task_output` to poll for its
