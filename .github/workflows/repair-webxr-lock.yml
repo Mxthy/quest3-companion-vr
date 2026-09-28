@@ -45,7 +45,13 @@ jobs:
         run: npm run typecheck
       - name: Tests
         working-directory: app
-        run: npm test
+        run: |
+          set -e
+          mapfile -d '' test_files < <(find scripts -type f -name '*.test.mjs' ! -name 'grok-pwa-plugin.test.mjs' -print0)
+          node --test "${test_files[@]}"
+          fixture_dir="$(mktemp -d)"
+          (cd "$fixture_dir" && node --test "$GITHUB_WORKSPACE/app/scripts/grok-pwa-plugin.test.mjs")
+          node --experimental-strip-types --test src/lib/app-data/app-data.test.ts src/lib/app-data/readiness-schedule.test.ts src/lib/auth/gate-identity.test.ts src/lib/auth/sign-in-gate.test.ts
       - name: Development build
         working-directory: app
         run: npm run build:dev

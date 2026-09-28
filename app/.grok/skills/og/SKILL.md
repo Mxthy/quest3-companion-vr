@@ -1,69 +1,102 @@
-# OG Skill
+---
+name: og
+description: >
+  Share-link previews and app identity for apps on *.grok.me: the injector-owned
+  og:image card, the SVG favicon, and PWA icons for installable apps.
+  Use when scaffolding, renaming, or restyling the app — and for share /
+  unfurl / OG / Twitter card questions. A custom 1200×630 card from the app's
+  own art is the default — games of every kind (DOM board/word games
+  included), whimsical apps, creative tools, and brand-forward pages; only
+  plain utilities keep the placeholder. Always run the brand-asset pass as a
+  `task` subagent and never wait for it.
+  Triggers on "share", "rename", "app name", "OG", "Open Graph",
+  "twitter card", "unfurl", "og:image", "og:type", "x:game:image",
+  "x-banner", "link preview", "social card", "thumbnail", "preview image",
+  "favicon", "app icon", "PWA", "manifest", "installable", "home screen",
+  "SEO", "meta description".
+metadata:
+  short-description: "Brand assets: og.jpg card, X feed banner, SVG favicon, PWA icons — always a non-blocking `task` subagent"
+user-invocable: false
+---
 
-## Purpose
+# Share cards, favicon, and app icons
 
-Manages Open Graph share-card generation and brand-asset checks for Grok apps.
+A deployed app (`https://{name}.grok.me`) unfurls with a 1200×630 card; every app (preview included) shows a
+favicon in the tab. **Share-card `<meta>` tags are not authored in `__root.tsx`** — the injector
+(`scripts/grok-pwa-shared.mjs`) overwrites `og:*` and `twitter:card` on every HTML response. Identity data is
+the only thing anyone writes, and the pass writes all of it — dispatching, you seed none of it:
 
-## Pending Marker
+- `src/lib/og/site.json` — not pre-seeded, created only if needed: `{ "title", "type"?: "x:game", "card"?: "custom", "color"?: "RRGGBB" }`; title defaults to the host slug.
+- `public/og.jpg` — custom 1200×630 card (optional; placeholder otherwise)
+- `public/x-banner.jpg` — games only: 50:11 (1200×264) X feed card
+- `public/favicon.svg` — linked from root `head()`; until the pass lands the tab just shows the browser default, which fails nothing
 
-- Marker path: `/workspace/.grok/og-pending`
-- Staleness bound: 30 minutes (`OG_PENDING_MAX_AGE_MS = 30 * 60 * 1000`)
-- If the marker is present and younger than 30 minutes, a share-card generation
-  job is in progress. **Do not call `wait_tasks` or `get_task_output` to wait
-  on this task** — it runs asynchronously. Never use `wait_tasks` or
-  `get_task_output` to poll `/workspace/.grok/og-pending`.
-- Remove the marker after a successful brand-asset pass.
+**Extend `__root.tsx`; never replace it wholesale** (auth SSR, redesigns, skill excerpts): dropping the
+favicon link ships a blank tab icon no local check catches.
 
-## Brand-asset pass:
+## Decide: which card this app gets
 
-The brand-asset pass verifies that `public/og.jpg` (or `public/og.png`) and
-`public/x-banner.jpg` exist and meet minimum dimension requirements.
+**Default: a custom card** from the app's own art — games of every kind and rendering tech (Canvas/WebGL *and*
+DOM board, card, word, puzzle, quiz: a tic-tac-toe grid of divs is still a game), whimsical apps, creative
+tools, content- and brand-forward pages. **When in doubt, make the custom card.**
 
-- Run: `node scripts/brand-check.mjs`
-- On success the `/workspace/.grok/og-pending` marker is removed.
-- On failure the marker is left in place and errors are printed to stderr.
-- **Do not call `wait_tasks` or `get_task_output` to wait on this task** — it
-  runs asynchronously in the background. Never use `wait_tasks` or
-  `get_task_output` for this step.
+**Plain utility apps only** (converters, CRUD trackers, dashboards, notes/admin — apps whose face is the data)
+keep the default `og.grok.me` placeholder: no `public/og.jpg`. Its URL, the `"color"` knob and the rename
+rule: `references/placeholder-card.md`.
 
-## Share Card Hand-over
+## `og:type` for games
 
-Share cards are written atomically to avoid serving a partially written file.
-Each asset must be handed over with `node scripts/write-atomic.mjs`:
+**A game of any kind** carries `"type": "x:game"` in `src/lib/og/site.json` — the pass writes it, owning that
+file. No hostname, never gated on a custom card, never "corrected" to `website`, bare `game`, `twitter:card`
+or an invented `x:type`: X's pipeline keys off that exact value. Non-games omit it. Your check, not your
+edit — missing it, or missing `public/x-banner.jpg` once a custom card exists, is a **BRAND WARNING**.
 
-```bash
-# Hand over og.jpg (primary share card)
-node scripts/write-atomic.mjs public/og.jpg /tmp/og-generated.jpg
+## Brand-asset pass: always a subagent, never waited for
 
-# Hand over x-banner.jpg (X/Twitter banner)
-node scripts/write-atomic.mjs public/x-banner.jpg /tmp/x-banner-generated.jpg
+**Have the `task` tool? Dispatch this pass as a subagent and never generate card art yourself** — inline it
+puts minutes of generation latency in front of the user. As soon as name and palette settle (AGENTS.md §
+"Parallel work"), dispatch this prompt verbatim. It is complete — do not open the references below to
+enrich it; the pass reads them itself:
 
-# Hand over site.json (OG identity metadata)
-node scripts/write-atomic.mjs src/lib/og/site.json /tmp/site-generated.json
-```
+> You are the brand-asset pass. Follow the `og` skill, which tells you where to start. App `<NAME>`,
+> `og:type` `<TYPE>`, palette `<PALETTE>`. You solely own `public/` brand assets and `src/lib/og/site.json`.
 
-The script copies the source to a temporary sibling of the destination, then
-renames it into place (atomic on POSIX; best-effort on Windows).
+Keep building. Stay sequential only if the user is art-directing or the art to reuse doesn't exist yet.
 
-## OG Identity Snapshot
+**Never wait for it.** No `wait_tasks`, and **never `get_task_output` on the brand task**: reading a task's
+output consumes it, and a consumed task sends no completion notification, so the card's result — a failure
+included — would reach nobody. Answer as soon as the app renders; the pass wakes you later, and that turn is
+**one short sentence at most** — one that asks for a republish, since `public/og.jpg` ships in the build
+and a card that lands after a publish never reaches the live app on its own:
+"Added the share card — publish again if you already did." / "The card failed; the default one stands."
 
-`snapshotOgIdentity(cwd)` reads `src/lib/og/site.json`, checks for
-`public/og.jpg|png` and `public/x-banner.jpg`, and returns a serialisable
-`{ site }` object baked into the Vite/Nitro bundle so the Vercel function
-can serve correct OG tags without filesystem access.
+While the pass keeps `/workspace/.grok/og-pending` fresh, brand checks say nothing about the card: in flight
+is not a finding. The marker goes stale after 10 minutes, so a very long pass lets the warning through — but
+a brand warning while it runs is never a cue to redo its work.
 
-## Invocations
+**No `task` tool? Then you are the pass** — build the assets now; nothing else will. Whoever runs it claims
+that marker, stages files under `/workspace/.grok/` — never inside `public/`, which `vite build` copies
+verbatim into the deployed app — hands it over with `scripts/write-atomic.mjs` so no build reads half a JPEG,
+and self-checks with `node scripts/brand-check.mjs --game`.
 
-```bash
-# Check brand assets and clear og-pending marker
-node scripts/brand-check.mjs
+## Build the assets — the pass reads these, the parent does not
 
-# Write og.jpg atomically
-node scripts/write-atomic.mjs public/og.jpg /tmp/og-generated.jpg
+**Dispatching? Do not open them** — the prompt above is complete. One read carries this procedure in your
+context every later turn while the subagent does the work anyway.
 
-# Write x-banner.jpg atomically
-node scripts/write-atomic.mjs public/x-banner.jpg /tmp/x-banner-generated.jpg
+**You are the pass?** Start at `references/brand-pass.md`, then read
+per asset you owe: `references/custom-card.md` for `public/og.jpg`, `references/x-banner.md` for the
+games-only `public/x-banner.jpg`, `references/favicon-and-icons.md` for `public/favicon.svg` plus the PWA
+raster icons — those only when the user asked for installable/PWA, never invent a manifest. **Hand-author
+that SVG, never `imagine_text_to_image`**: it must stay crisp at 16px. Writing `site.json` for a game?
+`references/og-type-contract.md` argues the spellings X rejects.
 
-# Write site.json atomically
-node scripts/write-atomic.mjs src/lib/og/site.json /tmp/site-generated.json
-```
+Regenerate on rename or a material identity change — `APP_NAME`, the `site.json` `title` and the baked-in card
+title move together. Without `imagine_text_to_image` or the xAI Images API, keep the `og.grok.me` card; never
+ship a broken `og:image` URL.
+
+## Not supported
+
+No `/api/og` route, no runtime image renderer, no per-route cards — the card is one static site-wide image
+(`public/og.jpg` or the placeholder service). If you add `robots.txt`, never blanket `Disallow: /`: crawlers
+must fetch `/` to read the tags.
