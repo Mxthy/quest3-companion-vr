@@ -27,6 +27,14 @@ import { adultAnchors } from "./adult-anchors";
 import { useCompanion } from "@/lib/companion/store";
 import { playerSim } from "@/lib/companion/player-ref";
 import { xrOriginHeightCorrection } from "@/lib/companion/view-height.mjs";
+import {
+  applyQuestRendererProfile,
+  applyQuestSceneProfile,
+  detectPerformanceTier,
+  formatDiagLines,
+  getSuggestedFoveationLevel,
+  XRDiagnostics,
+} from "@/xr";
 
 const ZONE_DEFS = new Map(DEFAULT_ZONES.map((z) => [z.id, z]));
 const PINCH_CM = 0.028;
@@ -177,9 +185,70 @@ function XrControllers() {
   return null;
 }
 
+/** Ported Quest perf heuristics: renderer/scene profile on session start,
+ * running fps/frame-time diagnostics and adaptive foveation. */
+const xrDiag = new XRDiagnostics();
+
+function XrPerf() {
+  const gl = useThree((s) => s.gl);
+  const scene = useThree((s) => s.scene);
+  const appliedRef = useRef(false);
+  const frameTimesRef = useRef<number[]>([]);
+  const lastAdjustRef = useRef(0);
+  const [, forceRender] = useState(0);
+
+  useEffect(() => {
+    const onToggle = () => {
+      xrDiag.toggle();
+      forceRender((n) => n + 1);
+    };
+    window.addEventListener("xr-diag-toggle", onToggle);
+    return () => window.removeEventListener("xr-diag-toggle", onToggle);
+  }, []);
+
+  useEffect(() => {
+    const unsub = xrStore.subscribe((s) => {
+      if (!s.session || appliedRef.current) return;
+      if (detectPerformanceTier() !== "quest") return;
+      applyQuestRendererProfile(gl);
+      applyQuestSceneProfile(scene);
+      appliedRef.current = true;
+    });
+    return unsub;
+  }, [gl, scene]);
+
+  useFrame((_state, delta, frame) => {
+    const session = gl.xr.getSession();
+    if (!session || !frame) return;
+    xrDiag.tick(delta);
+    const win = frameTimesRef.current;
+    win.push(delta * 1000);
+    if (win.length > 120) win.shift();
+    const now = performance.now();
+    if (now - lastAdjustRef.current < 2000 || win.length < 60) return;
+    const avg = win.reduce((a, b) => a + b, 0) / win.length;
+    const level = getSuggestedFoveationLevel(detectPerformanceTier(), avg);
+    if (typeof level === "number" && typeof gl.xr.setFoveation === "function") {
+      gl.xr.setFoveation(level);
+    }
+    lastAdjustRef.current = now;
+  });
+
+  if (!xrDiag.visible) return null;
+  return (
+    <Billboard position={[0, 2.05, -1.52]}>
+      <Text fontSize={0.045} color="#9ad7ff" anchorX="center" anchorY="middle">
+        {formatDiagLines(xrDiag.snapshot({ presenting: true })).join("\n")}
+      </Text>
+    </Billboard>
+  );
+}
+
 /** In-VR arousal HUD: world-space text above the companion (DOM HUD is invisible in XR). */
 function XrHud() {
   const hud = useAdultHud();
+  const clockLabel = useCompanion((s) => s.clockLabel);
+  const expression = useCompanion((s) => s.expression);
   const [inSession, setInSession] = useState(false);
   useEffect(() => {
     const unsub = xrStore.subscribe((s) => setInSession(s.session != null));
@@ -190,6 +259,15 @@ function XrHud() {
   if (!inSession) return null;
   return (
     <Billboard position={[0, 1.86, -1.52]}>
+      <Text
+        fontSize={0.045}
+        color="#ffd9e6"
+        anchorX="center"
+        anchorY="middle"
+        position={[0, 0.08, 0]}
+      >
+        {`${clockLabel} · ${expression}`}
+      </Text>
       <Text
         fontSize={0.075}
         color="#ffd9e6"
@@ -245,6 +323,7 @@ export function XrLayer() {
       <XrRig />
       <XrHands />
       <XrControllers />
+      <XrPerf />
       <XrHud />
     </XR>
   );

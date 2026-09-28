@@ -31,6 +31,7 @@ function DebugProbe() {
         };
       },
       adult: () => useAdultHud.getState(),
+      diag: () => window.dispatchEvent(new CustomEvent("xr-diag-toggle")),
       input: () => adultRuntime.input,
       teleport: (x: number, z: number, yaw: number) => {
         playerSim.position = { x, y: 1.62, z };
