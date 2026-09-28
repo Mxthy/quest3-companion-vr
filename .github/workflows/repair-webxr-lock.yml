@@ -1,0 +1,51 @@
+name: Repair WebXR lockfile once
+
+on:
+  push:
+    branches:
+      - fix/quest-webxr-g0
+    paths:
+      - .github/workflows/repair-webxr-lock.yml
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    if: github.ref == 'refs/heads/fix/quest-webxr-g0'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+      - name: Reconcile npm lockfile
+        working-directory: app
+        run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+      - name: Verify reproducible install
+        working-directory: app
+        run: npm ci --no-audit --no-fund
+      - name: Commit only regenerated lockfile
+        run: |
+          git add -- app/package-lock.json
+          if git diff --cached --quiet; then
+            echo 'Lockfile already up to date.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'fix(webxr): sync npm lockfile' -- app/package-lock.json
+          git push origin HEAD:refs/heads/fix/quest-webxr-g0
+      - name: Typecheck
+        working-directory: app
+        run: npm run typecheck
+      - name: Tests
+        working-directory: app
+        run: npm test
+      - name: Development build
+        working-directory: app
+        run: npm run build:dev

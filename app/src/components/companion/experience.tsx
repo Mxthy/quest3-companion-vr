@@ -9,7 +9,7 @@ import { Player } from "./player";
 import { Room } from "./room";
 import { useCompanion } from "@/lib/companion/store";
 import { playerSim } from "@/lib/companion/player-ref";
-import { adultRuntime, useAdultHud } from "@/lib/companion/adult";
+import { adultRuntime, useAdultHud, useXrSessionActive } from "@/lib/companion/adult";
 import { XrLayer } from "./xr-vr";
 import { adultAnchors } from "./adult-anchors";
 
@@ -51,11 +51,12 @@ function DebugProbe() {
         return out;
       },
     };
-  }, []);
+  }, [camera]);
   return null;
 }
 
 function Scene() {
+  const inXR = useXrSessionActive((s) => s.active);
   return (
     <>
       <color attach="background" args={["#120e0c"]} />
@@ -67,14 +68,18 @@ function Scene() {
       <Player />
       <XrLayer />
       <DebugProbe />
-      <ContactShadows
-        position={[0, 0.002, 0]}
-        opacity={0.28}
-        scale={10}
-        blur={2.4}
-        far={3.5}
-        color="#0a0807"
-      />
+      {!inXR && (
+        <ContactShadows
+          position={[0, 0.002, 0]}
+          opacity={0.28}
+          scale={10}
+          blur={2.4}
+          far={3.5}
+          color="#0a0807"
+          frames={1}
+          resolution={512}
+        />
+      )}
     </>
   );
 }

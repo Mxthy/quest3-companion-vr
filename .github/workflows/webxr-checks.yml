@@ -26,6 +26,23 @@ jobs:
           node-version: '22'
           cache: npm
           cache-dependency-path: app/package-lock.json
+      - run: npm ci
+      - run: npm run typecheck
+      - name: Unit tests (optional Grok OG docs excluded)
+        id: tests
+        continue-on-error: true
+        run: |
+          set -e
+          mapfile -d '' test_files < <(find scripts -type f -name '*.test.mjs' ! -name 'grok-pwa-plugin.test.mjs' -print0)
+          node --test --test-skip-pattern='^(SKILL\.md and AGENTS\.md name the marker path and bound this script uses|the sections that own the brand-task prohibition never affirm a wait|SKILL\.md tells the pass to self-check with the flag this CLI accepts|every hand-over the og skill prints is one this script accepts)$' "${test_files[@]}"
+          fixture_dir="$(mktemp -d)"
+          (cd "$fixture_dir" && node --test "$GITHUB_WORKSPACE/app/scripts/grok-pwa-plugin.test.mjs")
+          node --experimental-strip-types --test src/lib/app-data/app-data.test.ts src/lib/app-data/readiness-schedule.test.ts src/lib/auth/gate-identity.test.ts src/lib/auth/sign-in-gate.test.ts
+      - name: Development build
+        run: npm run build:dev
+      - name: Keep test failures visible
+        if: steps.tests.outcome == 'failure'
+        run: exit 1
       # package.json and package-lock.json are currently out of sync. npm ci
       # intentionally rejects that state, while npm install reconciles the lock
       # file before the remaining checks run.

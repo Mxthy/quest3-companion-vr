@@ -45,3 +45,26 @@ Companion / presence VR; original content. Immersion benchmark peers only — no
 4. Large outputs → files; compact chat status
 5. Adult VRM / explicit content and engine lock need user approval
 6. Query Wissensspeicher before inventing WebXR/Quest pipelines
+
+## OG / Brand-asset pending marker
+
+- Marker path: `/workspace/.grok/og-pending`
+- Staleness bound: 30 minutes (`OG_PENDING_MAX_AGE_MS = 30 * 60 * 1000`)
+- If `/workspace/.grok/og-pending` is present and younger than 30 minutes a
+  share-card generation job is in flight. **Do not call `wait_tasks` or
+  `get_task_output` to wait on this task** — it runs asynchronously in the
+  background. Do not use `wait_tasks` or `get_task_output` to poll for its
+  completion.
+
+## Execution loop
+
+1. Read TASK_STATE / HANDOFF from GitHub.
+2. Query Wissensspeicher for relevant pipelines.
+3. Implement the next backlog item.
+4. Run `npm run typecheck && npm run build` inside `app/`.
+5. Push all changed text files to GitHub.
+6. **Brand-asset pass** — run `node scripts/brand-check.mjs` from `app/`.
+   Do not use `wait_tasks` or `get_task_output` to wait on this step; it is
+   never a blocking task. Never call `wait_tasks` or `get_task_output` before
+   or after the brand-asset pass.
+7. Update TASK_STATE and HANDOFF on GitHub.

@@ -74,12 +74,14 @@ export function Overlay() {
   const prompt = useCompanion((s) => s.prompt);
   const muted = useCompanion((s) => s.muted);
   const used = useCompanion((s) => s.used);
+  const seated = useCompanion((s) => s.seated);
   const enter = useCompanion((s) => s.enter);
   const pause = useCompanion((s) => s.pause);
   const resume = useCompanion((s) => s.resume);
   const leave = useCompanion((s) => s.leave);
   const toggleMute = useCompanion((s) => s.toggleMute);
   const interact = useCompanion((s) => s.interact);
+  const stand = useCompanion((s) => s.stand);
   const [coarse, setCoarse] = useState(false);
   const [ageOk, setAgeOk] = useState(ageConfirmedThisSession);
   const adult = useAdultHud();
@@ -189,16 +191,27 @@ export function Overlay() {
           {coarse && (
             <div className="pointer-events-auto absolute bottom-6 left-4 right-4 flex items-end justify-between">
               <Joystick />
-              <button
-                type="button"
-                onPointerDown={(e) => {
-                  e.preventDefault();
-                  interact();
-                }}
-                className="mb-2 grid size-[72px] place-items-center rounded-full border border-border bg-primary text-sm font-medium text-primary-fg"
-              >
-                E
-              </button>
+              <div className="mb-2 flex flex-col items-center gap-2">
+                {seated && (
+                  <button
+                    type="button"
+                    onClick={stand}
+                    className="h-11 rounded-full border border-border bg-surface/90 px-5 text-sm font-medium text-fg"
+                  >
+                    Aufstehen
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onPointerDown={(e) => {
+                    e.preventDefault();
+                    interact();
+                  }}
+                  className="grid size-[72px] place-items-center rounded-full border border-border bg-primary text-sm font-medium text-primary-fg"
+                >
+                  E
+                </button>
+              </div>
             </div>
           )}
         </>

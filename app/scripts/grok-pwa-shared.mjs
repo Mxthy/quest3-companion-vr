@@ -410,7 +410,12 @@ export function normalizeHeadContext(ctx = {}) {
     ctx.site !== undefined ? ctx.site : snapshotOgIdentity(cwd).site,
     cwd,
   );
-  const appName = resolveOgTitle(site, ctx.appName ?? DEFAULT_APP_NAME, ctx.host ?? "");
+  // Resolve the app name from the provided ctx.appName first, then site title,
+  // document title, and host — so that an explicit appName is never shadowed.
+  const rawAppName = String(ctx.appName ?? "").trim();
+  const appName = rawAppName
+    ? rawAppName
+    : resolveOgTitle(site, DEFAULT_APP_NAME, ctx.host ?? "");
   return {
     appName,
     projectId: ctx.projectId ?? readGrokProjectId(),
@@ -426,12 +431,11 @@ export function injectGrokPwaHead(html, ctx = {}) {
   if (typeof html !== "string") return html;
   const { site, projectId, creator, creatorId, host, cwd } = normalizeHeadContext(ctx);
   const documentTitle = titleFromDocument(html);
-  const appName = resolveOgTitle(
-    site,
-    ctx.appName ?? DEFAULT_APP_NAME,
-    host,
-    documentTitle,
-  );
+  // Priority: explicit appName > document <title> > host slug > DEFAULT_APP_NAME
+  const rawAppName = String(ctx.appName ?? "").trim();
+  const appName = rawAppName
+    ? rawAppName
+    : resolveOgTitle(site, DEFAULT_APP_NAME, host, documentTitle);
   let next = stripShareMetaTags(html);
 
   const missing = grokPwaHeadTags(appName)

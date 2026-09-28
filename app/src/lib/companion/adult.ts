@@ -107,6 +107,8 @@ export const adultRuntime = {
 
 /** True while an immersive XR session is active (render adapter flag). */
 export let xrActive = false;
+export const useXrSessionActive = create<{ active: boolean }>(() => ({ active: false }));
 export function setXrActive(v: boolean) {
   xrActive = v;
+  useXrSessionActive.setState({ active: v });
 }
