@@ -47,6 +47,13 @@ jobs:
           curl -sL "https://base44.app/api/apps/6aba70fce22831cd934eaf4a/files/mp/public/6aba70fce22831cd934eaf4a/8874b9469_vivi.vrm" -o public/models/vivi.vrm
           test "$(stat -c%s public/models/vivi.vrm)" = "10885460"
 
+      - name: Fetch authored voice clips (gitignored asset)
+        run: |
+          mkdir -p public/audio/vivi
+          curl -sL "https://base44.app/api/apps/6aba70fce22831cd934eaf4a/files/mp/public/6aba70fce22831cd934eaf4a/4baa9dee7_062cad8ff_vivi_dialogue_audio_de_eve.zip" -o /tmp/vivi-voice.zip
+          unzip -q -j /tmp/vivi-voice.zip "vivi_dialogue_audio_de_eve/*.mp3" -d public/audio/vivi
+          test "$(ls public/audio/vivi | wc -l)" = "122"
+
       - name: Build production bundle (Cloudflare Pages preset)
         run: NITRO_PRESET=cloudflare_pages VITE_AUTH_ENABLED=true npm run build
 

@@ -200,7 +200,45 @@ export function tickClosePulse(input: { dt: number; proximity: number; consent: 
   });
 }
 
+/** Decode cache for authored voice clips. */
+const voiceBuffers = new Map<string, AudioBuffer>();
+
+/** Play an authored voice file through the vivi_head spatial source. */
+export async function playVoiceClipAtHead(
+  url: string,
+  volume = 0.95,
+): Promise<{ ok: boolean; durationSec: number }> {
+  const c = ac();
+  if (!c) return { ok: false, durationSec: 0 };
+  const s = ensureSource("vivi_head", 0.55, 5);
+  if (!s) return { ok: false, durationSec: 0 };
+  let buf = voiceBuffers.get(url);
+  if (!buf) {
+    try {
+      const res = await fetch(url);
+      if (!res.ok) return { ok: false, durationSec: 0 };
+      buf = await c.decodeAudioData(await res.arrayBuffer());
+      voiceBuffers.set(url, buf);
+    } catch {
+      return { ok: false, durationSec: 0 };
+    }
+  }
+  try {
+    const src = c.createBufferSource();
+    src.buffer = buf;
+    const g = c.createGain();
+    g.gain.value = volume;
+    src.connect(g);
+    g.connect(s.panner);
+    src.start();
+    return { ok: true, durationSec: buf.duration };
+  } catch {
+    return { ok: false, durationSec: 0 };
+  }
+}
+
 export function disposeSpatialAudio() {
+  voiceBuffers.clear();
   for (const s of Object.values(sources)) {
     try {
       s.panner.disconnect();

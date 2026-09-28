@@ -13,6 +13,7 @@ import {
   tickClosePulse,
 } from "@/lib/companion/apartment";
 import { useCompanion } from "@/lib/companion/store";
+import { initVoiceDirector, tryActivityVoice } from "@/lib/companion/voice";
 import {
   IDLE_INTENT,
   NpcBrain,
@@ -55,6 +56,8 @@ const LAST_VIVI = { x: 0, z: 0, yaw: 0 };
 
 // ── NPC life layer (Blueprint §§3-6, 10-12) ─────────────────────────
 const NPC_BRAIN = new NpcBrain();
+initVoiceDirector();
+let lastVoiceActivityLabel = "";
 const GAZE_TARGET = new THREE.Vector3(0, 1.45, 2);
 const EYE_TARGET = new THREE.Object3D();
 let gazeHold = 0;
@@ -182,6 +185,17 @@ function VrmBody({ vrm }: { vrm: VRM }) {
       lastIntent = intent;
       if (playing && intent.label !== st.activity) {
         useCompanion.setState({ activity: intent.label });
+      }
+      // Authored activity voice lines when the brain commits to an object.
+      if (
+        playing &&
+        intent.label !== lastVoiceActivityLabel &&
+        (intent.kind === "attend" || intent.kind === "rest")
+      ) {
+        lastVoiceActivityLabel = intent.label;
+        tryActivityVoice(intent.targetId);
+      } else if (intent.kind === "idle" || intent.kind === "sleep") {
+        lastVoiceActivityLabel = "";
       }
 
       // Stuck detection: if we can't make progress toward the current

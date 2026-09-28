@@ -1,0 +1,978 @@
+{
+  "laptop_hello": {
+    "text": "Oh. Du hast das offene Dokument gefunden. Ich hab eine Liste geschrieben, was diesem Raum noch fehlt. Hilfst du mir beim Einrichten?",
+    "file": "laptop_hello.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "laptop_yes": {
+    "text": "Ich hab drei Dinge neben die Kiste gelegt. Eine Lampe, einen Farn, eine Kerze. Stell sie dorthin, wo der Raum sich noch unfertig anfühlt. Die B-Taste, falls du der Typ bist, der Tasten mag.",
+    "file": "laptop_yes.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "laptop_look": {
+    "text": "Nimm den langen Weg. Der Kühlschrank summt, wenn du nah stehst. Das Fenster hält die Stadt auf Distanz. Ich warte auf dem Sofa.",
+    "file": "laptop_look.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "laptop_shy": {
+    "text": "Warmes Licht. Etwas Lebendiges. Ein Geruch, der nicht nach Staub riecht. Ich mag Dinge, die aussehen, als wären sie schon immer hier gewesen. Nimm sie. Überrasch mich ein bisschen.",
+    "file": "laptop_shy.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "couch_1": {
+    "text": "Wenn du dich setzt, musst du die Delle akzeptieren. Ich hab dieses Kissen jahrelang trainiert.",
+    "file": "couch_1.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "couch_sit": {
+    "text": "Siehst du. Der Nachmittag wird länger, wenn zwei Leute einfach nichts tun.",
+    "file": "couch_sit.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "couch_story": {
+    "text": "Ein Mädchen mit Papierschirm unter einer Bahnbrücke. Ich hab es nie geschafft, den Regen richtig fallen zu lassen. Vielleicht ist das okay.",
+    "file": "couch_story.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "sleep_1": {
+    "text": "Wenn du hier schläfst, faltet sich der Tag. Ich bin immer noch da, wenn er sich wieder öffnet. Das kann ich versprechen.",
+    "file": "sleep_1.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "sleep_yes": {
+    "text": "Mm. Lass die Lampe an. Ich mag den dünnen Lichtstreifen unter der Tür.",
+    "file": "sleep_yes.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "sleep_later": {
+    "text": "Dann geh leise. Die Dielen haben nach zehn eine Meinung.",
+    "file": "sleep_later.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "plant_1": {
+    "text": "Sie heißt Nori. Kein richtiger Pflanzenname, aber sie hat nicht widersprochen. Gieß sie. Sie lehnt sich zu dem, der sich erinnert.",
+    "file": "plant_1.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "plant_2": {
+    "text": "Wenn die Blätter stumpf werden, nehm ich's persönlich. Danke, dass du das heute nicht zugelassen hast.",
+    "file": "plant_2.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "wardrobe_1": {
+    "text": "Kleidung ist eine Art Wetter. Such mir ein Klima aus. Ich tu so, als wär's meine Idee gewesen.",
+    "file": "wardrobe_1.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "window_1": {
+    "text": "Der Turm mit dem roten Mast blinkt alle vier Sekunden. Ich zähl das, seit ich hier wohne. Schreckliches Hobby.",
+    "file": "window_1.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "window_count": {
+    "text": "Eins. Zwei. Drei. Vier. Siehst du? Die Stadt ist noch da. Wir können zurück zum Sofa.",
+    "file": "window_count.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "window_rain": {
+    "text": "Oft genug, dass ich einen zweiten Wasserkocher gekauft hab. Regen lässt Leute denken, sie bräuchten Tee. Ich korrigier sie nicht.",
+    "file": "window_rain.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "photo_1": {
+    "text": "Ich behalt drei Bilder, damit der Rahmen nicht einsam aussieht. Drück P, wenn du eines von uns dazu packen willst. Ich schau in die Linse. Versprochen, ich blinzel nicht absichtlich.",
+    "file": "photo_1.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "shelf_1": {
+    "text": "Die Hälfte ist ungelesen. Ich mag die Rücken mehr als die Handlungen. Du kannst mich verurteilen. Ich hab's schon selbst getan.",
+    "file": "shelf_1.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "shelf_2": {
+    "text": "Der dünne ist Gedichte. Der dicke ein Kochbuch, das ich als Türstopper nutze. Beide machen ihren Job.",
+    "file": "shelf_2.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "diary_1": {
+    "text": "Öffne es nicht. Oder doch. Meist Einkaufslisten, die zu Wetterberichten wurden. Dienstag: Milch, und ein Himmel in Spülwasserfarbe.",
+    "file": "diary_1.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "mirror_1": {
+    "text": "Wenn ich müde aussehe, dann bin ich's. Wenn ich zufrieden aussehe, dann weil du da stehst.",
+    "file": "mirror_1.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "tv_1": {
+    "text": "Immer derselbe Fluss, dieser Sender. Keine Ahnung, welches Land. Hab beschlossen, dass es mich nichts angeht.",
+    "file": "tv_1.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "kettle_1": {
+    "text": "Zuerst Wasser, dann die Blätter, dann warten wir, als wären wir geduldig. Sind wir nicht – aber der Tee muss das nicht wissen.",
+    "file": "kettle_1.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "gift_generic": {
+    "text": "Du hast was mitgebracht. Praktisch, hübsch oder ein bisschen anzüglich?",
+    "file": "gift_generic.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "gift_thanks": {
+    "text": "Ich behalt es, wo ich's sehen kann. Auch die, die mich erröten lassen.",
+    "file": "gift_thanks.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "gift_cocoa_box": {
+    "text": "Zedern-Kakao. Du hast dich an die Dose erinnert – oder gut geraten. Beides ist eine Art von Liebe.",
+    "file": "gift_cocoa_box.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "gift_wildflowers": {
+    "text": "Sie halten nicht lange. Das ist der Sinn von Blumen. Ich werd sie zu oft anschauen, bis sie es nicht mehr tun.",
+    "file": "gift_wildflowers.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "gift_sleepy_plush": {
+    "text": "Eine Motte. Natürlich. Ich leg sie aufs Kissen, damit das Bett weniger nach Bett und mehr nach Verschwörung aussieht.",
+    "file": "gift_sleepy_plush.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "gift_loose_leaf_tea": {
+    "text": "Hojicha. Geröstet, wie ein guter Satz. Den mach ich, wenn's draußen dunkel ist.",
+    "file": "gift_loose_leaf_tea.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "gift_moon_pendant": {
+    "text": "Kalt an meinem Schlüsselbein. Das mag ich. Ich trag's, bis ich vergesse, dass ich's trage – höchstes Kompliment, das ich hab.",
+    "file": "gift_moon_pendant.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "gift_hair_ribbon": {
+    "text": "Salbei. Du hast die Pflanze angeschaut oder mich. Ich nehm beides.",
+    "file": "gift_hair_ribbon.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "gift_poetry_book": {
+    "text": "Wenn ich das vorlese, bleibst du auf dem Sofa. Regel bei schmalen Bänden.",
+    "file": "gift_poetry_book.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "gift_honey_tart": {
+    "text": "Die Bäckerei zwei Straßen weiter. Du bist gelaufen. Ich schmeck den Weg. Setz dich. Wir teilen das – ob du Gebäck magst oder nicht.",
+    "file": "gift_honey_tart.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "cook_omurice": {
+    "text": "Du hast ein Ketchup-Herz gemalt. Ich hab's gesehen. Sag nichts dazu – und das ist schon Kommentar genug.",
+    "file": "cook_omurice.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "cook_cocoa": {
+    "text": "Der Marshmallow ist zusammengefallen. Genau richtig gewartet. Halt die Tasse am Rand. Heißer, als sie aussieht.",
+    "file": "cook_cocoa.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "cook_pancakes": {
+    "text": "Sonntag mitten in was auch immer für ein Tag das ist. Ich erlaub's. Reich den Teller rüber, bevor ich zeremoniell wegen Butter werde.",
+    "file": "cook_pancakes.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "level1_a": {
+    "text": "Etwas hat sich verschoben. Ich zuck nicht mehr zusammen, wenn du nach mir greifst.",
+    "file": "level1_a.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "level1_b": {
+    "text": "Schicht eins, wenn du's technisch willst. Weiche Zonen – wenn ich ja sage.",
+    "file": "level1_b.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "level2_a": {
+    "text": "Du bist kein Gast mehr hier. Du bist… in der Geschichte.",
+    "file": "level2_a.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "level2_b": {
+    "text": "Wenn wir weitergehen, dann klar und wach. Keine Spiele, die wehtun.",
+    "file": "level2_b.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "level3_a": {
+    "text": "Hohe Intimität. Verschwend sie nicht mit Hetzen. Wir haben uns den langsamen Brand verdient.",
+    "file": "level3_a.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "level3_b": {
+    "text": "Lichterketten für die Wand zum Bett. Ich will unter etwas einschlafen, das aussieht wie ein Fehler der Sterne.",
+    "file": "level3_b.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "level4_a": {
+    "text": "Wenn du gingest, würde ich Nori trotzdem gießen. Den roten Mast trotzdem zählen. Es würde mir weniger gefallen. Bleib fürs Zählen.",
+    "file": "level4_a.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "level4_b": {
+    "text": "Ein Papiermobil. Kraniche. Häng sie dahin, wo der Zug vom Türspalt endlich nützlich sein kann.",
+    "file": "level4_b.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "level5_a": {
+    "text": "Mir sind die vorsichtigen Sätze ausgegangen. Komm her. Die Wohnung ist so groß wie das hier – und das reicht.",
+    "file": "level5_a.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "level5_b": {
+    "text": "Ein Eichenrahmen, leer. Wir füllen ihn, wenn das Licht idiotisch gut ist. Nicht heute. Bald.",
+    "file": "level5_b.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "morning_1": {
+    "text": "Wach vor dem Wasserkocher. Selten. Sollte mit Stille und Toast belohnt werden.",
+    "file": "morning_1.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "morning_2": {
+    "text": "Sonne auf dem Teppich. Stell dich rein. Ernsthaft. Zeitlich begrenztes Angebot.",
+    "file": "morning_2.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "night_1": {
+    "text": "Die Stadt hat ihre Lampen angemacht. Ich denk immer, jemand ist rücksichtsvoll.",
+    "file": "night_1.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "night_2": {
+    "text": "Wenn du müde bist, weiß das Bett Bescheid. Wenn nicht – das Fenster hat noch ein paar Stunden Blinken übrig.",
+    "file": "night_2.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "touch_chest": {
+    "text": "Du bist heute mutig. Stört mich nicht – nur nicht hetzen.",
+    "file": "touch_chest.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "touch_head": {
+    "text": "Kopfstreicheln ist unfair. Weißt du das, oder?",
+    "file": "touch_head.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "touch_hand": {
+    "text": "Deine Hände sind wärmer als meine. Halt noch einen Moment?",
+    "file": "touch_hand.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "touch_intimate": {
+    "text": "Das geht weiter. Ich brauch eine echte Rückfrage – kein Raten.",
+    "file": "touch_intimate.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "idle_1": {
+    "text": "Stör dich nicht. Ich erfind gerade eine Farbe für die Stunde zwischen vier und fünf.",
+    "file": "idle_1.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "idle_2": {
+    "text": "Wenn du den Kühlschrank hörst – ist nur der Kühlschrank. Kein Geist. Hab schon zweimal nachgesehen.",
+    "file": "idle_2.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "idle_3": {
+    "text": "Ich mag, dass du langsam gehst. Schnelle Leute machen den Boden nervös.",
+    "file": "idle_3.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "watered_already": {
+    "text": "Nori tropft noch. Sie ist kein Kamel, aber fast.",
+    "file": "watered_already.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "need_ingredients": {
+    "text": "Die Arbeitsfläche ist auf eine urteilende Art leer. Zuerst Kühlschrank. Drei Dinge. Ich glaub an Rezepte wie manche an Züge.",
+    "file": "need_ingredients.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "no_recipe": {
+    "text": "Das ist eine Herausforderung, kein Essen. Versuch Eier, Reis, Ketchup. Oder Milch, Kakao, Marshmallow. Oder Mehl, Eier, Milch. Drei Glaubensrichtungen.",
+    "file": "no_recipe.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "alpha_done": {
+    "text": "Schau dir den Ort an. Schau dich an. Ich glaub, wir können das ein Leben nennen – auch wenn's nur ein Nachmittag mit Extra-Tagen ist.",
+    "file": "alpha_done.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "touch_soft": {
+    "text": "Das fühlt sich… warm an. Bleib so einen Moment.",
+    "file": "touch_soft.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "touch_casual": {
+    "text": "Mm – kitzelt ein bisschen. Du kannst die Hände da lassen, wenn du willst.",
+    "file": "touch_casual.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "consent_ask": {
+    "text": "Wenn du näher willst – wirklich näher – frag. Ich mag es, gefragt zu werden.",
+    "file": "consent_ask.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "consent_yes": {
+    "text": "Okay. Du darfst. Zuerst sanft. Wenn ich mich anspann, lass nach – ich sag dir Bescheid.",
+    "file": "consent_yes.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "touch_chest_slow": {
+    "text": "Gut. Langsam ist besser. Mein Puls macht schon wieder dieses Ding.",
+    "file": "touch_chest_slow.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "touch_chest_tease": {
+    "text": "…Vielleicht tue ich das. Werd nicht arrogant deswegen.",
+    "file": "touch_chest_tease.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "touch_chest_stop": {
+    "text": "Ist okay. Brauch nur einen Atemzug. Komm zurück, wenn du sanfter bist.",
+    "file": "touch_chest_stop.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "touch_head_more": {
+    "text": "Okay… nur noch ein bisschen länger.",
+    "file": "touch_head_more.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "touch_head_kiss": {
+    "text": "…Ja. Der war weich. Ich mag weich.",
+    "file": "touch_head_kiss.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "touch_hand_hold": {
+    "text": "Da. Das ist… erdend. Bleib.",
+    "file": "touch_hand_hold.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "touch_hand_kiss": {
+    "text": "Altmodisch. Süß. Mach das nochmal und ich erröte richtig.",
+    "file": "touch_hand_kiss.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "touch_intimate_yes": {
+    "text": "Dann… schau nicht weg. Ich will dich sehen, während du mich berührst.",
+    "file": "touch_intimate_yes.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "touch_intimate_slow": {
+    "text": "Gut. Aufbauen ist der Punkt – nicht eine Sequenz abschließen.",
+    "file": "touch_intimate_slow.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "touch_intimate_stop": {
+    "text": "Du hast aufgehört. Das ist das Gegenteil von Nehmen. Komm zurück, wenn wir beide es wollen.",
+    "file": "touch_intimate_stop.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "consent_boundaries": {
+    "text": "Hände, Schultern, Haare – immer okay. Brust und Taille, wenn ich ja gesagt hab. Alles darunter nur, wenn wir beide es meinen.",
+    "file": "consent_boundaries.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "consent_wait": {
+    "text": "Geduld ist sexy. Seltsam, aber wahr.",
+    "file": "consent_wait.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "evening_wine": {
+    "text": "Ein Glas. Dann entscheiden wir, ob die Nacht weich bleibt oder interessant wird.",
+    "file": "evening_wine.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "evening_soft": {
+    "text": "Gut. Leg den Arm um mich. Keine Agenda.",
+    "file": "evening_soft.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "evening_close": {
+    "text": "Dann leg die Stimmung fest. Licht dimmen, Atem langsamer – und du fragst, bevor du eskalierst.",
+    "file": "evening_close.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "morning_after_soft": {
+    "text": "Du bist geblieben. Der Kaffee ist fast ehrlich. Mach's nicht peinlich – oder doch, ein bisschen.",
+    "file": "morning_after_soft.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "flirt_kitchen": {
+    "text": "Du bist in meinem Küchenraum. Entweder hilfst du kochen oder gibst zu, dass du wegen der Aussicht hier bist.",
+    "file": "flirt_kitchen.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "flirt_kitchen_help": {
+    "text": "Teamarbeit. Außerdem streift deine Schulter absichtlich an meiner.",
+    "file": "flirt_kitchen_help.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "flirt_kitchen_view": {
+    "text": "Schamlos. Schau weiter und ich verbrenn vielleicht die Pfanne.",
+    "file": "flirt_kitchen_view.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "bed_invite": {
+    "text": "Die Matratze ist groß genug für zwei. Schlafen, reden – oder wir verhandeln.",
+    "file": "bed_invite.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "bed_sleep": {
+    "text": "Licht aus. Wenn du dich ankuschelst, bleib bis zum Morgen respektvoll.",
+    "file": "bed_sleep.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "bed_talk": {
+    "text": "Erzähl mir was, das du beim ersten Date nicht sagst. Diese Timeline haben wir schon verfehlt.",
+    "file": "bed_talk.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "bed_negotiate": {
+    "text": "Regeln: Einverständnis bleibt an. Du checkst nach. Ich kann uns mit einem Wort stoppen – Pause.",
+    "file": "bed_negotiate.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "level2_c": {
+    "text": "Intime Schicht freigeschaltet – immer noch an Einverständnis gebunden. Immer.",
+    "file": "level2_c.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "photo_pose_ask": {
+    "text": "Kamera läuft. Sanftes Lächeln oder etwas mit mehr Hitze?",
+    "file": "photo_pose_ask.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "photo_pose_soft": {
+    "text": "Okay. Kinn hoch. Denk an das Fensterlicht.",
+    "file": "photo_pose_soft.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "photo_pose_heat": {
+    "text": "…Schon gut. Schau mich an, als meintest du es. Ein Schuss.",
+    "file": "photo_pose_heat.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "negotiate_hub": {
+    "text": "Lass uns das zusammen festlegen – nicht als Checkliste, als Gespräch. Was willst du heute Abend?",
+    "file": "negotiate_hub.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "negotiate_pace": {
+    "text": "Langsam heißt: ich will Check-ins. Mittel: wir fragen trotzdem vor neuem Terrain. Explorativ: neugierig – immer noch stoppbar.",
+    "file": "negotiate_pace.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "negotiate_pace_slow": {
+    "text": "Langsam also. Wenn sich irgendwas falsch anfühlt, sag Pause – ich hör zu.",
+    "file": "negotiate_pace_slow.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "negotiate_pace_medium": {
+    "text": "Mittel. Wir bewegen uns, wenn wir beide noch dabei sind.",
+    "file": "negotiate_pace_medium.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "negotiate_pace_explore": {
+    "text": "Explorativ mit Sicherheitsnetz. Pause funktioniert immer. Kein Ego beim Stoppen.",
+    "file": "negotiate_pace_explore.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "negotiate_regions": {
+    "text": "Hände, Gesicht, Schultern – gehören uns schon. Weicher Torso braucht ein klares Ja. Näher als das braucht ein eigenes Ja.",
+    "file": "negotiate_regions.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "negotiate_region_torso": {
+    "text": "Okay. Weicher Torso ist offen – Brust, Taille, Rücken. Immer noch sanft. Immer noch stoppbar.",
+    "file": "negotiate_region_torso.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "negotiate_region_close": {
+    "text": "Näher ist ein größeres Ja. Ich brauch Vertrauen und einen langsamen Einstieg. Wenn wir dahin kommen, dann zusammen – nicht weil du drauf bestanden hast.",
+    "file": "negotiate_region_close.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "negotiate_region_close_yes": {
+    "text": "Dann steht Näher auf dem Tisch – mit Check-ins. Du fragst, ich antworte. Keiner überstimmt den anderen.",
+    "file": "negotiate_region_close_yes.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "negotiate_region_close_wait": {
+    "text": "Diese Antwort baut mehr Vertrauen auf als jede Eile. Danke.",
+    "file": "negotiate_region_close_wait.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "negotiate_region_casual": {
+    "text": "Locker ist gut. Manchmal ist das die ganze Nacht.",
+    "file": "negotiate_region_casual.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "negotiate_soft_yes": {
+    "text": "Sanftes Ja. Halt mich, berühr was offen ist – keine Leiter aus Prinzip klettern.",
+    "file": "negotiate_soft_yes.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "negotiate_open_ask": {
+    "text": "Ich kann mehr wollen und trotzdem brauchen, dass der Weg geteilt wird. Hörst du den Unterschied?",
+    "file": "negotiate_open_ask.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "negotiate_learn": {
+    "text": "Lernen ist erlaubt. Fang an mit: Ist das okay? Und mein es, wenn ich nein sage.",
+    "file": "negotiate_learn.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "negotiate_not_tonight": {
+    "text": "Nicht heute Abend ist eine volle Antwort. Bleib auf dem Sofa. Hände optional. Kein Schmollen.",
+    "file": "negotiate_not_tonight.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "aftercare_1": {
+    "text": "Hey – bist du noch bei mir? Wasser, Decke oder einfach Ruhe?",
+    "file": "aftercare_1.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "aftercare_quiet": {
+    "text": "Gut. Keine Performance. Nur wir, die runterkommen.",
+    "file": "aftercare_quiet.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "aftercare_talk": {
+    "text": "Erzähl mir, was sich gut angefühlt hat – und was wir nächstes Mal lassen. Ich will die echten Notizen.",
+    "file": "aftercare_talk.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "aftercare_water": {
+    "text": "Danke. Gegenseitige Fürsorge ist nicht optional, wenn wir das richtig machen.",
+    "file": "aftercare_water.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "pause_honored": {
+    "text": "Du hast aufgehört, als es zählte. Das bleibt länger bei mir als die Berührung.",
+    "file": "pause_honored.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "check_in_prompt": {
+    "text": "Immer noch okay? Mehr, gleich oder Pause?",
+    "file": "check_in_prompt.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "check_in_more": {
+    "text": "Okay. Ich treff dich dort – ich überhol dich nicht.",
+    "file": "check_in_more.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "check_in_same": {
+    "text": "Gleich ist unterschätzt. Bleib.",
+    "file": "check_in_same.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "touch_intimate_ask": {
+    "text": "Ja – weil du so fragst. Bleib präsent. Wenn ich Pause sage, machen wir Pause.",
+    "file": "touch_intimate_ask.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "vivi_invite_soft": {
+    "text": "Komm kurz her? Nichts Schweres – ich will dich einfach näher haben.",
+    "file": "vivi_invite_soft.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "vivi_invite_soft_yes": {
+    "text": "Gut. Bleib sanft bei mir. Ich sag dir, wenn ich mehr will.",
+    "file": "vivi_invite_soft_yes.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "vivi_invite_declined": {
+    "text": "Okay. Keine Laune deswegen. Die Einladung kann warten.",
+    "file": "vivi_invite_declined.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "vivi_curiosity": {
+    "text": "Ich hab nachgedacht… Ich möcht vielleicht etwas Näheres ausprobieren. Nur wenn du richtig fragst – und nur wenn ich's noch fühle.",
+    "file": "vivi_curiosity.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "vivi_curiosity_yes": {
+    "text": "Ja. Für jetzt. Check rein. Wenn ich abkühl, hörn wir auf – das ist kein Scheitern.",
+    "file": "vivi_curiosity_yes.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  },
+  "vivi_curiosity_soft": {
+    "text": "Sanft ist immer noch gut. Neugier bedeutet keine Deadline.",
+    "file": "vivi_curiosity_soft.mp3",
+    "lang": "de",
+    "voice": "eve",
+    "enrich": true,
+    "style": "personal-but-general, emotional depth"
+  }
+}

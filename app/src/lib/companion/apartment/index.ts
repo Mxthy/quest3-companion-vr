@@ -13,3 +13,4 @@ export * from "@/data/zones";
 export * from "./dialogue-actions";
 export * from "./audio-system";
 export * from "./spatial-audio";
+export { playVoiceClipAtHead } from "./spatial-audio";

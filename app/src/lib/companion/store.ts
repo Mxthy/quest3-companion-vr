@@ -72,7 +72,7 @@ type CompanionStateType = {
   stand: () => void;
   interact: () => void;
   speak: (event: SpeechEvent) => void;
-  speakLine: (line: string) => void;
+  speakLine: (line: string, durationMs?: number) => void;
   addBond: (n: number) => void;
   /** Advance the game clock by real elapsed seconds (drives mood/schedule). */
   tick: (realSeconds: number) => void;
@@ -224,12 +224,12 @@ export const useCompanion = create<CompanionStateType>((set, get) => ({
     set({ seated: false });
   },
 
-  speakLine: (line) => {
+  speakLine: (line, durationMs = 6200) => {
     if (speechTimer != null) window.clearTimeout(speechTimer);
     set({ speech: line });
     speechTimer = window.setTimeout(() => {
       set({ speech: null });
-    }, 6200);
+    }, durationMs);
   },
 
   speak: (event) => {

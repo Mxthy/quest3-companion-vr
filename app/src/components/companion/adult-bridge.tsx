@@ -21,6 +21,7 @@ import type { ArousalLevel } from "@/core/adult/PleasureModel";
 import { DEFAULT_ZONES, type ZoneId } from "@/core/adult/TouchZoneSystem";
 import type { Vec3 } from "@/core/adult/VirtualAnatomy";
 import { playSoft, speakTone } from "@/lib/companion/audio";
+import { tryZoneVoice } from "@/lib/companion/voice";
 import { playerSim } from "@/lib/companion/player-ref";
 import { adultAnchors } from "./adult-anchors";
 import { useCompanion } from "@/lib/companion/store";
@@ -128,6 +129,11 @@ export function AdultBridge() {
       switch (event.type) {
         case "zone_enter": {
           if (now - ev.current.lastZoneLineAt < 2600) break;
+          // Authored voice library first; text-line pool only as fallback.
+          if (tryZoneVoice(event.zoneId)) {
+            ev.current.lastZoneLineAt = now;
+            break;
+          }
           const pool = ADULT_LINES.zone_enter[event.zoneId] ?? ADULT_LINES.zone_enter.default;
           s.speakLine(pickAdultLine(`zone_${event.zoneId}`, pool));
           ev.current.lastZoneLineAt = now;
