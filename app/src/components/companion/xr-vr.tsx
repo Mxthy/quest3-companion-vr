@@ -41,6 +41,12 @@ const PINCH_CM = 0.028;
 const TMP_A = new THREE.Vector3();
 const TMP_B = new THREE.Vector3();
 const TMP_C = new THREE.Vector3();
+const GAZE_HIT = new THREE.Vector3();
+const GAZE_SPHERE = new THREE.Sphere(new THREE.Vector3(), 0.05);
+const GAZE_RAY = new THREE.Ray();
+
+/** Timestamp of the last successfully read hand joint pose (gaze fallback gate). */
+let lastHandPoseAt = 0;
 
 /** Immersive session needs HTTPS + user gesture (button in overlay). */
 export const xrStore = createXRStore({
@@ -113,6 +119,7 @@ function XrHands() {
       const poseIdx = getJointPose(indexTip, refSpace);
       const poseThumb = getJointPose(thumbTip, refSpace);
       if (!poseIdx || !poseThumb) continue;
+      lastHandPoseAt = performance.now();
 
       const pIdx = TMP_A.set(poseIdx.transform.position.x, poseIdx.transform.position.y, poseIdx.transform.position.z);
       const pThumb = TMP_B.set(poseThumb.transform.position.x, poseThumb.transform.position.y, poseThumb.transform.position.z);
@@ -244,6 +251,69 @@ function XrPerf() {
   );
 }
 
+/** Gaze fallback (Zevra-KB quest3-hands-touch-zones): when hand tracking
+ * drops and no controllers are held, looking at a zone (with a short dwell)
+ * counts as touch, so interactions survive tracking loss. */
+const GAZE_DWELL_MS = 800;
+const GAZE_COOLDOWN_MS = 1400;
+
+function XrGazeFallback() {
+  const gl = useThree((s) => s.gl);
+  const states = useXRInputSourceStates();
+  const dwellRef = useRef<{ id: string; since: number } | null>(null);
+  const cooldownRef = useRef(0);
+
+  useFrame(() => {
+    const session = gl.xr.getSession();
+    if (!session) return;
+    const hasController = states.some((s) => s.type === "controller");
+    const handSeen = performance.now() - lastHandPoseAt < 1500;
+    if (hasController || handSeen) {
+      dwellRef.current = null;
+      return;
+    }
+    const xrCam = gl.xr.getCamera();
+    const cam = (xrCam as unknown as XRCam).cameras?.[0];
+    if (!cam) return;
+    cam.getWorldPosition(TMP_B);
+    cam.getWorldDirection(TMP_A);
+    GAZE_RAY.set(TMP_B, TMP_A);
+
+    let hitId: string | null = null;
+    for (const [id, obj] of adultAnchors) {
+      const def = ZONE_DEFS.get(id);
+      if (!def) continue;
+      obj.getWorldPosition(TMP_C);
+      GAZE_SPHERE.center.copy(TMP_C);
+      GAZE_SPHERE.radius = Math.max(def.radius_m * 1.25, 0.045);
+      if (GAZE_RAY.intersectSphere(GAZE_SPHERE, GAZE_HIT)) {
+        hitId = id;
+        break;
+      }
+    }
+
+    const now = performance.now();
+    if (!hitId) {
+      dwellRef.current = null;
+      return;
+    }
+    if (dwellRef.current?.id !== hitId) {
+      dwellRef.current = { id: hitId, since: now };
+      return;
+    }
+    if (
+      now - dwellRef.current.since >= GAZE_DWELL_MS &&
+      cooldownRef.current <= now
+    ) {
+      adultRuntime.xrTouchPoints.push({ x: GAZE_HIT.x, y: GAZE_HIT.y, z: GAZE_HIT.z });
+      cooldownRef.current = now + GAZE_COOLDOWN_MS;
+      dwellRef.current = null;
+    }
+  });
+
+  return null;
+}
+
 /** In-VR arousal HUD: world-space text above the companion (DOM HUD is invisible in XR). */
 function XrHud() {
   const hud = useAdultHud();
@@ -324,6 +394,7 @@ export function XrLayer() {
       <XrHands />
       <XrControllers />
       <XrPerf />
+      <XrGazeFallback />
       <XrHud />
     </XR>
   );
