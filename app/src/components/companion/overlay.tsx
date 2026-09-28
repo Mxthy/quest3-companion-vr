@@ -72,6 +72,7 @@ export function Overlay() {
   const bond = useCompanion((s) => s.bond);
   const clockLabel = useCompanion((s) => s.clockLabel);
   const expression = useCompanion((s) => s.expression);
+  const activity = useCompanion((s) => s.activity);
   const dialogueMode = useCompanion((s) => s.dialogueMode);
   const speech = useCompanion((s) => s.speech);
   const prompt = useCompanion((s) => s.prompt);
@@ -116,7 +117,7 @@ export function Overlay() {
             <div className="min-w-0 rounded-xl border border-border bg-surface/80 px-3 py-2">
               <div className="flex items-baseline justify-between gap-4">
                 <p className="text-xs font-medium uppercase tracking-[0.16em] text-muted">Nähe</p>
-                <p className="font-mono text-[10px] text-muted">{clockLabel} · {expression}{dialogueMode === "llm" ? " · LLM" : ""}</p>
+                <p className="font-mono text-[10px] text-muted">{clockLabel} · {expression}{activity ? ` · ${activity}` : ""}{dialogueMode === "llm" ? " · LLM" : ""}</p>
                 <p className="font-mono text-xs tabular-nums text-fg">{Math.round(bond)}</p>
               </div>
               <div className="mt-1.5 h-1 overflow-hidden rounded-full bg-border">

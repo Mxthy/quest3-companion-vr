@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { emitNpc } from "./npc/events";
 import { loadSave, writeSave, type SaveData } from "./save";
 import { pickLine, talkEvent, type SpeechEvent } from "./dialogue";
 import { ADULT_LINES, pickAdultLine } from "./adult";
@@ -58,6 +59,8 @@ type CompanionStateType = {
   expression: string;
   /** Whether dialogue runs through the LLM or the scripted line pool. */
   dialogueMode: DialogueMode;
+  /** What Vivi is doing right now (NPC brain label for HUD). */
+  activity: string;
   enter: () => void;
   pause: () => void;
   resume: () => void;
@@ -126,8 +129,10 @@ export const useCompanion = create<CompanionStateType>((set, get) => ({
   clockLabel: formatClock(8 * 60),
   expression: "neutral",
   dialogueMode: isLlmConfigured(dialogueLLM.config) ? "llm" : "scripted",
+  activity: "",
 
   enter: () => {
+    emitNpc("player_entered");
     unlockAudio();
     setMuted(get().muted);
     const visits = get().visits + 1;
@@ -282,6 +287,7 @@ export const useCompanion = create<CompanionStateType>((set, get) => ({
   interact: () => {
     const s = get();
     if (s.phase !== "playing") return;
+    emitNpc("object_used");
     const look = s.lookId;
 
     if (s.seated && (look === "chair" || look == null || look === "elara")) {

@@ -3,6 +3,7 @@
  * Does not duplicate node data — only applies grants / intimacy / navigation.
  */
 import { dialogues, type DialogueNode } from "@/data/dialogues";
+import { emitNpc } from "@/lib/companion/npc/events";
 
 export type IntimacyPace = "slow" | "medium" | "exploratory";
 export type IntimacyRegion = "soft_torso" | "close" | "full";
@@ -213,6 +214,7 @@ export function continueDialogue(
   currentDialogueId: string | null,
   stats: ApartmentGameStats = createDefaultApartmentStats()
 ): DialogueResult & { nextDialogueId: string | null } {
+  emitNpc("player_talked");
   const node = currentDialogueId ? dialogues.nodes[currentDialogueId] : null;
   if (!node) {
     return {
@@ -254,6 +256,7 @@ export function chooseDialogue(
   currentDialogueId?: string | null,
   stats: ApartmentGameStats = createDefaultApartmentStats()
 ): DialogueResult & { nextDialogueId: string | null } {
+  emitNpc("player_talked");
   const dialogueId = currentDialogueId ?? stats.dialogueId ?? null;
   const node = dialogueId ? dialogues.nodes[dialogueId] : null;
   if (!node) {
