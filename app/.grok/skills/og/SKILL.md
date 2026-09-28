@@ -7,8 +7,8 @@ Manages Open Graph share-card generation and brand-asset checks for Grok apps.
 ## Pending Marker
 
 - Marker path: `/workspace/.grok/og-pending`
-- Staleness bound: 30 minutes (`OG_PENDING_MAX_AGE_MS = 30 * 60 * 1000`)
-- If the marker is present and younger than 30 minutes, a share-card generation
+- Staleness bound: 10 minutes (`OG_PENDING_MAX_AGE_MS = 10 * 60 * 1000`)
+- If the marker is present and younger than 10 minutes, a share-card generation
   job is in progress. **Do not call `wait_tasks` or `get_task_output` to wait
   on this task** — it runs asynchronously. Never use `wait_tasks` or
   `get_task_output` to poll `/workspace/.grok/og-pending`.
