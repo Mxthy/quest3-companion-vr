@@ -84,9 +84,21 @@ function Scene() {
   );
 }
 
+/** Drives the ported game-world clock: 20 real minutes = 24 game hours. */
+function GameClock() {
+  useEffect(() => {
+    const id = window.setInterval(() => {
+      useCompanion.getState().tick(1);
+    }, 1000);
+    return () => window.clearInterval(id);
+  }, []);
+  return null;
+}
+
 export function Experience() {
   return (
     <div className="absolute inset-0 bg-bg">
+      <GameClock />
       <Canvas
         shadows
         dpr={[1, 1.6]}

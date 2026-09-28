@@ -11,11 +11,28 @@ import {
   startRecord,
   unlockAudio,
 } from "./audio";
+import {
+  defaultCompanionState,
+  syncCompanionFromGame,
+  expressionFromMood,
+  formatClock,
+  isAwakeHour,
+  GAME_MINUTES_PER_REAL_SECOND,
+  rollPersona,
+  type CompanionState,
+  type PersonaState,
+} from "./personality";
+import {
+  dialogueLLM,
+  isLlmConfigured,
+  buildGameSnapFromCompanionStore,
+} from "./llm";
 
 export type HeldId = "cup" | "vinyl" | "lantern" | "toy_wand" | null;
 export type Phase = "start" | "playing" | "paused";
+export type DialogueMode = "scripted" | "llm";
 
-type CompanionState = {
+type CompanionStateType = {
   phase: Phase;
   bond: number;
   used: SaveData["used"];
@@ -29,6 +46,18 @@ type CompanionState = {
   prompt: string;
   musicOn: boolean;
   lanternLit: boolean;
+  /** Ported personality layer (mood, presence, trust, consent scope). */
+  companion: CompanionState;
+  /** Session-seeded persona brain (disposition + learned region memory). */
+  persona: PersonaState;
+  /** Game-world clock in minutes (20 real minutes = 24 game hours). */
+  gameMinutes: number;
+  /** Formatted clock label for HUD ("9:30 AM"). */
+  clockLabel: string;
+  /** Current facial expression derived from mood. */
+  expression: string;
+  /** Whether dialogue runs through the LLM or the scripted line pool. */
+  dialogueMode: DialogueMode;
   enter: () => void;
   pause: () => void;
   resume: () => void;
@@ -42,6 +71,8 @@ type CompanionState = {
   speak: (event: SpeechEvent) => void;
   speakLine: (line: string) => void;
   addBond: (n: number) => void;
+  /** Advance the game clock by real elapsed seconds (drives mood/schedule). */
+  tick: (realSeconds: number) => void;
 };
 
 const saved = loadSave();
@@ -51,10 +82,31 @@ function persist(partial: Partial<SaveData>) {
   writeSave({ ...cur, ...partial, used: partial.used ?? cur.used });
 }
 
+function energyFor(gameMinutes: number) {
+  return isAwakeHour(gameMinutes) ? 80 : 30;
+}
+
+/** Bridge stats until the engine reports live comfort/energy. */
+function syncPersonality(
+  prev: CompanionState,
+  bond: number,
+  gameMinutes: number,
+): CompanionState {
+  return syncCompanionFromGame({
+    prev,
+    affection: bond,
+    comfort: 70,
+    energy: energyFor(gameMinutes),
+    gameMinutes,
+    intimacyTrust: Math.min(10, Math.floor(bond / 10)),
+    consent: true,
+  });
+}
+
 let nearOnce = false;
 let speechTimer: number | null = null;
 
-export const useCompanion = create<CompanionState>((set, get) => ({
+export const useCompanion = create<CompanionStateType>((set, get) => ({
   phase: "start",
   bond: saved.bond,
   used: saved.used,
@@ -68,12 +120,33 @@ export const useCompanion = create<CompanionState>((set, get) => ({
   prompt: "",
   musicOn: saved.used.vinyl,
   lanternLit: saved.used.lantern,
+  companion: defaultCompanionState(),
+  persona: rollPersona(),
+  gameMinutes: 8 * 60,
+  clockLabel: formatClock(8 * 60),
+  expression: "neutral",
+  dialogueMode: isLlmConfigured(dialogueLLM.config) ? "llm" : "scripted",
 
   enter: () => {
     unlockAudio();
     setMuted(get().muted);
     const visits = get().visits + 1;
-    set({ phase: "playing", visits, seated: false, held: null });
+    // Fresh persona roll per session — she is a person-instance, not a script.
+    const persona = rollPersona();
+    const companion = syncPersonality(
+      defaultCompanionState(),
+      get().bond,
+      get().gameMinutes,
+    );
+    set({
+      phase: "playing",
+      visits,
+      seated: false,
+      held: null,
+      persona,
+      companion,
+      expression: expressionFromMood(get().bond, 70, energyFor(get().gameMinutes)),
+    });
     persist({ visits, bond: get().bond, used: get().used, muted: get().muted });
     get().speak("enter");
     nearOnce = false;
@@ -155,6 +228,20 @@ export const useCompanion = create<CompanionState>((set, get) => ({
   },
 
   speak: (event) => {
+    // LLM upgrade layer: when configured, Vivi composes freely with
+    // persona/mood context; the module falls back to pickLine internally.
+    if (get().dialogueMode === "llm") {
+      const snap = buildGameSnapFromCompanionStore(get(), {
+        seedNodeId: event,
+        consent: true,
+      });
+      void dialogueLLM.generate(snap, (partial) => {
+        if (partial) get().speakLine(partial);
+      }).then((reply) => {
+        get().speakLine(reply.text);
+      });
+      return;
+    }
     const line = pickLine(event);
     if (speechTimer != null) window.clearTimeout(speechTimer);
     set({ speech: line });
@@ -166,12 +253,29 @@ export const useCompanion = create<CompanionState>((set, get) => ({
 
   addBond: (n) => {
     const bond = Math.max(0, Math.min(100, get().bond + n));
-    set({ bond });
+    const gameMinutes = get().gameMinutes;
+    set({
+      bond,
+      companion: syncPersonality(get().companion, bond, gameMinutes),
+      expression: expressionFromMood(bond, 70, energyFor(gameMinutes)),
+    });
     persist({
       bond,
       used: get().used,
       visits: get().visits,
       muted: get().muted,
+    });
+  },
+
+  tick: (realSeconds) => {
+    if (get().phase !== "playing") return;
+    const gameMinutes =
+      (get().gameMinutes + realSeconds * GAME_MINUTES_PER_REAL_SECOND) % 1440;
+    set({
+      gameMinutes,
+      clockLabel: formatClock(gameMinutes),
+      companion: syncPersonality(get().companion, get().bond, gameMinutes),
+      expression: expressionFromMood(get().bond, 70, energyFor(gameMinutes)),
     });
   },
 
@@ -256,7 +360,7 @@ export const useCompanion = create<CompanionState>((set, get) => ({
   },
 }));
 
-export function promptFor(s: CompanionState): string {
+export function promptFor(s: CompanionStateType): string {
   if (s.phase !== "playing") return "";
   if (s.held === "cup") return s.nearElara ? "E · Tasse reichen" : "E · Ablegen";
   if (s.held === "vinyl") return s.lookId === "player" ? "E · Auflegen" : "Zur Konsole gehen";
