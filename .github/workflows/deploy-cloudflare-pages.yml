@@ -41,6 +41,12 @@ jobs:
       - name: Install dependencies
         run: npm ci --no-audit --no-fund
 
+      - name: Fetch VRM model binary (gitignored asset)
+        run: |
+          mkdir -p public/models
+          curl -sL "https://base44.app/api/apps/6aba70fce22831cd934eaf4a/files/mp/public/6aba70fce22831cd934eaf4a/8874b9469_vivi.vrm" -o public/models/vivi.vrm
+          test "$(stat -c%s public/models/vivi.vrm)" = "10885460"
+
       - name: Build production bundle (Cloudflare Pages preset)
         run: NITRO_PRESET=cloudflare_pages VITE_AUTH_ENABLED=true npm run build
 
