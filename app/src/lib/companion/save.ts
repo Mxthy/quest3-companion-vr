@@ -1,5 +1,31 @@
-const KEY = "elara-companion-v1";
-const VERSION = 1;
+import {
+  CURRENT_SAVE_KEY,
+  CURRENT_SAVE_VERSION,
+  LEGACY_FUSED_SAVE_KEY,
+  mergeLegacyProgress,
+} from "./save-migration.mjs";
+
+const KEY = CURRENT_SAVE_KEY;
+const VERSION = CURRENT_SAVE_VERSION;
+
+export type ImportedProgress = {
+  source: typeof LEGACY_FUSED_SAVE_KEY;
+  day: number;
+  gameMinutes: number;
+  affection: number;
+  comfort: number;
+  energy: number;
+  coins: number;
+  level: number;
+  outfit: string;
+  unlockedOutfits: string[];
+  unlockedDecor: string[];
+  interacted: string[];
+  photos: string[];
+  giftedCount: number;
+  dishesCooked: number;
+  alphaComplete: boolean;
+};
 
 export type SaveData = {
   version: number;
@@ -11,6 +37,7 @@ export type SaveData = {
   };
   visits: number;
   muted: boolean;
+  importedProgress?: ImportedProgress;
 };
 
 const defaults: SaveData = {
@@ -32,12 +59,28 @@ function migrate(raw: SaveData): SaveData {
   return merged;
 }
 
+function parseStored(key: string): unknown {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
 export function loadSave(): SaveData {
   try {
-    const raw = localStorage.getItem(KEY);
-    if (!raw) return { ...defaults, used: { ...defaults.used } };
-    const parsed = JSON.parse(raw) as SaveData;
-    return migrate(parsed);
+    const currentRaw = parseStored(KEY);
+    const current = currentRaw ? migrate(currentRaw as SaveData) : { ...defaults, used: { ...defaults.used } };
+
+    if (current.importedProgress) return current;
+
+    const legacyRaw = parseStored(LEGACY_FUSED_SAVE_KEY);
+    if (!legacyRaw) return current;
+
+    const imported = migrate(mergeLegacyProgress(current, legacyRaw) as SaveData);
+    writeSave(imported);
+    return imported;
   } catch {
     return { ...defaults, used: { ...defaults.used } };
   }

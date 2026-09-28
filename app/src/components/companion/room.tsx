@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import * as THREE from "three";
 import { useRoomTextures } from "@/lib/companion/textures";
 import { useCompanion } from "@/lib/companion/store";
+import { useXrSessionActive } from "@/lib/companion/adult";
 
 function Dust() {
   const geo = useMemo(() => {
@@ -27,6 +28,7 @@ export function Room() {
   const tex = useRoomTextures();
   const lanternLit = useCompanion((s) => s.lanternLit);
   const bond = useCompanion((s) => s.bond);
+  const inXR = useXrSessionActive((s) => s.active);
 
   const wallMat = useMemo(
     () =>
@@ -58,9 +60,9 @@ export function Room() {
         intensity={bond >= 40 ? 55 : 42}
         distance={12}
         decay={2}
-        castShadow
-        shadow-mapSize-width={1024}
-        shadow-mapSize-height={1024}
+        castShadow={!inXR}
+        shadow-mapSize-width={inXR ? 256 : 1024}
+        shadow-mapSize-height={inXR ? 256 : 1024}
         shadow-bias={-0.0002}
       />
       <pointLight position={[0.15, 2.15, -0.2]} color="#f0d8c0" intensity={22} distance={8} decay={2} />
@@ -70,7 +72,7 @@ export function Room() {
       )}
 
       {/* floor */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0.2]} receiveShadow>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0.2]} receiveShadow={!inXR}>
         <planeGeometry args={[7.4, 6.6]} />
         <meshStandardMaterial color="#c4a078" map={tex.wood} roughness={0.72} />
       </mesh>
@@ -81,16 +83,16 @@ export function Room() {
       </mesh>
 
       {/* walls */}
-      <mesh position={[0, 1.36, -2.95]} material={wallMat} receiveShadow>
+      <mesh position={[0, 1.36, -2.95]} material={wallMat} receiveShadow={!inXR}>
         <boxGeometry args={[7.4, 2.72, 0.12]} />
       </mesh>
       <mesh position={[0, 1.36, 3.45]} material={wallMat}>
         <boxGeometry args={[7.4, 2.72, 0.12]} />
       </mesh>
-      <mesh position={[3.7, 1.36, 0.25]} material={wallMat} receiveShadow>
+      <mesh position={[3.7, 1.36, 0.25]} material={wallMat} receiveShadow={!inXR}>
         <boxGeometry args={[0.12, 2.72, 6.6]} />
       </mesh>
-      <mesh position={[-3.7, 1.36, 0.25]} material={wallMat} receiveShadow>
+      <mesh position={[-3.7, 1.36, 0.25]} material={wallMat} receiveShadow={!inXR}>
         <boxGeometry args={[0.12, 2.72, 6.6]} />
       </mesh>
 
@@ -108,36 +110,36 @@ export function Room() {
         <meshStandardMaterial color="#1a1612" roughness={0.4} metalness={0.3} transparent opacity={0.18} />
       </mesh>
       {/* curtains */}
-      <mesh position={[-3.48, 1.4, -1.15]} castShadow>
+      <mesh position={[-3.48, 1.4, -1.15]} castShadow={!inXR}>
         <boxGeometry args={[0.08, 2.2, 0.55]} />
         <meshStandardMaterial color="#2c201c" roughness={0.85} />
       </mesh>
-      <mesh position={[-3.48, 1.4, 1.45]} castShadow>
+      <mesh position={[-3.48, 1.4, 1.45]} castShadow={!inXR}>
         <boxGeometry args={[0.08, 2.2, 0.55]} />
         <meshStandardMaterial color="#2c201c" roughness={0.85} />
       </mesh>
 
       {/* rug */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.012, -0.35]} receiveShadow>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.012, -0.35]} receiveShadow={!inXR}>
         <planeGeometry args={[2.6, 2.2]} />
         <meshStandardMaterial map={tex.rug} roughness={0.95} color="#6a4a40" />
       </mesh>
 
       {/* sofa */}
       <group position={[0, 0, -1.85]}>
-        <mesh position={[0, 0.22, 0]} castShadow receiveShadow>
+        <mesh position={[0, 0.22, 0]} castShadow={!inXR} receiveShadow={!inXR}>
           <boxGeometry args={[1.85, 0.38, 0.72]} />
           <meshStandardMaterial color="#6a5248" roughness={0.88} />
         </mesh>
-        <mesh position={[0, 0.58, -0.28]} castShadow>
+        <mesh position={[0, 0.58, -0.28]} castShadow={!inXR}>
           <boxGeometry args={[1.85, 0.55, 0.18]} />
           <meshStandardMaterial color="#3f302c" roughness={0.88} />
         </mesh>
-        <mesh position={[-0.92, 0.42, 0.02]} castShadow>
+        <mesh position={[-0.92, 0.42, 0.02]} castShadow={!inXR}>
           <boxGeometry args={[0.16, 0.42, 0.7]} />
           <meshStandardMaterial color="#3f302c" roughness={0.88} />
         </mesh>
-        <mesh position={[0.92, 0.42, 0.02]} castShadow>
+        <mesh position={[0.92, 0.42, 0.02]} castShadow={!inXR}>
           <boxGeometry args={[0.16, 0.42, 0.7]} />
           <meshStandardMaterial color="#3f302c" roughness={0.88} />
         </mesh>
@@ -145,11 +147,11 @@ export function Room() {
 
       {/* player chair */}
       <group position={[0.62, 0, 0.55]}>
-        <mesh position={[0, 0.24, 0]} castShadow>
+        <mesh position={[0, 0.24, 0]} castShadow={!inXR}>
           <boxGeometry args={[0.48, 0.08, 0.48]} />
           <meshStandardMaterial color="#4e3c34" roughness={0.8} />
         </mesh>
-        <mesh position={[0, 0.48, -0.2]} castShadow>
+        <mesh position={[0, 0.48, -0.2]} castShadow={!inXR}>
           <boxGeometry args={[0.48, 0.42, 0.08]} />
           <meshStandardMaterial color="#43342e" roughness={0.8} />
         </mesh>
@@ -166,7 +168,7 @@ export function Room() {
       </group>
 
       {/* coffee table */}
-      <mesh position={[0.05, 0.28, -0.38]} castShadow receiveShadow material={woodMat}>
+      <mesh position={[0.05, 0.28, -0.38]} castShadow={!inXR} receiveShadow={!inXR} material={woodMat}>
         <boxGeometry args={[0.85, 0.06, 0.5]} />
       </mesh>
       <mesh position={[0.05, 0.14, -0.38]} material={woodMat}>
@@ -175,10 +177,10 @@ export function Room() {
 
       {/* sideboard + record player body */}
       <group position={[2.25, 0, 0.35]}>
-        <mesh position={[0, 0.38, 0]} castShadow receiveShadow material={woodMat}>
+        <mesh position={[0, 0.38, 0]} castShadow={!inXR} receiveShadow={!inXR} material={woodMat}>
           <boxGeometry args={[0.9, 0.76, 0.42]} />
         </mesh>
-        <mesh position={[0.12, 0.78, 0.02]} castShadow>
+        <mesh position={[0.12, 0.78, 0.02]} castShadow={!inXR}>
           <boxGeometry args={[0.42, 0.04, 0.36]} />
           <meshStandardMaterial color="#1a1614" roughness={0.5} />
         </mesh>
@@ -211,11 +213,11 @@ export function Room() {
           <cylinderGeometry args={[0.12, 0.14, 0.22, 10]} />
           <meshStandardMaterial color="#6a4032" roughness={0.9} />
         </mesh>
-        <mesh position={[0, 0.55, 0]} castShadow>
+        <mesh position={[0, 0.55, 0]} castShadow={!inXR}>
           <sphereGeometry args={[0.28, 12, 12]} />
           <meshStandardMaterial color="#3a5244" roughness={0.85} />
         </mesh>
-        <mesh position={[0.16, 0.7, 0.08]} castShadow>
+        <mesh position={[0.16, 0.7, 0.08]} castShadow={!inXR}>
           <sphereGeometry args={[0.16, 10, 10]} />
           <meshStandardMaterial color="#2f4a3c" roughness={0.85} />
         </mesh>
@@ -223,7 +225,7 @@ export function Room() {
 
       {/* bookshelf */}
       <group position={[2.4, 0, -1.7]}>
-        <mesh position={[0, 0.9, 0]} castShadow material={woodMat}>
+        <mesh position={[0, 0.9, 0]} castShadow={!inXR} material={woodMat}>
           <boxGeometry args={[0.7, 1.8, 0.28]} />
         </mesh>
         {[0.35, 0.75, 1.15, 1.5].map((y, i) => (
@@ -254,6 +256,7 @@ export const COLLIDERS: { minX: number; maxX: number; minZ: number; maxZ: number
   { minX: 1.7, maxX: 2.75, minZ: 0.05, maxZ: 0.7 }, // sideboard
   { minX: 1.95, maxX: 2.8, minZ: -2.05, maxZ: -1.4 }, // shelf
   { minX: -2.8, maxX: -2.3, minZ: -2.15, maxZ: -1.65 }, // plant
+  { minX: 0.32, maxX: 0.92, minZ: 0.26, maxZ: 0.84 }, // player chair
 ];
 
 export const ROOM_BOUNDS = { minX: -3.35, maxX: 3.35, minZ: -2.55, maxZ: 3.15 };
