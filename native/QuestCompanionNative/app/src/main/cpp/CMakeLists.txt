@@ -7,6 +7,7 @@ find_package(OpenXR REQUIRED CONFIG)
 add_library(quest_companion SHARED
     main.cpp
     openxr_bootstrap.cpp
+    contact_sampler.cpp
 )
 
 target_compile_features(quest_companion PRIVATE cxx_std_20)

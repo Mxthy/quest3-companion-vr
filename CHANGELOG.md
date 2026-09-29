@@ -1,5 +1,21 @@
 # CHANGELOG
 
+## 2026-09-29 (1)
+- Native hand-tracking sensing gate: XR_EXT_HAND_TRACKING in enabledExtensions + PFN-Loader
+  (xrCreateHandTrackerEXT / xrLocateHandJointsEXT) im OpenXR-Bootstrap; Oculus HAND_TRACKING
+  Permission + uses-feature (required=false) im Manifest
+- contact_sampler.h/.cpp: 17 BodyRegions, Tap/Hold/Stroke/Grab/Push-Klassifikation,
+  Penetration-Intensitaet, per-Hand-Zone-Tracking, Event-Queue; sensing-only (keine Logik)
+- main.cpp: JNI_OnLoad cached ContactBridge-Klasse, Frame-Loop wired
+  (SampleHandJoints → Sampler.Update → PollEvent → JNI Push, "(IFFJ)V");
+  Session-Gate fehlt noch → Sampling zur Laufzeit inaktiv bis XrSession existiert
+  (kompiliert und APK-geci, nicht als "laufend" gemeldet – Bootstrap-Disziplin)
+- Java ContactBridge (com.zevra.questcompanion): Listener-Registry als Gegenstelle
+- TS-Seite: ContactController.dispatchNativeContact (beide Core-Kopien),
+  integration/companion/drop-in/native-contact-bridge.ts mit BodyRegion-Mirror,
+  interpretTouch (comfort/attention/tap_directive/hold_comfort/neutral),
+  Region→ZoneId-Mapping + installNativeContactGlobal()
+
 ## 2026-09-20 (3)
 - XR immersive mode live: VR-Button im Overlay, XR-Adapter (xr-vr.tsx) als einzige WebXR-Schicht
   (platform-adapters-Kontrakt), Hand-Pinch=Grab + Fingerspitzen-Hit-Test, Controller-Squeeze/Trigger,

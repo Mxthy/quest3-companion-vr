@@ -73,6 +73,23 @@ export class ContactController {
     for (const l of this.listeners) l(e);
   }
 
+  /**
+   * Native bridge entry: an OpenXR-sampled touch (JNI ContactBridge) enters
+   * the same event pipeline as runtime-simulated contacts. Content-agnostic:
+   * classification stays with the caller, the controller only fans out.
+   */
+  dispatchNativeContact(zoneId: ZoneId, intensity: number, holdMs: number): void {
+    if (intensity >= 0.75) {
+      this.emit({ type: "hold_start", zoneId });
+    }
+    this.emit({ type: "zone_enter", zoneId });
+    if (holdMs > 0) {
+      this.emit({ type: "hold_end", zoneId });
+    }
+    this.emit({ type: "impulse", zoneId });
+    this.emit({ type: "zone_exit", zoneId });
+  }
+
   updateZonePosition(id: ZoneId, position: Vec3) {
     const def = DEFAULT_AVATAR_ZONES.find((z) => z.id === id) ?? {
       id,

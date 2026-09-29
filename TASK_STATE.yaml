@@ -1,6 +1,6 @@
 project: quest-companion-vr
-updated: 2026-09-22
-phase: native_openxr_bootstrap_scaffold
+updated: 2026-09-29
+phase: native_hand_tracking_sensing
 target:
   device: Meta Quest 3
   refresh_hz: 72

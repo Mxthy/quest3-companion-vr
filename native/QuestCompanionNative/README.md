@@ -16,6 +16,27 @@ The first bootstrap gate intentionally covers only:
 
 It does **not** yet create the Vulkan device, OpenXR session, swapchains, stereo views, input actions, or render a frame. Those are the next gates and must not be reported as working until compiled and tested.
 
+## Hand-tracking sensing (compiled, runtime-inactive)
+
+Added on top of the bootstrap gate:
+
+- `XR_EXT_HAND_TRACKING_EXTENSION_NAME` is enabled when the runtime offers it
+  (with a controller-fallback log otherwise) and both PFNs
+  (`xrCreateHandTrackerEXT`, `xrLocateHandJointsEXT`) are loaded after instance
+  creation. Oculus hand-tracking permission + `uses-feature required=false` are
+  in the manifest.
+- `contact_sampler.h/.cpp` — sensing-only touch zone module: 17 body regions,
+  per-hand zone tracking, Tap/Hold/Stroke/Grab/Push classification with
+  penetration-based intensity, event queue.
+- `main.cpp` caches `com.zevra.questcompanion.ContactBridge` in `JNI_OnLoad`
+  and polls sampler events into it in the frame loop.
+- `ContactBridge.java` fans events out to registered listeners.
+
+The sampling path stays **inactive at runtime** until the OpenXR session gate
+exists (`SetSession` / `SetBaseSpace` are ready to be called by it): there is
+no `XrSession` yet, so `SampleHandJoints` returns false and no hand joints
+flow. It is compiled by the APK workflow only — not reported as working.
+
 ## Pinned build matrix
 
 | Component | Version |

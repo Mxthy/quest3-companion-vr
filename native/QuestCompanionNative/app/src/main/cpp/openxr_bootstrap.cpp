@@ -44,6 +44,21 @@ OpenXrBootstrap::OpenXrBootstrap(GameActivity* activity) noexcept : activity_(ac
 
 OpenXrBootstrap::~OpenXrBootstrap() {
     if (instance_ != XR_NULL_HANDLE) {
+        for (auto& tracker : handTrackers_) {
+            if (tracker != XR_NULL_HANDLE) {
+                PFN_xrDestroyHandTrackerEXT destroy = nullptr;
+                xrGetInstanceProcAddr(
+                    instance_,
+                    "xrDestroyHandTrackerEXT",
+                    reinterpret_cast<PFN_xrVoidFunction*>(&destroy));
+                if (destroy != nullptr) {
+                    destroy(tracker);
+                }
+                tracker = XR_NULL_HANDLE;
+            }
+        }
+    }
+    if (instance_ != XR_NULL_HANDLE) {
         const XrResult result = xrDestroyInstance(instance_);
         if (XR_FAILED(result)) {
             QC_LOGE("xrDestroyInstance failed: %s", ResultName(result));
@@ -121,6 +136,13 @@ bool OpenXrBootstrap::CreateInstance() {
         QC_LOGE("Required render extension missing: %s", XR_KHR_VULKAN_ENABLE2_EXTENSION_NAME);
         return false;
     }
+    if (available(XR_EXT_HAND_TRACKING_EXTENSION_NAME)) {
+        enabledExtensions.push_back(XR_EXT_HAND_TRACKING_EXTENSION_NAME);
+        handTrackingAvailable_ = true;
+        QC_LOGI("Hand tracking extension enabled");
+    } else {
+        QC_LOGI("Hand tracking extension unavailable – controller fallback only");
+    }
 
     XrInstanceCreateInfoAndroidKHR androidInfo{XR_TYPE_INSTANCE_CREATE_INFO_ANDROID_KHR};
     androidInfo.applicationVM = activity_->vm;
@@ -158,7 +180,32 @@ bool OpenXrBootstrap::CreateInstance() {
             XR_VERSION_MINOR(properties.runtimeVersion),
             XR_VERSION_PATCH(properties.runtimeVersion));
     }
+
+    LoadHandTrackingFunctions();
     return true;
+}
+
+void OpenXrBootstrap::LoadHandTrackingFunctions() {
+    if (!handTrackingAvailable_ || instance_ == XR_NULL_HANDLE) {
+        return;
+    }
+    const XrResult create = xrGetInstanceProcAddr(
+        instance_,
+        "xrCreateHandTrackerEXT",
+        reinterpret_cast<PFN_xrVoidFunction*>(&xrCreateHandTrackerEXT_));
+    const XrResult locate = xrGetInstanceProcAddr(
+        instance_,
+        "xrLocateHandJointsEXT",
+        reinterpret_cast<PFN_xrVoidFunction*>(&xrLocateHandJointsEXT_));
+    if (XR_FAILED(create) || XR_FAILED(locate) ||
+        xrCreateHandTrackerEXT_ == nullptr || xrLocateHandJointsEXT_ == nullptr) {
+        QC_LOGE("Hand tracking function loading failed: create=%d locate=%d", create, locate);
+        handTrackingAvailable_ = false;
+        xrCreateHandTrackerEXT_ = nullptr;
+        xrLocateHandJointsEXT_ = nullptr;
+        return;
+    }
+    QC_LOGI("Hand tracking functions loaded");
 }
 
 bool OpenXrBootstrap::TryAcquireSystem() {
@@ -215,6 +262,71 @@ bool OpenXrBootstrap::HasExtension(const char* extensionName) const {
         [extensionName](const XrExtensionProperties& extension) {
             return std::strcmp(extension.extensionName, extensionName) == 0;
         });
+}
+
+void OpenXrBootstrap::SetSession(XrSession session) {
+    session_ = session;
+    if (!handTrackingAvailable_ || session_ == XR_NULL_HANDLE) {
+        return;
+    }
+    if (xrCreateHandTrackerEXT_ == nullptr) {
+        QC_LOGE("Cannot create hand trackers: functions not loaded");
+        return;
+    }
+    for (int i = 0; i < 2; ++i) {
+        if (handTrackers_[i] != XR_NULL_HANDLE) {
+            continue;  // already created
+        }
+        XrHandTrackerCreateInfoEXT createInfo{XR_TYPE_HAND_TRACKER_CREATE_INFO_EXT};
+        createInfo.hand = i == 0 ? XR_HAND_LEFT_EXT : XR_HAND_RIGHT_EXT;
+        createInfo.handJointSet = XR_HAND_JOINT_SET_DEFAULT_EXT;
+        const XrResult result = xrCreateHandTrackerEXT_(instance_, &createInfo, &handTrackers_[i]);
+        if (XR_FAILED(result)) {
+            QC_LOGE("xrCreateHandTrackerEXT (%s) failed: %s",
+                    i == 0 ? "left" : "right", ResultName(result));
+            handTrackers_[i] = XR_NULL_HANDLE;
+        }
+    }
+}
+
+void OpenXrBootstrap::SetBaseSpace(XrSpace space) {
+    baseSpace_ = space;
+}
+
+bool OpenXrBootstrap::SampleHandJoints(XrTime* predictedTime,
+                                        XrHandJointLocationEXT* leftJoints,
+                                        XrHandJointLocationEXT* rightJoints) {
+    if (session_ == XR_NULL_HANDLE || baseSpace_ == XR_NULL_HANDLE ||
+        handTrackers_[0] == XR_NULL_HANDLE || handTrackers_[1] == XR_NULL_HANDLE ||
+        xrLocateHandJointsEXT_ == nullptr) {
+        if (!handSampleLogEmitted_) {
+            handSampleLogEmitted_ = true;
+            QC_LOGI("Hand sampling inactive – session gate not reached yet");
+        }
+        return false;
+    }
+    if (predictedTime == nullptr || leftJoints == nullptr || rightJoints == nullptr) {
+        return false;
+    }
+
+    for (int i = 0; i < 2; ++i) {
+        XrHandJointsLocateInfoEXT locateInfo{XR_TYPE_HAND_JOINTS_LOCATE_INFO_EXT};
+        locateInfo.baseSpace = baseSpace_;
+        locateInfo.time = *predictedTime;
+        XrHandJointLocationsEXT locations{XR_TYPE_HAND_JOINT_LOCATIONS_EXT};
+        locations.jointCount = XR_HAND_JOINT_COUNT_EXT;
+        locations.jointLocations = i == 0 ? leftJoints : rightJoints;
+        const XrResult result = xrLocateHandJointsEXT_(handTrackers_[i], &locateInfo, &locations);
+        if (XR_FAILED(result)) {
+            QC_LOGE("xrLocateHandJointsEXT (%s) failed: %s",
+                    i == 0 ? "left" : "right", ResultName(result));
+            return false;
+        }
+        if (!locations.isActive) {
+            return false;
+        }
+    }
+    return true;
 }
 
 const char* OpenXrBootstrap::ResultName(XrResult result) const {
