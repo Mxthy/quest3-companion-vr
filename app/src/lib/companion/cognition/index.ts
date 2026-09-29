@@ -8,3 +8,5 @@ export * from "./memory";
 export * from "./player-model";
 export * from "./expectation";
 export * from "./persist";
+export * from "./belief";
+export * from "./goap";

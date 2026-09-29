@@ -10,6 +10,8 @@ import { perceive, type Perception } from "../npc/perception";
 import type { Intent } from "../npc/brain";
 import { appraise, appraiseAmbient, tickEmotion, dominantEmotion } from "./emotion";
 import { recordEpisodic } from "./memory";
+import { belief, tickBelief } from "./belief";
+import { noteWorldChange, resetDailyFacts } from "./goap";
 import { noteInteraction, observeLook, playerModel, tickPlayerModel } from "./player-model";
 import { expectation, onPlayerArrived, anticipateFromPrediction } from "./expectation";
 import { loadCognition, markDirty, saveCognition } from "./persist";
@@ -71,6 +73,7 @@ export function initCognition(): void {
         // She notices what the player touches — object attention spike.
         spikeAttention("object", st.lookId, 0.55);
         noteInteraction("object");
+        noteWorldChange(st.lookId);
         break;
       case "player_near":
         spikeAttention("player", null, 0.5);
@@ -95,8 +98,10 @@ export function tickCognition(
   const { energy, boredom } = needs;
   appraiseAmbient(dt, { playerNear: p.playerNear, boredom, patience: TRAITS.patience });
 
-  // Player model learning: gaze dwell + interaction time.
+  // Belief state + daily fact bookkeeping.
   const st = useCompanion.getState();
+  tickBelief(dt, p, st.gameMinutes);
+  resetDailyFacts(Math.floor(st.gameMinutes / 1440) + 1, st.gameMinutes);
   observeLook(st.lookId, dt);
   tickPlayerModel(dt, p.playerNear);
   // Anticipation: occasional glance at the predicted object (Blueprint §7).
@@ -119,4 +124,4 @@ export function tickCognition(
 // Emotions are a plain record — import the live object for the context.
 import { emotions as emotionsRef } from "./emotion";
 
-export { dominantEmotion, attention, microState, TRAITS, expectation, playerModel };
+export { dominantEmotion, attention, microState, TRAITS, expectation, playerModel, belief };

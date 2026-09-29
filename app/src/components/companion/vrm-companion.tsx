@@ -16,13 +16,16 @@ import { useCompanion } from "@/lib/companion/store";
 import { initVoiceDirector, tryActivityVoice } from "@/lib/companion/voice";
 import {
   attention,
+  cancelGoap,
   dominantEmotion,
   expressionFromEmotion,
   initCognition,
   microEnvelope,
   microState,
   tickCognition,
+  tickGoap,
 } from "@/lib/companion/cognition";
+import { tryIntentVoice } from "@/lib/companion/voice";
 import {
   IDLE_INTENT,
   NpcBrain,
@@ -76,6 +79,7 @@ let WALK_PHASE = 0;
 let WALK_BLEND = 0;
 let blinkTimer = 2;
 let yawnAmount = 0;
+let goapArrived = false;
 let stuckMs = 0;
 let skipNavLabel = "";
 let blinkVal = 0;
@@ -197,11 +201,14 @@ function VrmBody({ vrm }: { vrm: VRM }) {
       if (playing && intent.label !== st.activity) {
         useCompanion.setState({ activity: intent.label });
       }
+      // GOAP-mapped targets carry their own step voices.
+      const GOAP_TARGETS = new Set(["kettle", "stove", "plant"]);
       // Authored activity voice lines when the brain commits to an object.
       if (
         playing &&
         intent.label !== lastVoiceActivityLabel &&
-        (intent.kind === "attend" || intent.kind === "rest")
+        (intent.kind === "attend" || intent.kind === "rest") &&
+        !GOAP_TARGETS.has(intent.targetId ?? "")
       ) {
         lastVoiceActivityLabel = intent.label;
         tryActivityVoice(intent.targetId);
@@ -221,10 +228,20 @@ function VrmBody({ vrm }: { vrm: VRM }) {
         skipNavLabel = "";
         stuckMs = 0;
       }
+      // ── GOAP: brain goal → plan chain; walk target comes from the plan ──
+      const goapTick = tickGoap(intent.targetId, intent.kind, goapArrived, p.night, playing);
+      goapArrived = false;
+      const navTargetId = playing && goapTick.targetId ? goapTick.targetId : intent.targetId;
+      if (playing && goapTick.label && goapTick.label !== st.activity) {
+        useCompanion.setState({ activity: goapTick.label });
+      }
+      if (goapTick.completed?.voiceIntent) {
+        tryIntentVoice(goapTick.completed.voiceIntent);
+      }
       let tx: number | null = null;
       let tz: number | null = null;
-      if (playing && intent.targetId && intent.label !== skipNavLabel) {
-        const it = interactablePos(intent.targetId);
+      if (playing && navTargetId && intent.label !== skipNavLabel) {
+        const it = interactablePos(navTargetId);
         if (it) {
           const bx = rootObj.position.x - it.x;
           const bz = rootObj.position.z - it.z;
@@ -245,15 +262,17 @@ function VrmBody({ vrm }: { vrm: VRM }) {
           if (stuckMs > 2.5) {
             skipNavLabel = intent.label;
             moving = false;
+            cancelGoap();
           }
         }
-        const it = intent.targetId ? interactablePos(intent.targetId) : null;
+        const it = navTargetId ? interactablePos(navTargetId) : null;
         if (w.arrived && it) {
           bodyYaw = steerYaw(
             bodyYaw,
             Math.atan2(it.x - rootObj.position.x, it.z - rootObj.position.z),
             dt,
           );
+          if (goapTick.targetId) goapArrived = true;
         } else if (!w.arrived) {
           bodyYaw = steerYaw(bodyYaw, w.targetYaw, dt);
         }

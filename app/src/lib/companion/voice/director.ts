@@ -93,6 +93,15 @@ export function tryZoneVoice(zoneId: string): boolean {
   });
 }
 
+/** GOAP step hook: fire a voice intent without an object binding. */
+export function tryIntentVoice(intent: string): boolean {
+  return speakWithVoice({
+    intent,
+    relationship: relationshipLevel(),
+    consent: consentActive(),
+  });
+}
+
 /** NPC brain hook: she started attending an object (or rests at it). */
 export function tryActivityVoice(targetId: string | null): boolean {
   if (!targetId) return false;

@@ -5,6 +5,7 @@
  */
 import { episodic, semantic, type EpisodicMemory } from "./memory";
 import { playerModel } from "./player-model";
+import { goap } from "./goap";
 
 const KEY = "vivi_cognition_v1";
 const SAVE_INTERVAL_MS = 15_000;
@@ -16,6 +17,7 @@ type Persisted = {
   episodic: EpisodicMemory[];
   semantic: [string, { key: string; value: number; text: string; updatedAt: number }][];
   playerModel: typeof playerModel;
+  goapFacts: typeof goap.facts;
 };
 
 export function markDirty(): void {
@@ -31,6 +33,9 @@ export function loadCognition(): void {
     episodic.length = 0;
     episodic.push(...(data.episodic ?? []));
     for (const [k, f] of data.semantic ?? []) semantic.set(k, f);
+    if (data.goapFacts) {
+      Object.assign(goap.facts, data.goapFacts);
+    }
     if (data.playerModel) {
       playerModel.familiarity = data.playerModel.familiarity ?? 0;
       playerModel.interactionSeconds = data.playerModel.interactionSeconds ?? 0;
@@ -53,6 +58,7 @@ export function saveCognition(force = false): void {
       episodic: episodic.slice(-20), // only highlights survive the session
       semantic: [...semantic.entries()],
       playerModel,
+      goapFacts: goap.facts,
     };
     localStorage.setItem(KEY, JSON.stringify(data));
     lastSave = now;
