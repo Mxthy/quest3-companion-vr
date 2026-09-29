@@ -6,6 +6,7 @@ import type {
   LlmSituation,
 } from "./types";
 import { dialogueMemory } from "./memory-store";
+import { memoryContext } from "@/lib/companion/cognition";
 
 /** Local intimacy agreement interface matching system structure */
 export type IntimacyAgreement = {
@@ -141,6 +142,8 @@ export function buildPlayerSnap(s: GameSnapshotForLlm): LlmPlayerStance {
 }
 
 export function buildLlmContext(s: GameSnapshotForLlm): LlmRequestContext {
+  // Cognition memory: episodic highlights + semantic facts (Phase 2).
+  const cognitionMemory = memoryContext();
   const situation: LlmSituation = {
     scene: s.scene ?? (s.zoneId ? "touch" : "apartment"),
     focus: s.focusName,
@@ -173,9 +176,13 @@ export function buildLlmContext(s: GameSnapshotForLlm): LlmRequestContext {
           scheduleBeat: s.companion.scheduleBeat,
         }
       : undefined,
-    structuredMemoryBlock: s.structuredMemory
-      ? memoryPromptBlock(s.structuredMemory)
-      : undefined,
+    // Cognition memory: episodic highlights + semantic facts (Phase 2).
+    structuredMemoryBlock: [
+      s.structuredMemory ? memoryPromptBlock(s.structuredMemory) : undefined,
+      cognitionMemory,
+    ]
+      .filter(Boolean)
+      .join("\n\n") || undefined,
   };
 }
 

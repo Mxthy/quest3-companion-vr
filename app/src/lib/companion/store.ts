@@ -169,6 +169,7 @@ export const useCompanion = create<CompanionStateType>((set, get) => ({
   },
 
   leave: () => {
+    emitNpc("player_left");
     persist({
       bond: get().bond,
       used: get().used,

@@ -8,6 +8,7 @@ export type NpcEvent =
   | "player_near"
   | "player_touched"
   | "player_talked"
+  | "player_left"
   | "object_used";
 
 type Handler = (event: NpcEvent) => void;
