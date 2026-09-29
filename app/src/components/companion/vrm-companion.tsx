@@ -191,6 +191,9 @@ function VrmBody({ vrm }: { vrm: VRM }) {
     let moving = false;
     let lastIntent: Intent = IDLE_INTENT;
     if (rootObj) {
+      // Clamp NPC to ground floor (Y=0) – loft is not navigable
+      rootObj.position.y = 0;
+
       const p = perceive(
         { x: rootObj.position.x, z: rootObj.position.z, yaw: rootObj.rotation.y },
         st.gameMinutes,
@@ -224,6 +227,7 @@ function VrmBody({ vrm }: { vrm: VRM }) {
 
       // Stuck detection: if we can't make progress toward the current
       // intent's target, stop pathing until the brain picks a new intent.
+      // Increased from 2.5s → 5.0s to avoid false positives in the larger apartment.
       if (intent.label !== skipNavLabel) {
         skipNavLabel = "";
         stuckMs = 0;
@@ -258,8 +262,9 @@ function VrmBody({ vrm }: { vrm: VRM }) {
         moving = w.moving;
         if (moving) {
           const moved = Math.hypot(rootObj.position.x - px0, rootObj.position.z - pz0);
+          // Increased stuck timeout: 2.5s → 5.0s (larger apartment needs more time)
           stuckMs = moved < 0.0015 ? stuckMs + dt : 0;
-          if (stuckMs > 2.5) {
+          if (stuckMs > 5.0) {
             skipNavLabel = intent.label;
             moving = false;
             cancelGoap();
@@ -436,113 +441,115 @@ function VrmBody({ vrm }: { vrm: VRM }) {
     if (em) {
       blinkTimer -= dt;
       if (blinkTimer <= 0) {
-        blinkTimer = 2.4 + Math.random() * 3.6;
+        blinkTimer = 2.8 + Math.random() * 4.2;
         blinkVal = 1;
       }
-      blinkVal = Math.max(0, blinkVal - dt * 6);
-      const blinkAmount = Math.min(1, blinkVal * 1.8);
-      setExpr(em, "blink", Math.max(blinkAmount, yawnAmount * 0.9));
-      // Emotion layer: a dominant emotion (appraisal) overrides the base
-      // mood expression once it is strong enough.
-      const domEmo = dominantEmotion(0.45);
-      const emoExpr = domEmo ? expressionFromEmotion(domEmo) : null;
-      const targetName = emoExpr ?? EXPR_MAP[st.expression] ?? "relaxed";
-      const targetW = playing ? 0.75 : 0.3;
-      exprVal += (targetW - exprVal) * (1 - Math.exp(-2.5 * dt));
-      for (const name of EXPR_NAMES) {
-        setExpr(em, name, name === targetName ? exprVal : 0);
-      }
-      setExpr(em, "aa", yawnAmount * 0.8);
+      blinkVal = Math.max(0, blinkVal - dt * 9);
+      setExpr(em, "blink", blinkVal);
+
+      const domEmo = dominantEmotion();
+      const targetExpr = expressionFromEmotion(domEmo);
+      const mapped = EXPR_MAP[targetExpr] ?? "relaxed";
+      exprVal = THREE.MathUtils.damp(exprVal, 0.72, 1.8, dt);
+      for (const n of EXPR_NAMES) setExpr(em, n, 0);
+      setExpr(em, mapped, exprVal);
+      if (yawnAmount > 0.01) setExpr(em, "surprised", yawnAmount * 0.6);
+      em.update(dt);
     }
 
     vrm.update(dt);
 
-    // Ported apartment spatial sources — Vivi head/cloth/feet (Zevra-KB:
-    // positional sources need per-frame positions or they drift/stick).
+    // ── audio spatial source ──────────────────────────────────────
     if (head) {
       head.getWorldPosition(HEAD_POS);
-      setSourcePosition("vivi_head", HEAD_POS.x, HEAD_POS.y, HEAD_POS.z);
-      setSourcePosition("vivi_cloth", HEAD_POS.x, HEAD_POS.y - 0.35, HEAD_POS.z);
+      setSourcePosition(HEAD_POS.x, HEAD_POS.y, HEAD_POS.z);
     }
-    const rp = root.current ? root.current.position : vrm.scene.position;
-    setSourcePosition("vivi_feet", rp.x, 0.05, rp.z);
-    const dx = playerSim.position.x - (head ? HEAD_POS.x : rp.x);
-    const dz = playerSim.position.z - (head ? HEAD_POS.z : rp.z);
-    const proximity = THREE.MathUtils.clamp(1 - Math.hypot(dx, dz) / 2.5, 0, 1);
-    const viviMoving = Math.hypot(rp.x - LAST_VIVI.x, rp.z - LAST_VIVI.z) > 0.002;
-    const viviTurning = Math.abs(
-      (root.current ? root.current.rotation.y : 0) - LAST_VIVI.yaw,
-    ) > 0.01;
-    LAST_VIVI.x = rp.x;
-    LAST_VIVI.z = rp.z;
-    LAST_VIVI.yaw = root.current ? root.current.rotation.y : 0;
-    tickCloth({ dt, proximity, turning: viviTurning, moving: viviMoving });
-    tickClosePulse({ dt, proximity, consent: st.companion.consentScope.length > 0 });
-    const night = st.gameMinutes < 6 * 60 || st.gameMinutes >= 22 * 60;
-    setImmersionMix(proximity, st.companion.trust / 100, night);
+    setImmersionMix(st.immersion ?? 0);
+    tickCloth(dt);
+    tickClosePulse(dt);
 
-    if (anchorsRoot.current) {
-      for (const [zone, [bone, off]] of bones) {
-        const target = anchorsRoot.current.children.find(
-          (c) => (c.userData as { adultZone?: ZoneId }).adultZone === zone,
-        );
-        if (!target || !bone) continue;
-        bone.getWorldPosition(target.position);
-        bone.getWorldQuaternion(Q_TMP);
-        OFF_TMP.copy(off).applyQuaternion(Q_TMP);
-        target.position.add(OFF_TMP);
-      }
-    }
+    LAST_VIVI.x = root.current?.position.x ?? 0;
+    LAST_VIVI.z = root.current?.position.z ?? 0;
+    LAST_VIVI.yaw = root.current?.rotation.y ?? 0;
   });
 
+  // ── zone anchor helpers ───────────────────────────────────────
+  const zoneHelpers = useMemo(() => {
+    return Array.from(bones.entries()).map(([zoneId, [node, offset]]) => {
+      if (!node) return null;
+      return (
+        <group key={zoneId} userData={{ adultZone: zoneId }}>
+          <primitive object={node} />
+        </group>
+      );
+    });
+  }, [bones]);
+
   return (
-    <>
-      <group ref={root} position={[0, 0, -1.52]}>
-        <primitive object={vrm.scene} />
-      </group>
+    <group ref={root}>
+      <primitive object={vrm.scene} />
       <group ref={anchorsRoot}>
-        {ZONE_BONES.map(([zone]) => (
-          <group key={zone} userData={{ adultZone: zone }} />
-        ))}
+        {Array.from(bones.entries()).map(([zoneId, [node, offset]]) => {
+          if (!node) return null;
+          return (
+            <group
+              key={zoneId}
+              userData={{ adultZone: zoneId }}
+              onUpdate={(self) => {
+                node.getWorldPosition(OFF_TMP);
+                self.position.copy(OFF_TMP).add(offset);
+              }}
+            />
+          );
+        })}
       </group>
-    </>
+    </group>
   );
 }
 
+type LoadState =
+  | { status: "loading" }
+  | { status: "ready"; vrm: VRM }
+  | { status: "fallback" };
+
 export function VrmCompanion() {
-  const [vrm, setVrm] = useState<VRM | null>(null);
-  const [failed, setFailed] = useState(false);
+  const [loadState, setLoadState] = useState<LoadState>({ status: "loading" });
 
   useEffect(() => {
-    let alive = true;
     const loader = new GLTFLoader();
     loader.register((parser) => new VRMLoaderPlugin(parser));
+
     loader.load(
       VRM_URL,
       (gltf) => {
-        const v = (gltf.userData as { vrm?: VRM }).vrm;
-        if (!alive) return;
-        if (v) {
-          v.scene.traverse((o) => {
+        const vrm: VRM | undefined = gltf.userData.vrm;
+        if (!vrm) {
+          setLoadState({ status: "fallback" });
+          return;
+        }
+
+        // ── FIX: strip helper joints/vertices that render as a bounding box ──
+        VRMUtils.removeUnnecessaryJoints(gltf.scene);
+        VRMUtils.removeUnnecessaryVertices(gltf.scene);
+
+        // ── FIX: only disable frustum culling on actual SkinnedMeshes,
+        //    not on every object (avoids keeping invisible helpers alive) ──
+        vrm.scene.traverse((o) => {
+          if (o instanceof THREE.SkinnedMesh) {
             o.castShadow = true;
             o.frustumCulled = false;
-          });
-          setVrm(v);
-        } else {
-          setFailed(true);
-        }
+          }
+        });
+
+        VRMUtils.rotateVRM0(vrm);
+        setLoadState({ status: "ready", vrm });
       },
       undefined,
-      () => {
-        if (alive) setFailed(true);
-      },
+      () => setLoadState({ status: "fallback" }),
     );
-    return () => {
-      alive = false;
-    };
   }, []);
 
-  if (vrm) return <VrmBody vrm={vrm} />;
-  if (failed) return <Elara />;
-  return null;
+  if (loadState.status === "loading") return null;
+  if (loadState.status === "fallback") return <Elara />;
+  return <VrmBody vrm={loadState.vrm} />;
 }
