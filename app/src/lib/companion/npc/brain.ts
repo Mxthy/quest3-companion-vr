@@ -6,6 +6,7 @@
 import { interactables } from "@/data/interactables";
 import { emitNpc, onNpc, type NpcEvent } from "./events";
 import { initialNeeds, tickNeeds, type Needs, type NeedMode } from "./needs";
+import { TRAITS } from "@/lib/companion/cognition/traits";
 import type { Perception } from "./perception";
 
 export type IntentKind = "sleep" | "rest" | "attend" | "observe_player" | "idle";
@@ -118,11 +119,15 @@ export class NpcBrain {
         intent: { kind: "sleep", targetId: "bed", label: ACTIVITY_LABEL.bed! },
       });
     } else {
+      // Personality reshapes the utility landscape (cognition traits).
+      const social = TRAITS.sociability;
+      const curious = TRAITS.curiosity;
+      const independent = TRAITS.independence;
+      const jitter = TRAITS.impulsiveness * 0.12;
       candidates.push({
-        score: 0.4 + Math.random() * 0.1,
+        score: (0.4 + Math.random() * 0.1 + jitter * 0.5) * (0.85 + independent * 0.3),
         intent: { kind: "idle", targetId: null, label: "steht da und schaut umher" },
       });
-
       if (this.needs.energy < 0.35) {
         const restId = pick(["couch", "cushion"]);
         candidates.push({
@@ -134,7 +139,7 @@ export class NpcBrain {
       const pool = poolForHour(p.hour).filter((id) => !this.recentTargets.includes(id));
       const attendId = pool.length ? pick(pool) : pick(poolForHour(p.hour));
       candidates.push({
-        score: 0.3 + this.needs.boredom * 0.9 + Math.random() * 0.15,
+        score: (0.3 + this.needs.boredom * 0.9 + Math.random() * 0.15) * (0.8 + curious * 0.4),
         intent: {
           kind: "attend",
           targetId: attendId,
@@ -152,9 +157,10 @@ export class NpcBrain {
       if (p.playerNear || p.playerTalking || p.playerDistance < 3.5) {
         candidates.push({
           score:
-            (1 - this.needs.social) * 0.9 +
-            (p.playerTalking ? 0.8 : 0) +
-            (p.playerNear ? 0.3 : 0),
+            ((1 - this.needs.social) * 0.9 +
+              (p.playerTalking ? 0.8 : 0) +
+              (p.playerNear ? 0.3 : 0)) *
+            (0.7 + social * 0.6),
           intent: { kind: "observe_player", targetId: null, label: "schaut dich an" },
         });
       }

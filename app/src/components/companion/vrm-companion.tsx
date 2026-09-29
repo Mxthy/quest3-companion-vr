@@ -15,6 +15,15 @@ import {
 import { useCompanion } from "@/lib/companion/store";
 import { initVoiceDirector, tryActivityVoice } from "@/lib/companion/voice";
 import {
+  attention,
+  dominantEmotion,
+  expressionFromEmotion,
+  initCognition,
+  microEnvelope,
+  microState,
+  tickCognition,
+} from "@/lib/companion/cognition";
+import {
   IDLE_INTENT,
   NpcBrain,
   interactablePos,
@@ -57,6 +66,7 @@ const LAST_VIVI = { x: 0, z: 0, yaw: 0 };
 // ── NPC life layer (Blueprint §§3-6, 10-12) ─────────────────────────
 const NPC_BRAIN = new NpcBrain();
 initVoiceDirector();
+initCognition();
 let lastVoiceActivityLabel = "";
 const GAZE_TARGET = new THREE.Vector3(0, 1.45, 2);
 const EYE_TARGET = new THREE.Object3D();
@@ -65,6 +75,7 @@ let eyesBound = false;
 let WALK_PHASE = 0;
 let WALK_BLEND = 0;
 let blinkTimer = 2;
+let yawnAmount = 0;
 let stuckMs = 0;
 let skipNavLabel = "";
 let blinkVal = 0;
@@ -198,6 +209,12 @@ function VrmBody({ vrm }: { vrm: VRM }) {
         lastVoiceActivityLabel = "";
       }
 
+      // Cognitive core: attention, emotion decay, micro-behavior selection.
+      tickCognition(dt, p, intent, playing, {
+        energy: NPC_BRAIN.needs.energy,
+        boredom: NPC_BRAIN.needs.boredom,
+      });
+
       // Stuck detection: if we can't make progress toward the current
       // intent's target, stop pathing until the brain picks a new intent.
       if (intent.label !== skipNavLabel) {
@@ -253,7 +270,27 @@ function VrmBody({ vrm }: { vrm: VRM }) {
       }
       rootObj.rotation.y = bodyYaw;
 
-      // ── gaze director (Blueprint §11: ~70% activity / 20% player / 10% saccade) ──
+      // ── gaze director: attention & micro-behavior override first ──
+      const mA = microState.active;
+      if (mA && (mA.action === "look_player" || mA.action === "look_away")) {
+        if (mA.action === "look_player") {
+          GAZE_TARGET.set(playerSim.position.x, playerSim.position.y - 0.25, playerSim.position.z);
+        } else {
+          GAZE_TARGET.set(
+            rootObj.position.x - Math.sin(bodyYaw) * 1.6,
+            1.3,
+            rootObj.position.z - Math.cos(bodyYaw) * 1.6,
+          );
+        }
+        gazeHold = 0.3;
+      } else if (attention.urgency > 0.55 && attention.kind === "player") {
+        GAZE_TARGET.set(playerSim.position.x, playerSim.position.y - 0.25, playerSim.position.z);
+        gazeHold = Math.max(gazeHold, 0.2);
+      } else if (attention.urgency > 0.55 && attention.kind === "object" && attention.objectId) {
+        GAZE_TARGET.set(attention.objectX, 1.15, attention.objectZ);
+        gazeHold = Math.max(gazeHold, 0.2);
+      } else {
+      // ── weighted pick (Blueprint §11: ~70% activity / 20% player / 10% saccade) ──
       gazeHold -= dt;
       if (gazeHold <= 0) {
         gazeHold = 2.5 + Math.random() * 3.5;
@@ -280,6 +317,7 @@ function VrmBody({ vrm }: { vrm: VRM }) {
             rootObj.position.z + Math.cos(bodyYaw) * 2.2,
           );
         }
+      }
       }
       EYE_TARGET.position.copy(GAZE_TARGET);
       if (!eyesBound && vrm.lookAt) {
@@ -320,6 +358,46 @@ function VrmBody({ vrm }: { vrm: VRM }) {
       if (leftLowerArm) leftLowerArm.rotation.z = rest.leftForearmZ + Math.sin(t * 0.7) * 0.018;
       if (rightLowerArm) rightLowerArm.rotation.z = rest.rightForearmZ - Math.sin(t * 0.7) * 0.018;
 
+      // ── micro-behavior overlay (cognition §10-11) ────────────────
+      const ma = microState.active;
+      if (ma && !moving) {
+        const env = microEnvelope(ma);
+        switch (ma.action) {
+          case "shift_weight":
+            if (hips) hips.rotation.y += env * 0.05;
+            if (chest) chest.rotation.z += env * 0.04;
+            break;
+          case "adjust_posture":
+            if (spine) spine.rotation.x -= env * 0.05;
+            break;
+          case "adjust_hair":
+            if (rightUpperArm) rightUpperArm.rotation.z += env * 0.95;
+            if (rightLowerArm) rightLowerArm.rotation.z += env * 0.85;
+            break;
+          case "stretch":
+            if (leftUpperArm) leftUpperArm.rotation.z -= env * 0.8;
+            if (rightUpperArm) rightUpperArm.rotation.z += env * 0.8;
+            if (spine) spine.rotation.x -= env * 0.06;
+            break;
+          case "yawn":
+            if (head) head.rotation.x -= env * 0.14;
+            yawnAmount = env;
+            break;
+          case "fidget":
+            if (leftLowerArm) leftLowerArm.rotation.z += Math.sin(t * 9) * 0.05 * env;
+            if (rightLowerArm) rightLowerArm.rotation.z += Math.sin(t * 9 + 1.2) * 0.05 * env;
+            break;
+          case "sigh":
+            if (spine) spine.rotation.x += env * 0.045;
+            if (chest) chest.rotation.z += env * 0.02;
+            break;
+          default:
+            break;
+        }
+      } else {
+        yawnAmount = Math.max(0, yawnAmount - dt * 3);
+      }
+
       if (head && root.current) {
         const dx = GAZE_TARGET.x - root.current.position.x;
         const dz = GAZE_TARGET.z - root.current.position.z;
@@ -343,13 +421,19 @@ function VrmBody({ vrm }: { vrm: VRM }) {
         blinkVal = 1;
       }
       blinkVal = Math.max(0, blinkVal - dt * 6);
-      setExpr(em, "blink", Math.min(1, blinkVal * 1.8));
-      const targetName = EXPR_MAP[st.expression] ?? "relaxed";
+      const blinkAmount = Math.min(1, blinkVal * 1.8);
+      setExpr(em, "blink", Math.max(blinkAmount, yawnAmount * 0.9));
+      // Emotion layer: a dominant emotion (appraisal) overrides the base
+      // mood expression once it is strong enough.
+      const domEmo = dominantEmotion(0.45);
+      const emoExpr = domEmo ? expressionFromEmotion(domEmo) : null;
+      const targetName = emoExpr ?? EXPR_MAP[st.expression] ?? "relaxed";
       const targetW = playing ? 0.75 : 0.3;
       exprVal += (targetW - exprVal) * (1 - Math.exp(-2.5 * dt));
       for (const name of EXPR_NAMES) {
         setExpr(em, name, name === targetName ? exprVal : 0);
       }
+      setExpr(em, "aa", yawnAmount * 0.8);
     }
 
     vrm.update(dt);
