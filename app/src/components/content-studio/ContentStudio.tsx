@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Download, History, RotateCcw, Save, Search, ShieldCheck } from "lucide-react";
+import { Download, FileCode2, History, RotateCcw, Save, Search, ShieldCheck } from "lucide-react";
 import { dialogues } from "@/data/dialogues";
 import type { ContentStudioData, ContentStudioNode } from "@/lib/content-studio/types";
 import {
@@ -68,6 +68,51 @@ export function ContentStudio() {
     URL.revokeObjectURL(url);
   }
 
+  /**
+   * Drop-in replacement for src/data/dialogues.ts. Type header mirrors the
+   * repo file; replace the file in the repo and push — CI deploys it.
+   */
+  function exportTs() {
+    const header = `export type DialogueChoice = {
+  id: string;
+  label: string;
+  next: string | null;
+  affection?: number;
+};
+
+export type DialogueNode = {
+  id: string;
+  speaker: string;
+  text: string;
+  expression: string;
+  affection: number;
+  comfort?: number;
+  next?: string | null;
+  choices?: DialogueChoice[];
+  grant?: string[];
+};
+
+export type DialoguesData = {
+  starts: Record<string, string>;
+  nodes: Record<string, DialogueNode>;
+};
+
+`;
+    const body = `export const dialogues: DialoguesData = ${JSON.stringify(data, null, 2)};
+
+export default dialogues;
+`;
+    const blob = new Blob([header + body], {
+      type: "text/plain",
+    });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = "dialogues.ts";
+    anchor.click();
+    URL.revokeObjectURL(url);
+  }
+
   function persist() {
     saveDraft(data);
     const revision = createRevision(data, `Saved ${new Date().toLocaleString("de-DE")}`);
@@ -98,6 +143,13 @@ export function ContentStudio() {
             className="inline-flex items-center gap-2 rounded-md bg-primary px-3 py-2 text-sm text-primary-fg"
           >
             <Save size={16} /> {saved ? "Gespeichert" : "Speichern"}
+          </button>
+          <button
+            onClick={exportTs}
+            className="inline-flex items-center gap-2 rounded-md border border-border px-3 py-2 text-sm"
+            title="Erzeugt eine drop-in dialogues.ts für src/data/ — Datei im Repo ersetzen und pushen, dann deployt CI automatisch."
+          >
+            <FileCode2 size={16} /> dialogues.ts exportieren
           </button>
           <button
             onClick={exportJson}
