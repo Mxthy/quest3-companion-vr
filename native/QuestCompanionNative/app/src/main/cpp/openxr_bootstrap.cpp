@@ -280,7 +280,7 @@ void OpenXrBootstrap::SetSession(XrSession session) {
         XrHandTrackerCreateInfoEXT createInfo{XR_TYPE_HAND_TRACKER_CREATE_INFO_EXT};
         createInfo.hand = i == 0 ? XR_HAND_LEFT_EXT : XR_HAND_RIGHT_EXT;
         createInfo.handJointSet = XR_HAND_JOINT_SET_DEFAULT_EXT;
-        const XrResult result = xrCreateHandTrackerEXT_(instance_, &createInfo, &handTrackers_[i]);
+        const XrResult result = xrCreateHandTrackerEXT_(session_, &createInfo, &handTrackers_[i]);
         if (XR_FAILED(result)) {
             QC_LOGE("xrCreateHandTrackerEXT (%s) failed: %s",
                     i == 0 ? "left" : "right", ResultName(result));
